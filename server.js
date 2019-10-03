@@ -1,6 +1,4 @@
-// Dependencies
-var port_num = 5000;
-
+// Dependencies.
 var express = require('express');
 var http = require('http');
 var path = require('path');
@@ -10,35 +8,37 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-var move_speed = 5; //pixels moved every keydown
-
-var refresh_rate = 1000/60; //60 times per second
+var move_speed = 5;
+var refresh_rate = 1000/60;
+var port_num = 5000;
 
 app.set('port', port_num);
 app.use('/static', express.static(__dirname + '/static'));
 
-//Routing
+// Routing
 app.get('/', function(request, response) {
-    response.sendFile(path.join(__dirname, 'index.html'));
+  response.sendFile(path.join(__dirname, 'index.html'));
 });
 
-//Starts the server
 server.listen(port_num, function() {
-    console.log('Starting server on port ', port_num);
+  console.log('Starting server on port', port_num);
 });
 
 var players = {};
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     players[socket.id] = {
-      x:300,
-      y:300
+      x: 300,
+      y: 300
     };
   });
   socket.on('movement', function(data) {
-    var player = players[player.id] || {};
+    var player = players[socket.id] || {};
     if (data.left) {
       player.x -= move_speed;
+    }
+    if (data.up) {
+      player.y -= move_speed;
     }
     if (data.right) {
       player.x += move_speed;
@@ -46,14 +46,9 @@ io.on('connection', function(socket) {
     if (data.down) {
       player.y += move_speed;
     }
-    if (data.up) {
-      player.y -= move_speed;
-    }
   });
-
 });
 
 setInterval(function() {
   io.sockets.emit('state', players);
 }, refresh_rate);
-
