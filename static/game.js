@@ -48,6 +48,14 @@ document.addEventListener('keyup', function(event) {
     }
 });
 
+socket.on('connection', function(socket) {
+  players[socket.id] = socket;
+  
+  socket.on('disconnect', function() {
+    players[socket.id].disconnect();
+  });
+});
+
 // update player movement to server
 socket.emit('new player');
 setInterval(function() {
