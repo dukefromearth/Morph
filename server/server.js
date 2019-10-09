@@ -10,7 +10,9 @@ var io = socketIO(server);
 
 var move_speed = 5;
 var refresh_rate = 1000/60;
-var port_num = 5000;
+var port_num = process.env.PORT || 5000;
+
+const environment = process.env.ENV || "prod"
 
 app.set('port', port_num);
 app.use('/static', express.static(__dirname + '/static'));
@@ -21,6 +23,7 @@ app.get('/', function(request, response) {
 });
 
 server.listen(port_num, function() {
+  console.log(`Running as ${environment} environment`)
   console.log('Starting server on port', port_num);
 });
 
