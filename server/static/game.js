@@ -1,6 +1,6 @@
 
 
-var socket = io();
+var socket = io("http://ec2-3-82-14-140.compute-1.amazonaws.com:8080/");
 var refresh_rate = 1000/60;
 
 var movement = {
@@ -17,15 +17,19 @@ socket.on('message', function(data){
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
       case 65: // A
-        movement.left = true;
+      case 37:        
+	movement.left = true;
         break;
       case 87: // W
+      case 38:
         movement.up = true;
         break;
       case 68: // D
+      case 39:
         movement.right = true;
         break;
       case 83: // S
+      case 40:
         movement.down = true;
         break;
     }
@@ -34,15 +38,19 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('keyup', function(event) {
     switch (event.keyCode) {
         case 65: // A
+	case 37:
             movement.left = false;
             break;
         case 87: // W
+        case 38:
             movement.up = false;
             break;
         case 68: // D
+	case 39:
             movement.right = false;
             break;
         case 83: // S
+	case 40:
             movement.down = false;
             break;
     }
@@ -68,7 +76,7 @@ canvas.width = 800;
 canvas.height = 600;
 var context = canvas.getContext('2d');
 socket.on('state', function(players) {
-  console.log(players);
+  //console.log(players);
   context.clearRect(0, 0, 800, 600);
   context.fillStyle = 'green';
   for (var id in players) {

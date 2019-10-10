@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "server": "PORT=13911 ENV=server nodemon server.js",
+    "server": "PORT=8080 ENV=server nodemon server.js",
     "dev": "ENV=dev nodemon server.js"
   },
   "keywords": [],
