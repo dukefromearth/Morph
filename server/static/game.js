@@ -41,7 +41,7 @@ document.addEventListener('keydown', function(event) {
       case 32: // Space
         bullet = true;
         break;
-    }
+    } 
   });
 
 document.addEventListener('keyup', function(event) {
@@ -87,7 +87,6 @@ var context = canvas.getContext('2d');
 socket.on('state', function(players) {
   //console.log(players);
   context.clearRect(0, 0, 800, 600);
-  
   for (var id in players) {
     var player = players[id];
     context.fillStyle = 'blue';
