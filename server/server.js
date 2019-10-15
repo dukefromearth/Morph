@@ -8,20 +8,20 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
+var WINDOW_WIDTH = 800;
+var WINDOW_HEIGHT = 600;
+
 var move_speed = 5;
-var bullet_speed = 5;
-var bullet_delay_millis = 0;
-var bullet_size = 10;
+var bullet_speed = 2;
+var bullet_delay_millis =  50*bullet_speed;
+var bullet_size = 3;
+var max_bullets = 100;
+var last_bullet_time = 0;
+var min_health = 5;
 var refresh_rate = 1000/60;
-<<<<<<< Updated upstream
-var port_num = 5000;
-=======
 var port_num = process.env.PORT || 5000;
 
-var last_time = 0;
-
 const environment = process.env.ENV || "prod";
->>>>>>> Stashed changes
 
 app.set('port', port_num);
 app.use('/static', express.static(__dirname + '/static'));
@@ -32,23 +32,28 @@ app.get('/', function(request, response) {
 });
 
 server.listen(port_num, function() {
-<<<<<<< Updated upstream
-=======
   console.log(`Running as ${environment} environment`);
->>>>>>> Stashed changes
   console.log('Starting server on port', port_num);
 });
 
 var players = {};
 var bullets = [];
+
 io.on('connection', function(socket) {
+
   socket.on('new player', function() {
     players[socket.id] = {
-      x: 300,
-      y: 300
+      x: 30+Math.floor(Math.random()*(WINDOW_WIDTH-60)),
+      y: 30+Math.floor(Math.random()*(WINDOW_HEIGHT-60)),
+      gun_angle: 0,
+      health: min_health,
+      collision: false,
+      id: socket.id,
+      mousex: 0,
+      mousey: 0
     };
   });
-
+  
   socket.on('disconnect', function() {
     delete players[socket.id];
   });
@@ -67,35 +72,50 @@ io.on('connection', function(socket) {
     if (data.down) {
       player.y += move_speed;
     }
+    player.mousex = data.mousex;
+    player.mousey = data.mousey;
   });
+
+  free_bullet_index = -1;
 
   //When player presses shoot key, mouse position is sent here, a new bullet is pushed to bullet array.
   socket.on('shoot-bullet', function(angle){
     if(players[socket.id] === undefined) return; //happens if server restarts
     //Check time since last bullet
+    console.log(players[socket.id]);
     var curr_time = Date.now();
-    if (curr_time - last_time > bullet_delay_millis){
+    if (curr_time - last_bullet_time > bullet_delay_millis){
       var x = Math.cos(angle) * 10;
       var y = Math.sin(angle) * 10; 
-      var new_bullet = {x: players[socket.id].x + x, y: players[socket.id].y + y, time: curr_time, angle: angle, size: bullet_size};
+      var new_bullet = {owner: players[socket.id].id, x: players[socket.id].x + x, y: players[socket.id].y + y, time: curr_time, angle: angle, size: bullet_size, is_alive: true};
+      if(bullets.length > max_bullets) bullets.shift();
       bullets.push(new_bullet);
-      if(bullets.length > 100) bullets.shift();
-      last_time = curr_time;
+      last_bullet_time = curr_time;
     }
   });
 });
+ 
+function collision(){
+  for (var bID in bullets){
+    bullet = bullets[bID];
+    for(var pID in players){
+      player = players[pID];
+      if((Math.abs(bullet.x - player.x)) < 10 && (Math.abs(bullet.y - player.y)) < 10 && bullet.owner != player.id && bullet.is_alive){
+        player.health -= 1;
+        bullet.is_alive = false;
+      }
+    }
+    bullet.x += Math.cos(bullet.angle) * bullet_speed;
+    bullet.y += Math.sin(bullet.angle) * bullet_speed; 
+    if (bullet.x > 800 || bullet.y > 600 || bullet.x < 0 || bullet.y < 0) {
+      free_bullet_index = bID;
+    }
+  }
+}
 
 setInterval(function() {
   io.sockets.emit('state', players);
-  for (var id in bullets) {
-    bullet = bullets[id];
-    bullet.x += Math.cos(bullet.angle) * bullet_speed;
-    bullet.y += Math.sin(bullet.angle) * bullet_speed; 
-    if(id === 0) console.log(bullet.x, bullet.y);
-    if (bullet.x > 800 || bullet.y > 600 || bullet.x < 0 || bullet.y < 0) {
-      bullets.shift();
-    }
-  }
   io.sockets.emit('bullets-update', bullets);
+  collision();
 }, refresh_rate);
 

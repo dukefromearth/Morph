@@ -7,7 +7,9 @@ var movement = {
     up: false,
     down: false,
     left: false,
-    right: false
+    right: false,
+    mousex: 0,
+    mousey: 0
 };
 
 var bullet = false;
@@ -18,8 +20,8 @@ socket.on('message', function(data){
 });
 
 document.addEventListener("mousemove", function(event) {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
+  movement.mousex = event.clientX;
+  movement.mousey = event.clientY;
 });
 
 document.addEventListener('keydown', function(event) {
@@ -85,10 +87,11 @@ var context = canvas.getContext('2d');
 socket.on('state', function(players) {
   //console.log(players);
   context.clearRect(0, 0, 800, 600);
-  context.fillStyle = 'blue';
+  
   for (var id in players) {
     var player = players[id];
-    angle = Math.atan2(mouse.y-player.y,mouse.x-player.x);
+    context.fillStyle = 'blue';
+    angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
     context.beginPath();
     context.arc(player.x, player.y, 12, 0,  2* Math.PI);
     context.fill();
@@ -98,17 +101,19 @@ socket.on('state', function(players) {
     context.arc(player.x,player.y,15,angle-(2*Math.PI)/12,angle+(2*Math.PI)/12);
     context.stroke();
     context.lineWidth = 1;
+    context.fillStyle = 'white';
+    context.fillText(player.health,player.x-5,player.y+5);
   }
 });
 
 socket.on('bullets-update', function(bullets){
-  //console.log(bullets);
   context.fillStyle = 'red';
   for (var id in bullets) {
     var bullet = bullets[id];
-    //console.log(bullet);
-    context.beginPath();
-    context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
-    context.fill();
+    if(bullet.is_alive){
+      context.beginPath();
+      context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
+      context.fill();
+    }
   }
 });
