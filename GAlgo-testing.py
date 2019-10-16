@@ -106,16 +106,23 @@ def min_index(arr):
         count += 1
     return minim
 
+def top_guesses(all):
+    top = []
+    for guess in all:
+        if guess.fitness == all[0].fitness:
+            top.append(guess)
+    return top
 
-def top_guess(top_ten):
+def top_guess(top):
     fitness_of_top = []
-    for test_gene in top_ten:
+    fitness = top[0].fitness
+    for test_gene in top:
         curr_fitness = 0;
-        for target_gene in top_ten:
+        for target_gene in top:
             curr_fitness += cal_fitness(test_gene.chromosome,target_gene.chromosome)
         fitness_of_top.append(curr_fitness)
     min_idx = min_index(fitness_of_top)
-    return top_ten[min_idx]
+    return top[min_idx]
 
 
 def run_ga():
@@ -156,14 +163,14 @@ def run_ga():
         # From 50% of fittest population, Individuals
         # will mate to produce offspring
         s = int((90 * POPULATION_SIZE) / 100)
-        top_gene = top_guess(population[:5])
+        top_gene = top_guess(top_guesses(population[:10]))
         prob = random.random()
-        test = 0
+        test = 1
 
         for _ in range(s):
             if test:
-                if prob < .9: parent1 = top_gene
-                else: parent1 = random.choice(population[:5])
+                if prob < .3: parent1 = top_gene
+                else: parent1 = random.choice(population[:10])
             else: parent1 = random.choice(population[:10])
             parent2 = random.choice(population[:10])
             child = parent1.mate(parent2)
@@ -187,7 +194,7 @@ def run_ga():
 def benchmarker():
     count = 0
     tot_gen_count = 0
-    max_gens = 50
+    max_gens = 30
     total_time = 0
     epoch = datetime.utcfromtimestamp(0)
     def unix_time_millis(dt):
