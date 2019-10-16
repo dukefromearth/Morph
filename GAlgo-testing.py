@@ -6,7 +6,7 @@ def random_generator(size=75, chars="01"):
     return ''.join(random.choice(chars) for x in range(size))
 
 # Number of individuals in each generation
-POPULATION_SIZE = 100
+POPULATION_SIZE = 175
 
 # Valid genes
 # 0 = empty space
@@ -156,16 +156,16 @@ def run_ga():
         # From 50% of fittest population, Individuals
         # will mate to produce offspring
         s = int((90 * POPULATION_SIZE) / 100)
-        top_gene = top_guess(population[:10])
+        top_gene = top_guess(population[:5])
         prob = random.random()
-        test = 1
+        test = 0
 
         for _ in range(s):
             if test:
-                if prob < .3: parent1 = top_gene
-                else: parent1 = random.choice(population[:50])
-            else: parent1 = random.choice(population[:50])
-            parent2 = random.choice(population[:50])
+                if prob < .9: parent1 = top_gene
+                else: parent1 = random.choice(population[:5])
+            else: parent1 = random.choice(population[:10])
+            parent2 = random.choice(population[:10])
             child = parent1.mate(parent2)
             new_generation.append(child)
 
@@ -189,11 +189,15 @@ def benchmarker():
     tot_gen_count = 0
     max_gens = 50
     total_time = 0
+    epoch = datetime.utcfromtimestamp(0)
+    def unix_time_millis(dt):
+        return (dt - epoch).total_seconds() * 1000.0
     while count < max_gens:
-        start_time = datetime.now().microsecond
+        start_time = unix_time_millis(datetime.now())
         tot_gen_count += run_ga()
-        end_time = datetime.now().microsecond
+        end_time = unix_time_millis(datetime.now())
         count += 1
-        total_time += (end_time - start_time)
+        total_time = total_time + (end_time - start_time)
     print("Average generations: ", tot_gen_count/max_gens)
     print("Average time: ", total_time/max_gens)
+
