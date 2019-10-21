@@ -1,38 +1,40 @@
 // Dependencies.
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var socketIO = require('socket.io');
+/*jshint esversion: 6 */
+import express from 'express';
+import http from 'http';
+import path from 'path';
+import socketIO from 'socket.io';
+import Player from './player.mjs';  
+import Bullet from './bullet.js';
+
 
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
 var WINDOW_WIDTH = 800;
-var WINDOW_HEIGHT = 600;
+var WINDOW_HEIGHT = 600; 
 
-var move_speed = 5;
-var bullet_speed = 2;
+var bullet_speed = 4;
 var bullet_delay_millis =  50*bullet_speed;
-var bullet_size = 3;
 var max_bullets = 100;
 var last_bullet_time = 0;
-var min_health = 5;
-var refresh_rate = 1000/60;
-var port_num = process.env.PORT || 5000;
 
-const environment = process.env.ENV || "prod";
+var refresh_rate = 1000/60;
+var port_num = 5050;
+
+var free_bullet_index = -1;
 
 app.set('port', port_num);
-app.use('/static', express.static(__dirname + '/static'));
+app.use('/static', express.static('./static'));
 
 // Routing
 app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, 'index.html'));
+  response.sendFile('/Users/stephenduke/Documents/GitHub/Morph/server/index.html');
 });
 
 server.listen(port_num, function() {
-  console.log(`Running as ${environment} environment`);
+  //console.log(`Running as ${environment} environment`);
   console.log('Starting server on port', port_num);
 });
 
@@ -42,16 +44,8 @@ var bullets = [];
 io.on('connection', function(socket) {
 
   socket.on('new player', function() {
-    players[socket.id] = {
-      x: 30+Math.floor(Math.random()*(WINDOW_WIDTH-60)),
-      y: 30+Math.floor(Math.random()*(WINDOW_HEIGHT-60)),
-      gun_angle: 0,
-      health: min_health,
-      collision: false,
-      id: socket.id,
-      mousex: 0,
-      mousey: 0
-    };
+    players[socket.id] = new Player(socket.id);
+    console.log(players[socket.id]);
   });
   
   socket.on('disconnect', function() {
@@ -61,45 +55,43 @@ io.on('connection', function(socket) {
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
     if (data.left) {
-      player.x -= move_speed;
+      player.x -= player.speed;
     }
     if (data.up) {
-      player.y -= move_speed;
+      player.y -= player.speed;
     }
     if (data.right) {
-      player.x += move_speed;
+      player.x += player.speed;
     }
     if (data.down) {
-      player.y += move_speed;
+      player.y += player.speed;
     }
     player.mousex = data.mousex;
     player.mousey = data.mousey;
   });
 
-  free_bullet_index = -1;
-
   //When player presses shoot key, mouse position is sent here, a new bullet is pushed to bullet array.
   socket.on('shoot-bullet', function(angle){
-    if(players[socket.id] === undefined) return; //happens if server restarts
-    //Check time since last bullet
-    console.log(players[socket.id]);
+    var player = players[socket.id];
+    if(player === undefined) return; //happens if server restarts
     var curr_time = Date.now();
-    if (curr_time - last_bullet_time > bullet_delay_millis){
-      var x = Math.cos(angle) * 10;
-      var y = Math.sin(angle) * 10; 
-      var new_bullet = {owner: players[socket.id].id, x: players[socket.id].x + x, y: players[socket.id].y + y, time: curr_time, angle: angle, size: bullet_size, is_alive: true};
+    if (curr_time - player.time_at_last_shot > player.bullets_per_sec){
+      var x = Math.cos(angle) * 10; //start away from player
+      var y = Math.sin(angle) * 10; //start away from player.
+      var new_bullet = new Bullet(player.x+x,player.y+y,angle,player.id);
       if(bullets.length > max_bullets) bullets.shift();
       bullets.push(new_bullet);
-      last_bullet_time = curr_time;
+      player.time_at_last_shot = curr_time;
     }
   });
 });
- 
+
+
 function collision(){
   for (var bID in bullets){
-    bullet = bullets[bID];
+    var bullet = bullets[bID];
     for(var pID in players){
-      player = players[pID];
+      var player = players[pID];
       if((Math.abs(bullet.x - player.x)) < 10 && (Math.abs(bullet.y - player.y)) < 10 && bullet.owner != player.id && bullet.is_alive){
         player.health -= 1;
         bullet.is_alive = false;
