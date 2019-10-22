@@ -11,8 +11,11 @@ var io = socketIO(server);
 var move_speed = 5;
 var refresh_rate = 1000/60;
 var port_num = process.env.PORT || 5000;
+const cors = require('cors')
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod"
+
+app.use(cors())
 
 app.set('port', port_num);
 app.use('/static', express.static(__dirname + '/static'));
@@ -39,7 +42,11 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     delete players[socket.id];
   });
-
+socket.on('connect', function(){
+console.log("Hello World")
+	socket.emit("Hello World")
+return "Hello World"
+})
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
     if (data.left) {
