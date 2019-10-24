@@ -3,11 +3,11 @@
 export default class Player { 
     constructor(socketID,game_width, game_height){
         this.image = 'img_ship';
-        this.gun = 'img_gun'
+        this.gun = 'img_gun';
         this.x = Math.floor(Math.random() * (game_width - 75));
         this.y = Math.floor(Math.random() * (game_height - 75));
         this.size = 70;
-        this.speed = 5;
+        this.speed = 10;
         this.health = 100;
         this.gun_angle = 1;
         this.collision = false;

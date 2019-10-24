@@ -1,10 +1,13 @@
-var socket = io("http://gun.mwong.io");
+
+/*jshint esversion: 6 */
+//Thanks to https://github.com/vzhou842
+
+var socket = io();
 var refresh_rate = 1000/60;
 var angle = 0;
 var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
 var context = canvas.getContext('2d');
+var MAP_SIZE = 3000;
 
 var socket_id = 0;
 
@@ -19,6 +22,35 @@ var movement = {
 };
 
 var bullet = false;
+var _players = {};
+var _bullets = [];
+
+setCanvasDimensions();
+
+function setCanvasDimensions() {
+  // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
+  // 800 in-game units of width.
+  const scaleRatio = Math.max(1, 800 / window.innerWidth);
+  canvas.width = scaleRatio * (window.innerWidth - 15);
+  canvas.height = scaleRatio * (window.innerHeight - 30);
+}
+
+function renderBackground(x, y) {
+  const backgroundX = (MAP_SIZE/2) - x + (canvas.width/2);
+  const backgroundY = (MAP_SIZE/2) - y + (canvas.height/2);
+  const backgroundGradient = context.createRadialGradient(
+    backgroundX,
+    backgroundY,
+    MAP_SIZE / 10,
+    backgroundX,
+    backgroundY,
+    MAP_SIZE / 2
+  );
+  backgroundGradient.addColorStop(0, 'black');
+  backgroundGradient.addColorStop(1, 'gray');
+  context.fillStyle = backgroundGradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+}
 
 socket.on('message', function(data){
     console.log(data);
@@ -79,6 +111,7 @@ document.addEventListener('keyup', function(event) {
 
 socket.on('connection', function(socket) {
   players[socket.id] = socket;
+  socket_id = socket.id;
 
   socket.on('disconnect', function() {
     players[socket.id].disconnect();
@@ -93,16 +126,26 @@ setInterval(function() {
 }, refresh_rate);
 
 socket.on('state', function(players) {
-  context.clearRect(0, 0, 800, 600);
-  for (var id in players) {
-    var player = players[id];
+  _players = players;
+});
+
+socket.on('bullets-update', function(bullets){
+  _bullets = bullets;
+});
+
+function Draw(){
+  context.fillStyle = 'black';  
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  for (var id in _players) {
+    var player = _players[id];
     
     //draw this players health and score
     if(player.id === socket.id) {
-      context.fillStyle = 'black';
+      context.fillStyle = 'white';
       context.font = "15px Courier";
-      context.fillText("Score: " + player.score, 700, 20);
-      context.fillText("Health: " + player.health, 700, 35);
+      context.fillText("Score: " + player.score, canvas.width-100, 20);
+      context.fillText("Health: " + player.health, canvas.width-100, 35);
     }
 
     //set transparency of player
@@ -112,35 +155,26 @@ socket.on('state', function(players) {
     angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
     context.rotate(angle);
     //draw player
-    context.drawImage(document.getElementById(player.image), 0-(player.size/2), 0-(player.size/2),player.size,player.size);
+    var player_img = document.getElementById(player.image);
+    console.log(player_img);
+    context.drawImage(player_img, 0-(player.size/2), 0-(player.size/2),player.size,player.size);
     context.restore();
-    //draw health
-    context.fillStyle = 'blue'; 
-    context.arc(player.x, player.y, player.size/6, 0, 2 * Math.PI);
-    context.fill();
 
-    //draw gun
-    context.strokeStyle = 'green';
-    context.beginPath();
-    context.lineWidth = 8;
-    context.arc(player.x,player.y,(player.size/2),angle-(2*Math.PI)/20,angle+(2*Math.PI)/20);
-    context.stroke();
-    context.closePath();
     context.globalAlpha = 1;
 
-  }
-  
-});
-
-socket.on('bullets-update', function(bullets){
-  context.fillStyle = 'red';
-  for (var id in bullets) {
-    var bullet = bullets[id];
-    if(bullet.is_alive){
-      context.beginPath();
-      context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
-      context.fill();
+    context.fillStyle = 'red';
+    for (var bid in _bullets) {
+      var bullet = _bullets[bid];
+      if(bullet.is_alive){
+        context.beginPath();
+        context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
+        context.fill();
+        context.closePath();
+      }
     }
-  }
-});
 
+  }
+  window.requestAnimationFrame(Draw);
+}
+
+window.requestAnimationFrame(Draw);
