@@ -1,7 +1,12 @@
 var socket = io("http://gun.mwong.io");
 var refresh_rate = 1000/60;
-var mouse = {x: 0, y: 0};
 var angle = 0;
+var canvas = document.getElementById('canvas');
+canvas.width = 800;
+canvas.height = 600;
+var context = canvas.getContext('2d');
+
+var socket_id = 0;
 
 var movement = {
     up: false,
@@ -9,11 +14,11 @@ var movement = {
     left: false,
     right: false,
     mousex: 0,
-    mousey: 0
+    mousey: 0,
+    angle: 0
 };
 
 var bullet = false;
-
 
 socket.on('message', function(data){
     console.log(data);
@@ -74,7 +79,7 @@ document.addEventListener('keyup', function(event) {
 
 socket.on('connection', function(socket) {
   players[socket.id] = socket;
-  
+
   socket.on('disconnect', function() {
     players[socket.id].disconnect();
   });
@@ -87,29 +92,44 @@ setInterval(function() {
     if(bullet) socket.emit('shoot-bullet', angle);
 }, refresh_rate);
 
-
-var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
-var context = canvas.getContext('2d');
 socket.on('state', function(players) {
   context.clearRect(0, 0, 800, 600);
   for (var id in players) {
     var player = players[id];
-    context.fillStyle = 'blue';
+    
+    //draw this players health and score
+    if(player.id === socket.id) {
+      context.fillStyle = 'black';
+      context.font = "15px Courier";
+      context.fillText("Score: " + player.score, 700, 20);
+      context.fillText("Health: " + player.health, 700, 35);
+    }
+
+    //set transparency of player
+    context.globalAlpha = player.health/80;
+    context.save();
+    context.translate(player.x,player.y);    
     angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
-    context.beginPath();
-    context.arc(player.x, player.y, 12, 0,  2* Math.PI);
+    context.rotate(angle);
+    //draw player
+    context.drawImage(document.getElementById(player.image), 0-(player.size/2), 0-(player.size/2),player.size,player.size);
+    context.restore();
+    //draw health
+    context.fillStyle = 'blue'; 
+    context.arc(player.x, player.y, player.size/6, 0, 2 * Math.PI);
     context.fill();
-    context.strokeStyle = 'purple';
+
+    //draw gun
+    context.strokeStyle = 'green';
     context.beginPath();
     context.lineWidth = 8;
-    context.arc(player.x,player.y,15,angle-(2*Math.PI)/12,angle+(2*Math.PI)/12);
+    context.arc(player.x,player.y,(player.size/2),angle-(2*Math.PI)/20,angle+(2*Math.PI)/20);
     context.stroke();
-    context.lineWidth = 1;
-    context.fillStyle = 'white';
-    context.fillText(player.health,player.x-5,player.y+5);
+    context.closePath();
+    context.globalAlpha = 1;
+
   }
+  
 });
 
 socket.on('bullets-update', function(bullets){

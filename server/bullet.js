@@ -8,7 +8,7 @@ class Bullet{
         this.angle = angle;
         this.epoch = Date.now();
         this.decay = 3000;
-        this.speed = 4;
+        this.speed = 30;
         this.size = 3;
         this.is_alive = true;
     }
