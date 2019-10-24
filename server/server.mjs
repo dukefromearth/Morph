@@ -4,7 +4,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import Game from './game.mjs';
+import Game from './src/game.mjs';
 
 var __dirname = path.resolve(path.dirname(''));
 
@@ -21,11 +21,11 @@ var refresh_rate = 1000/60;
 var port_num = 5000;
 
 app.set('port', port_num);
-app.use('/static', express.static('./static'));
+app.use('/static', express.static('../client/static'));
 
 // Routing
 app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, '/index.html'));
+  response.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
 server.listen(port_num, function() {
