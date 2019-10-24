@@ -4,15 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
-    "start": "node server.js",
-    "server": "PORT=8080 ENV=server nodemon server.js",
-    "dev": "ENV=dev nodemon server.js"
-=======
     "start":"node --experimental-modules server.mjs",
     "server": "PORT=8080 ENV=server nodemon --experimental-modules server.mjs",
-    "dev": "ENV=dev nodemon --experimental-modules server.js",
->>>>>>> e9074eaeb0db48031b70e0bf50a9a7b778436de1
+    "dev": "ENV=dev nodemon --experimental-modules server.js"
   },
   "keywords": [],
   "author": "",
