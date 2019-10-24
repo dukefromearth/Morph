@@ -10,9 +10,7 @@
       img {
 			  display: none;
 		  }
-      img.img_ship {
-        animation: rotate 0.5s infinite linear;
-      }
+
     </style>
     <!-- Load the Socket library -->
     <script src="/socket.io/socket.io.js"></script>
@@ -20,7 +18,7 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <img id="img_ship" src="/static/assets/ship.png" clas = "rotate">
+    <img id="img_ship" src="/static/assets/ship.png" class = "image">
     <img id="img_gun" src="/static/assets/gun2.gif">
   </body>
   <script type = "module" src="/static/game.js"></script>

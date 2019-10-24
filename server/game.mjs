@@ -19,7 +19,6 @@ export default class Game {
         delete this.players[socketID];
     }
     revive_player(socketID){
-        delete this.players[socketID];
         this.players[socketID] = new Player(socketID,this.game_width,this.game_height);
     }
     update_player_pos(socketID,data){

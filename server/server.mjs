@@ -6,6 +6,8 @@ import path from 'path';
 import socketIO from 'socket.io';
 import Game from './game.mjs';
 
+var __dirname = path.resolve(path.dirname(''));
+
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
 
@@ -16,14 +18,14 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 var refresh_rate = 1000/60;
-var port_num = 5050;
+var port_num = 5000;
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
 
 // Routing
 app.get('/', function(request, response) {
-  response.sendFile('/Users/stephenduke/Documents/GitHub/Morph/server/index.html');
+  response.sendFile(path.join(__dirname, '/index.html'));
 });
 
 server.listen(port_num, function() {

@@ -85,32 +85,43 @@ setInterval(function() {
 }, refresh_rate);
 
 socket.on('state', function(players) {
-  console.log(players);
   context.clearRect(0, 0, 800, 600);
   for (var id in players) {
     var player = players[id];
+    
+    //draw this players health and score
     if(player.id === socket.id) {
       context.fillStyle = 'black';
       context.font = "15px Courier";
       context.fillText("Score: " + player.score, 700, 20);
       context.fillText("Health: " + player.health, 700, 35);
     }
-    console.log(player.score);
-    context.globalAlpha = player.health/100;
-    context.fillStyle = 'blue';
+
+    //set transparency of player
+    context.globalAlpha = player.health/80;
+    context.save();
+    context.translate(player.x,player.y);    
     angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
-    context.drawImage(document.getElementById(player.image), player.x-(player.size/2),player.y-(player.size/2),player.size,player.size);
+    context.rotate(angle);
+    //draw player
+    context.drawImage(document.getElementById(player.image), 0-(player.size/2), 0-(player.size/2),player.size,player.size);
+    context.restore();
+    //draw health
     context.fillStyle = 'blue'; 
     context.arc(player.x, player.y, player.size/6, 0, 2 * Math.PI);
     context.fill();
-    context.globalAlpha = 1;
+
+    //draw gun
     context.strokeStyle = 'green';
     context.beginPath();
     context.lineWidth = 8;
     context.arc(player.x,player.y,(player.size/2),angle-(2*Math.PI)/20,angle+(2*Math.PI)/20);
     context.stroke();
     context.closePath();
+    context.globalAlpha = 1;
+
   }
+  
 });
 
 socket.on('bullets-update', function(bullets){
