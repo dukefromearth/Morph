@@ -7,14 +7,22 @@
         height: 600px;
         border: 5px solid black;
       }
+      img {
+			  display: none;
+		  }
+      img.img_ship {
+        animation: rotate 0.5s infinite linear;
+      }
     </style>
     <!-- Load the Socket library -->
     <script src="/socket.io/socket.io.js"></script>
-    <!-- Load the Phaser game library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.2/phaser.min.js"></script>
+
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <img id="img_ship" src="/static/assets/ship.png" clas = "rotate">
+    <img id="img_gun" src="/static/assets/gun2.gif">
   </body>
-  <script src="/static/game.js"></script>
+  <script type = "module" src="/static/game.js"></script>
+  
 </html>

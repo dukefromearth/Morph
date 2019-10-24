@@ -1,7 +1,12 @@
 var socket = io();
 var refresh_rate = 1000/60;
-var mouse = {x: 0, y: 0};
 var angle = 0;
+var canvas = document.getElementById('canvas');
+canvas.width = 800;
+canvas.height = 600;
+var context = canvas.getContext('2d');
+
+var socket_id = 0;
 
 var movement = {
     up: false,
@@ -9,11 +14,11 @@ var movement = {
     left: false,
     right: false,
     mousex: 0,
-    mousey: 0
+    mousey: 0,
+    angle: 0
 };
 
 var bullet = false;
-
 
 socket.on('message', function(data){
     console.log(data);
@@ -66,7 +71,7 @@ document.addEventListener('keyup', function(event) {
 
 socket.on('connection', function(socket) {
   players[socket.id] = socket;
-  
+
   socket.on('disconnect', function() {
     players[socket.id].disconnect();
   });
@@ -79,28 +84,32 @@ setInterval(function() {
     if(bullet) socket.emit('shoot-bullet', angle);
 }, refresh_rate);
 
-
-var canvas = document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
-var context = canvas.getContext('2d');
 socket.on('state', function(players) {
+  console.log(players);
   context.clearRect(0, 0, 800, 600);
   for (var id in players) {
     var player = players[id];
+    if(player.id === socket.id) {
+      context.fillStyle = 'black';
+      context.font = "15px Courier";
+      context.fillText("Score: " + player.score, 700, 20);
+      context.fillText("Health: " + player.health, 700, 35);
+    }
+    console.log(player.score);
+    context.globalAlpha = player.health/100;
     context.fillStyle = 'blue';
     angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
-    context.beginPath();
-    context.arc(player.x, player.y, 12, 0,  2* Math.PI);
+    context.drawImage(document.getElementById(player.image), player.x-(player.size/2),player.y-(player.size/2),player.size,player.size);
+    context.fillStyle = 'blue'; 
+    context.arc(player.x, player.y, player.size/6, 0, 2 * Math.PI);
     context.fill();
-    context.strokeStyle = 'purple';
+    context.globalAlpha = 1;
+    context.strokeStyle = 'green';
     context.beginPath();
     context.lineWidth = 8;
-    context.arc(player.x,player.y,15,angle-(2*Math.PI)/12,angle+(2*Math.PI)/12);
+    context.arc(player.x,player.y,(player.size/2),angle-(2*Math.PI)/20,angle+(2*Math.PI)/20);
     context.stroke();
-    context.lineWidth = 1;
-    context.fillStyle = 'white';
-    context.fillText(player.health,player.x-5,player.y+5);
+    context.closePath();
   }
 });
 
