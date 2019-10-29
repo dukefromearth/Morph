@@ -57,3 +57,4 @@ setInterval(function() {
   game.update();
 }, refresh_rate);
 
+export { io, server }
