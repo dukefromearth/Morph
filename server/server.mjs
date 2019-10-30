@@ -34,6 +34,7 @@ server.listen(port_num, function() {
 });
 
 io.on('connection', function(socket) {
+  console.log('new connection')
   socket.on('new player', function() {
     game.new_player(socket.id);
   });
@@ -57,4 +58,6 @@ setInterval(function() {
   game.update();
 }, refresh_rate);
 
-export { io, server }
+export default app = {
+  server, io
+}
