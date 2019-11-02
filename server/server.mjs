@@ -11,7 +11,7 @@ var __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
 
-var game = new Game(800,600);
+var game = new Game(3000,3000);
 
 var app = express();
 var server = http.Server(app);
@@ -49,11 +49,18 @@ io.on('connection', function(socket) {
   socket.on('shoot-bullet', function(){
     game.new_bullet(socket.id);
   });
+
+  socket.on('shoot-bomb', function(){
+    game.new_bomb(socket.id);
+  });
 });
 
 setInterval(function() {
   io.sockets.emit('state', game.players);
   io.sockets.emit('bullets-update', game.bullets);
+  if(game.bomb.is_alive){
+    io.sockets.emit('bombs-update',game.bomb.bomb_locations);
+  }
   game.update();
 }, refresh_rate);
 

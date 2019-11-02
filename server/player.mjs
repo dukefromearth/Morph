@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 export default class Player { 
-    constructor(socketID,game_width, game_height){
+    constructor(socketID,game_width, game_height, canvasW, canvasH){
         this.image = 'img_ship';
         this.gun = 'img_gun';
         this.x = Math.floor(Math.random() * (game_width - 75));
@@ -9,6 +9,7 @@ export default class Player {
         this.size = 70;
         this.speed = 10;
         this.health = 100;
+        this.max_health = 100;;
         this.gun_angle = 1;
         this.collision = false;
         this.id = socketID;
@@ -16,30 +17,30 @@ export default class Player {
         this.mousey = 0;
         this.time_at_last_shot = 0;
         this.bullets_per_sec = 1000/50;
+        this.time_at_last_bomb = 0;
+        this.bomb_speed = 1000;
         this.gun_angle = 0;
         this.score = 0;
     }
-    update_pos(data){
+    update_pos(data,game_width,game_height){
         if (data.left) {
-        this.x -= this.speed;
+            if(this.x > this.size/2)
+                this.x -= this.speed;
         }
         if (data.up) {
-        this.y -= this.speed;
+            if(this.y > this.size/2)
+                this.y -= this.speed;
         }
         if (data.right) {
-        this.x += this.speed;
+            if(this.x < game_width - this.size/2)
+                this.x += this.speed;
         }
         if (data.down) {
-        this.y += this.speed;
+            if(this.y < game_height - this.size/2)
+                this.y += this.speed;
         }
         this.mousex = data.mousex;
         this.mousey = data.mousey;
-        this.gun_angle = Math.atan2(this.mousey-this.y,this.mousex-this.x);
-    }
-    draw(context){
-        context.fillStyle = 'blue';
-        context.beginPath();
-        context.arc(this.x, this.y, 12, 0,  2* Math.PI);
-        context.fill();
+        this.gun_angle = data.angle;
     }
 }

@@ -11,6 +11,7 @@ class Bullet{
         this.speed = 30;
         this.size = 3;
         this.is_alive = true;
+        this.distance_from_origin = 0;
     }
 }
 

@@ -1,3 +1,4 @@
+
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
 
@@ -19,8 +20,9 @@ var movement = {
     mousey: 0,
     angle: 0
 };
-
 var bullet = false;
+var bomb = false;
+var _bombs = [];
 var _players = {};
 var _bullets = [];
 
@@ -40,13 +42,15 @@ function renderBackground(x, y) {
   const backgroundGradient = context.createRadialGradient(
     backgroundX,
     backgroundY,
-    MAP_SIZE / 10,
+    MAP_SIZE / 30,
     backgroundX,
     backgroundY,
     MAP_SIZE / 2
   );
-  backgroundGradient.addColorStop(0, 'black');
-  backgroundGradient.addColorStop(1, 'gray');
+  backgroundGradient.addColorStop(0, 'orange');
+  backgroundGradient.addColorStop(0.2, 'purple');
+  backgroundGradient.addColorStop(1, 'black');
+  
   context.fillStyle = backgroundGradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
 }
@@ -58,6 +62,7 @@ socket.on('message', function(data){
 document.addEventListener("mousemove", function(event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
+  movement.angle = Math.atan2(movement.mousey - canvas.height/2, movement.mousex - canvas.width/2);
 });
 
 document.addEventListener('keydown', function(event) {
@@ -77,26 +82,32 @@ document.addEventListener('keydown', function(event) {
       case 32: // Space
         bullet = true;
         break;
+      case 16: // Shift
+        bomb = true;
+        break;
     } 
   });
 
 document.addEventListener('keyup', function(event) {
     switch (event.keyCode) {
-        case 65: // A
-            movement.left = false;
-            break;
-        case 87: // W
-            movement.up = false;
-            break;
-        case 68: // D
-            movement.right = false;
-            break;
-        case 83: // S
-            movement.down = false;
-            break;
-        case 32:
-            bullet = false;
-            break;
+      case 65: // A
+          movement.left = false;
+          break;
+      case 87: // W
+          movement.up = false;
+          break;
+      case 68: // D
+          movement.right = false;
+          break;
+      case 83: // S
+          movement.down = false;
+          break;
+      case 32: // Space
+          bullet = false;
+          break;
+      case 16: // Shift
+          bomb = false;
+          break;
     }
 });
 
@@ -113,7 +124,8 @@ socket.on('connection', function(socket) {
 socket.emit('new player');
 setInterval(function() {
     socket.emit('movement', movement);
-    if(bullet) socket.emit('shoot-bullet', angle);
+    if(bullet) socket.emit('shoot-bullet', movement.angle);
+    if(bomb) socket.emit('shoot-bomb');
 }, refresh_rate);
 
 socket.on('state', function(players) {
@@ -124,47 +136,92 @@ socket.on('bullets-update', function(bullets){
   _bullets = bullets;
 });
 
+socket.on('bombs-update', function(bomb_locs){
+  _bombs = bomb_locs;
+});
+
+function drawBullet(bullet){
+  context.beginPath();
+  context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
+  context.fill();
+  context.closePath();
+}
+
+var bullet_img = document.getElementById("img_blast");
+function drawBulletImage(bullet,myPlayer){
+  const canvasX = canvas.width / 2 + bullet.x - myPlayer.x;
+  const canvasY = canvas.height / 2 + bullet.y - myPlayer.y;
+  context.save();
+  context.translate(canvasX,canvasY);
+  context.rotate(bullet.angle);
+  context.drawImage(bullet_img, -15, -15, 30,30);
+  context.restore();
+}
+
+function renderPlayer(myPlayer, player, ship_type){
+  const canvasX = canvas.width / 2 + player.x - myPlayer.x;
+  const canvasY = canvas.height / 2 + player.y - myPlayer.y;
+  context.save();
+  context.translate(canvasX,canvasY);    
+  context.rotate(player.gun_angle); 
+  var player_img = document.getElementById(ship_type);
+  context.drawImage(player_img, 0-(player.size/2), 0-(player.size/2),player.size,player.size);
+  context.fillStyle = 'white';
+  
+  context.restore();
+  context.beginPath();
+  context.globalAlpha = 0.2;
+  context.lineWidth = 8;
+  context.strokeStyle = 'green';
+  context.arc(canvasX, canvasY, player.size, 0, player.health*2 * Math.PI/player.max_health);
+  context.stroke();
+  context.globalAlpha = 1;
+  context.closePath();
+}
+
 function Draw(){
-  context.fillStyle = 'black';  
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = 'black';
+  var myPlayer = {};
+  // Draw boundaries
+  for (var pID in _players) {
+    if(_players[pID].id === socket.id){
+      myPlayer = _players[pID];
+      renderBackground(myPlayer.x, myPlayer.y);
+      renderPlayer(myPlayer,myPlayer,"img_ship");
+      context.strokeStyle = 'blue';
+      context.lineWidth = 1;
+      context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, MAP_SIZE, MAP_SIZE);
+      context.fillStyle = 'white';
+      context.font = "15px Courier";
+      context.fillText("Score: " + myPlayer.score, canvas.width-100, 20);
+      context.fillText("Health: " + myPlayer.health, canvas.width-100, 35); 
+    }
+  }
   
   for (var id in _players) {
     var player = _players[id];
-    
-    //draw this players health and score
-    if(player.id === socket.id) {
-      context.fillStyle = 'white';
-      context.font = "15px Courier";
-      context.fillText("Score: " + player.score, canvas.width-100, 20);
-      context.fillText("Health: " + player.health, canvas.width-100, 35);
+    if(player.id != myPlayer.id){
+      renderPlayer(myPlayer,player,"img_enemy");
     }
+  }
 
-    //set transparency of player
-    context.globalAlpha = player.health/80;
-    context.save();
-    context.translate(player.x,player.y);    
-    angle = Math.atan2(player.mousey-player.y,player.mousex-player.x);
-    context.rotate(angle);
-    //draw player
-    var player_img = document.getElementById(player.image);
-    console.log(player_img);
-    context.drawImage(player_img, 0-(player.size/2), 0-(player.size/2),player.size,player.size);
-    context.restore();
-
-    context.globalAlpha = 1;
-
-    context.fillStyle = 'red';
     for (var bid in _bullets) {
       var bullet = _bullets[bid];
       if(bullet.is_alive){
-        context.beginPath();
-        context.arc(bullet.x, bullet.y, bullet.size, 0, 2 * Math.PI);
-        context.fill();
-        context.closePath();
+        drawBulletImage(bullet,myPlayer);
       }
     }
 
-  }
+    context.fillStyle = 'purple';
+    for (var bombID in _bombs){
+      var bomb = _bombs[bombID];
+        context.beginPath();
+        context.arc(bomb[0], bomb[1], 6, 0, 2 * Math.PI);
+        context.fill();
+        context.closePath();
+    }
+    _bombs = [];
+
   window.requestAnimationFrame(Draw);
 }
 
