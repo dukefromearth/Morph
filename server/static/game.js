@@ -22,6 +22,8 @@ var movement = {
 };
 var bullet = false;
 var bomb = false;
+var asteroid = false;
+var _asteroids = [];
 var _bombs = [];
 var _players = {};
 var _bullets = [];
@@ -85,6 +87,9 @@ document.addEventListener('keydown', function(event) {
       case 16: // Shift
         bomb = true;
         break;
+      case 81: //q temp for asteroid testing
+        asteroid = true;
+        break;
     } 
   });
 
@@ -108,6 +113,9 @@ document.addEventListener('keyup', function(event) {
       case 16: // Shift
           bomb = false;
           break;
+      case 81: //q for testing asteroids
+          asteroid = false;
+          break;
     }
 });
 
@@ -126,6 +134,7 @@ setInterval(function() {
     socket.emit('movement', movement);
     if(bullet) socket.emit('shoot-bullet', movement.angle);
     if(bomb) socket.emit('shoot-bomb');
+    if(asteroid) socket.emit('new_asteroid', angle);
 }, refresh_rate);
 
 socket.on('state', function(players) {
@@ -139,6 +148,17 @@ socket.on('bullets-update', function(bullets){
 socket.on('bombs-update', function(bomb_locs){
   _bombs = bomb_locs;
 });
+
+socket.on('asteroids_update',function(asteroid){
+  _asteroids = asteroid;
+});
+
+function drawAsteroid(asteroid){
+  context.beginPath();
+  context.arc(asteroid.x, asteroid.y, asteroid.size, 0, 2 * Math.PI);
+  context.fill();
+  context.closePath();
+}
 
 function drawBullet(bullet){
   context.beginPath();
@@ -197,21 +217,30 @@ function Draw(){
       context.fillText("Health: " + myPlayer.health, canvas.width-100, 35); 
     }
   }
+  //draw asteroids
+  for(var id in _asteroids) {
+    var asteroid = _asteroids[id];
+    if(asteroid.is_alive){
+      drawAsteroid(asteroid);
+    }
+  }
   
+  //draw players
   for (var id in _players) {
     var player = _players[id];
     if(player.id != myPlayer.id){
       renderPlayer(myPlayer,player,"img_enemy");
     }
   }
-
+    //draw bullets
     for (var bid in _bullets) {
       var bullet = _bullets[bid];
       if(bullet.is_alive){
         drawBulletImage(bullet,myPlayer);
       }
     }
-
+    
+    //draw bombs
     context.fillStyle = 'purple';
     for (var bombID in _bombs){
       var bomb = _bombs[bombID];

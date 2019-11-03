@@ -1,12 +1,14 @@
 /*jshint esversion: 6 */
+import Asteroid from './asteroid.js';
+import Bomb from './bombs.mjs';
 import Bullet from './bullet.js';
 import Player from './player.mjs';
-import Bomb from './bombs.mjs';
 
 export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
         this.bullets = [];
         this.players = {};
+        this.asteroid_belt = [];
         this.bomb = {};
         this.open_bullet_indexes = [];
         this.free_bullet_index = -1;
@@ -69,6 +71,11 @@ export default class Game {
             if (player.health < 100) player.health++;
         }
     }
+    new_asteroid(){//check angle
+        var new_asteroid = new Asteroid(Math.random() * 600, Math.random() * 600, Math.random() * 360);
+        this.asteroid_belt.push(new_asteroid);
+        
+    }
     update(){
         this.time_counter++;
         if(this.time_counter%60 === 1) this.update_health();
@@ -106,6 +113,14 @@ export default class Game {
                         }
                     }
                 }
+            }
+        }
+        for(var id in this.asteroid_belt){
+            var ast = this.asteroid_belt[id];
+            ast.x += Math.cos(ast.angle) * ast.speed;
+            ast.y += Math.sin(ast.angle) * ast.speed;
+            if (ast.x > 800 || ast.y > 600 || ast.x < 0 || ast.y < 0) {
+                //wrap around?
             }
         }
     }

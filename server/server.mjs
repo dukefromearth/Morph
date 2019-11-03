@@ -53,11 +53,16 @@ io.on('connection', function(socket) {
   socket.on('shoot-bomb', function(){
     game.new_bomb(socket.id);
   });
+
+  socket.on('new_asteroid', function(){
+    game.new_asteroid();
+  });
 });
 
 setInterval(function() {
   io.sockets.emit('state', game.players);
   io.sockets.emit('bullets-update', game.bullets);
+  io.sockets.emit('asteroids_update', game.asteroid_belt);
   if(game.bomb.is_alive){
     io.sockets.emit('bombs-update',game.bomb.bomb_locations);
   }
