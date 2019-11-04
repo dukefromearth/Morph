@@ -11,7 +11,7 @@ var __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
 
-var game = new Game(3000,3000);
+var game = new Game(2000,2000);
 
 var app = express();
 var server = http.Server(app);

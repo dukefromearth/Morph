@@ -9,14 +9,14 @@ export default class Player {
         this.size = 70;
         this.speed = 10;
         this.health = 100;
-        this.max_health = 100;;
+        this.max_health = 100;
         this.gun_angle = 1;
         this.collision = false;
         this.id = socketID;
         this.mousex = 0;
         this.mousey = 0;
         this.time_at_last_shot = 0;
-        this.bullets_per_sec = 1000/50;
+        this.bullets_per_sec = 1000/10;
         this.time_at_last_bomb = 0;
         this.bomb_speed = 1000;
         this.gun_angle = 0;

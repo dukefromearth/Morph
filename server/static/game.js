@@ -7,7 +7,7 @@ var refresh_rate = 1000/60;
 var angle = 0;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var MAP_SIZE = 3000;
+var MAP_SIZE = 2000;
 
 var socket_id = 0;
 
@@ -153,11 +153,14 @@ socket.on('asteroids_update',function(asteroid){
   _asteroids = asteroid;
 });
 
-function drawAsteroid(asteroid){
-  context.beginPath();
-  context.arc(asteroid.x, asteroid.y, asteroid.size, 0, 2 * Math.PI);
-  context.fill();
-  context.closePath();
+function drawAsteroid(asteroid, myPlayer){
+  const canvasX = canvas.width / 2 + asteroid.x - myPlayer.x;
+  const canvasY = canvas.height / 2 + asteroid.y - myPlayer.y;
+  context.save();
+  context.translate(canvasX,canvasY);
+  var asteroid_img = document.getElementById('img_asteroid2');
+  context.drawImage(asteroid_img, -15, -15,30,30);
+  context.restore();
 }
 
 function drawBullet(bullet){
@@ -175,6 +178,24 @@ function drawBulletImage(bullet,myPlayer){
   context.translate(canvasX,canvasY);
   context.rotate(bullet.angle);
   context.drawImage(bullet_img, -15, -15, 30,30);
+  context.restore();
+}
+
+function drawBombs(bomb, myPlayer){
+  const canvasX = canvas.width / 2 + bomb[0] - myPlayer.x;
+  const canvasY = canvas.height / 2 + bomb[1] - myPlayer.y;
+  context.save();
+  context.translate(canvasX,canvasY);
+  var bomb_img;
+  if(Math.random() < 0.5){
+    bomb_img = document.getElementById('img_flame');
+  }
+  else bomb_img = document.getElementById('img_electric');
+  context.drawImage(bomb_img, -myPlayer.size/2, -myPlayer.size/2,60,60);
+  // context.beginPath();
+  // context.arc(0, 0, 6, 0, 2 * Math.PI);
+  // context.fill();
+  // context.closePath();
   context.restore();
 }
 
@@ -218,10 +239,11 @@ function Draw(){
     }
   }
   //draw asteroids
-  for(var id in _asteroids) {
-    var asteroid = _asteroids[id];
+  context.fillStyle = 'white';
+  for(var aID in _asteroids) {
+    var asteroid = _asteroids[aID];
     if(asteroid.is_alive){
-      drawAsteroid(asteroid);
+      drawAsteroid(asteroid, myPlayer);
     }
   }
   
@@ -241,13 +263,10 @@ function Draw(){
     }
     
     //draw bombs
-    context.fillStyle = 'purple';
+    context.fillStyle = 'white';
     for (var bombID in _bombs){
       var bomb = _bombs[bombID];
-        context.beginPath();
-        context.arc(bomb[0], bomb[1], 6, 0, 2 * Math.PI);
-        context.fill();
-        context.closePath();
+        drawBombs(bomb,myPlayer);
     }
     _bombs = [];
 

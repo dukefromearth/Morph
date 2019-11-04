@@ -13,7 +13,7 @@ export default class Game {
         this.open_bullet_indexes = [];
         this.free_bullet_index = -1;
         this.max_bullets = 10000;
-        this.max_bullet_distance = 1000;
+        this.max_bullet_distance = GAME_HEIGHT;
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
         this.time_counter = 0;
@@ -58,7 +58,7 @@ export default class Game {
         if(player === undefined) return; //happens if server restarts
         var curr_time = Date.now();
         if (curr_time - player.time_at_last_bomb > player.bomb_speed){
-          this.bomb= new Bomb(player.mousex,player.mousey,true);
+          this.bomb= new Bomb(player.x+this.bomb.size/2,player.y+this.bomb.size/2,true);
           player.time_at_last_bomb = curr_time;
         }
     }
@@ -72,9 +72,8 @@ export default class Game {
         }
     }
     new_asteroid(){//check angle
-        var new_asteroid = new Asteroid(Math.random() * 600, Math.random() * 600, Math.random() * 360);
-        this.asteroid_belt.push(new_asteroid);
-        
+        var new_asteroid = new Asteroid(Math.random() * this.game_width, Math.random() * this.game_height, Math.random() * 360);
+        this.asteroid_belt.push(new_asteroid);    
     }
     update(){
         this.time_counter++;
@@ -119,8 +118,9 @@ export default class Game {
             var ast = this.asteroid_belt[id];
             ast.x += Math.cos(ast.angle) * ast.speed;
             ast.y += Math.sin(ast.angle) * ast.speed;
-            if (ast.x > 800 || ast.y > 600 || ast.x < 0 || ast.y < 0) {
+            if (ast.x > this.game_width || ast.y > this.game_height || ast.x < 0 || ast.y < 0) {
                 //wrap around?
+                ast.is_alive = false;
             }
         }
     }
