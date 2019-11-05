@@ -10,4 +10,8 @@ export default class Projectile {
         this.size = 3;
         this.is_alive = true;
     }
+    updatePos(){
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed; 
+    }
 }

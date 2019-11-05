@@ -17,6 +17,7 @@ var movement = {
     mousey: 0,
     angle: 0
 };
+
 var bullet = false;
 var bomb = false;
 var asteroid = false;
@@ -150,12 +151,40 @@ socket.on('asteroids_update',function(asteroid){
   _asteroids = asteroid;
 });
 
+function drawShield(myPlayer){
+
+  const canvasX = canvas.width / 2;
+  const canvasY = canvas.height / 2;
+  context.save();
+  context.translate(canvasX,canvasY);    
+  var shield_img;
+  var curr_time = Date.now();
+  var count = 0;
+  if(curr_time%500 < 100 * ++count){
+    shield_img = document.getElementById("shield1");
+  }
+  else if(curr_time%500 < 100 * ++count){
+    shield_img = document.getElementById("shield2");
+  }
+  else if(curr_time%500 < 100 * ++count){
+    shield_img = document.getElementById("shield3");
+  }
+  else if(curr_time%500 < 100 * ++count){
+    shield_img = document.getElementById("shield4");
+  }
+  else {
+    shield_img = document.getElementById("shield5");
+  }
+  context.drawImage(shield_img, 0-((myPlayer.size*2)/2), 0-((myPlayer.size*2)/2),myPlayer.size*2,myPlayer.size*2);
+  context.restore();
+}
+
 function drawAsteroid(asteroid, myPlayer){
   const canvasX = canvas.width / 2 + asteroid.x - myPlayer.x;
   const canvasY = canvas.height / 2 + asteroid.y - myPlayer.y;
   context.save();
   context.translate(canvasX,canvasY);
-  var asteroid_img = document.getElementById('img_asteroid2');
+  var asteroid_img = document.getElementById(asteroid.type);
   context.drawImage(asteroid_img, -15, -15,30,30);
   context.restore();
 }
@@ -211,7 +240,7 @@ function renderPlayer(myPlayer, player, ship_type){
   context.globalAlpha = 0.2;
   context.lineWidth = 8;
   context.strokeStyle = 'green';
-  context.arc(canvasX, canvasY, player.size, 0, player.health*2 * Math.PI/player.max_health);
+  context.arc(canvasX, canvasY, player.size, 0, player.health.accumulator*2 * Math.PI/player.health.threshhold);
   context.stroke();
   context.globalAlpha = 1;
   context.closePath();
@@ -226,13 +255,14 @@ function Draw(){
       myPlayer = _players[pID];
       renderBackground(myPlayer.x, myPlayer.y);
       renderPlayer(myPlayer,myPlayer,"img_ship");
+      drawShield(myPlayer);
       context.strokeStyle = 'blue';
       context.lineWidth = 1;
       context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, MAP_SIZE, MAP_SIZE);
       context.fillStyle = 'white';
       context.font = "15px Courier";
       context.fillText("Score: " + myPlayer.score, canvas.width-100, 20);
-      context.fillText("Health: " + myPlayer.health, canvas.width-100, 35); 
+      context.fillText("Health: " + myPlayer.health.accumulator, canvas.width-100, 35); 
     }
   }
   //draw asteroids
