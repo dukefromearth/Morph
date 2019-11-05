@@ -14,6 +14,7 @@ import chai from 'chai'
 
 let io = ioserver(app.io)
 let server = app.server
+const expect = chai.expect
 const NODE_PORT = process.env.NODE_PORT || 5000
 
 describe('Client', function(){
@@ -44,6 +45,15 @@ describe('Client', function(){
 		done()
 	})
 
+	// afterEach((done) => {
+ //    // Cleanup
+	//     if(socket.connected) {
+	//       socket.disconnect();
+	//     }
+	//     io.close();
+	//     done();
+	//   });
+
 	it('connect to server', (done) => {
 		socket.on('connect', () => {
 			console.log("test if connected",socket.connected)
@@ -53,9 +63,18 @@ describe('Client', function(){
 	})
 
 	it('new player', (done) => {
+		io.emit('state', "");
 
-		socket.emit('new player');
-		done()
+		// socket.emit('new player');
+		socket.once('state', (message) => {
+	      // Check that the message matches
+	      expect(message).to.be.empty;
+	      done();
+	    });
+
+	    io.on('connection', (socket) => {
+		  expect(socket).to.not.be.null;
+		});
 
 
 		// expect(io).to.throw(Error);
