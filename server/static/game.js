@@ -8,8 +8,6 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 2000;
 
-draw.test();
-
 var movement = {
     up: false,
     down: false,
@@ -127,7 +125,7 @@ socket.on('connection', function(socket) {
   });
 });
 
-// update player updates to server
+// update player movement to server
 socket.emit('new player');
 setInterval(function() {
     socket.emit('movement', movement);
