@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 export default class Player { 
-    constructor(socketID,game_width, game_height, canvasW, canvasH){
+    constructor(socketID,game_width, game_height){
         this.image = 'img_ship';
         this.gun = 'img_gun';
         this.x = Math.floor(Math.random() * (game_width - 75));

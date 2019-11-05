@@ -1,7 +1,6 @@
 
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
-
 var socket = io();
 var refresh_rate = 1000/60;
 var angle = 0;
@@ -9,7 +8,7 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 2000;
 
-var socket_id = 0;
+draw.test();
 
 var movement = {
     up: false,

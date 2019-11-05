@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
-import Asteroid from './asteroid.js';
+import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
-import Bullet from './bullet.js';
+import Bullet from './bullet.mjs';
 import Player from './player.mjs';
 
 export default class Game {
