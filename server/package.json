@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha test/io.test.mjs -r esm",
+    "test": "npx mocha test/*.test.mjs -r esm",
     "start": "nodemon --experimental-modules server.mjs",
     "server": "PORT=8080 ENV=server nodemon --experimental-modules server.mjs",
     "dev": "ENV=dev nodemon --experimental-modules server.js"
