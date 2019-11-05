@@ -4,14 +4,9 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import Game from './src/game.mjs';
 
-var __dirname = path.resolve(path.dirname(''));
 
-const HOST = process.env.HOST || '0.0.0.0';
-const environment = process.env.ENV || "prod";
 
-var game = new Game(800,600);
 
 var app = express();
 var server = http.Server(app);
@@ -25,7 +20,7 @@ app.use('/static', express.static('../client/static'));
 
 // Routing
 app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, '../client/index.html'));
+
 });
 
 server.listen(port_num, function() {
@@ -34,7 +29,7 @@ server.listen(port_num, function() {
 });
 
 io.on('connection', function(socket) {
-  console.log('new connection')
+
   socket.on('new player', function() {
     game.new_player(socket.id);
   });
@@ -50,12 +45,10 @@ io.on('connection', function(socket) {
   socket.on('shoot-bullet', function(){
     game.new_bullet(socket.id);
   });
-});
+
 
 setInterval(function() {
-  io.sockets.emit('state', game.players);
-  io.sockets.emit('bullets-update', game.bullets);
-  game.update();
+
 }, refresh_rate);
 
 export default app = {
