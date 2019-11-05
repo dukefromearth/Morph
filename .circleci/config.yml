@@ -1,0 +1,30 @@
+# Javascript Node 8 simple CircleCI 2.0 configuration file
+# Eduardo San Martin Morote
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# Put this file in a .circleci/ folder
+version: 2
+
+general:
+  
+
+jobs:
+  build:
+    branches:
+      only:
+       - test-suite # list of branches to build
+       - master # or regexes
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:8
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      # run tests!
+      - run: npm test
