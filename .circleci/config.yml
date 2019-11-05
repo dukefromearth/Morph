@@ -5,13 +5,14 @@
 version: 2
 
 general:
-  branches:
-    only:
-     - test-suite # list of branches to build
-     - master # or regexes
+  
 
 jobs:
   build:
+    branches:
+      only:
+       - test-suite # list of branches to build
+       - master # or regexes
     docker:
       # specify the version you desire here
       - image: circleci/node:8
