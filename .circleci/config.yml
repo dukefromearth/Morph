@@ -11,11 +11,11 @@ jobs:
       enabled: true
     steps:
       - run:
-        command: |
+        command: 
         ssh $SSH_USER@$SSH_HOST     <-'ENDSSH'
-          pkill screen
-          rm -rf Morph
-    ENDSSH
+              pkill screen
+              rm -rf Morph
+        ENDSSH
     #"pkill screen;rm -rf Morph;git clone git@github.com:dukefromearth/Morph.git Morph2;cd Morph2/server;npm i;npm start"
   build:
     docker:
