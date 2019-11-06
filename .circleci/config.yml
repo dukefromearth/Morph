@@ -11,14 +11,26 @@ jobs:
       enabled: true
     steps:
       - run:
+          name: ssh
           command: ssh $SSH_USER@$SSH_HOST 
-          "pkill screen;
-          rm -rf Morph;
-          git clone git@github.com:dukefromearth/Morph.git Morph;
-          cd Morph/server;
-          npm i;
+
+      # - run:
+      #     name: kill screen
+      #     command: pkill screen
+      # - run:
+      #     name: Delete old repo folder
+      #     command: rm -rf Morph
+      # - run:
+      - run: 
+          name: commands
+          command: |
+          pkill screen
+          rm -rf Morph
+          git clone git@github.com:dukefromearth/Morph.git Morph
+          cd Morph/server
+          npm i
           npm start
-          "
+          
 
     #"pkill screen;rm -rf Morph;git clone git@github.com:dukefromearth/Morph.git Morph2;cd Morph2/server;npm i;npm start"
   build:
