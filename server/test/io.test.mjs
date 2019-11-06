@@ -3,7 +3,7 @@
 import client from 'socket.io-client'
 import ioserver from 'socket.io'
 
-import app from '../server.mjs'
+import app from '../server.js'
 
 import assert from 'assert'
 import Http from 'http'
@@ -28,8 +28,6 @@ describe('Client', function(){
 	})
 
 	after((done) => {
-		
-		socket.disconnect()
 
 		done()
 	})
@@ -60,10 +58,13 @@ describe('Client', function(){
 	})
 
 	it('disconnect server', (done) => {
-		io.close()
-			socket.on('disconnect', () => {
+
+		
+		socket.on('disconnect', () => {
 			done()
 		});
+
+		socket.disconnect()
 		
 	})
 	

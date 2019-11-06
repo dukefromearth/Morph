@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-class Bullet{
+export default class Bullet{
     constructor(x,y,angle,id){
         this.owner = id;
         this.x = x;
@@ -13,5 +13,3 @@ class Bullet{
         this.is_alive = true;
     }
 }
-
-module.exports = Bullet;

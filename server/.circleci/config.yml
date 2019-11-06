@@ -6,6 +6,14 @@ version: 2
 
 
 jobs:
+  deploy:
+    machine: 
+      enabled: true
+    steps:
+      - run:
+          name: SSH deploy
+          command: |
+            ssh $SSH_USER@$SSH_HOST 
   build:
     docker:
       # specify the version you desire here
