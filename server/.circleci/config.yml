@@ -52,9 +52,4 @@ jobs:
 workflows:
   deploy:
     jobs:
-      - awsec2:
-        steps:
-          -ssh $SSH_USER@$SSH_HOST     <-'ENDSSH'
-          pkill screen
-          rm -rf Morph
-    ENDSSH
+      - deploy
