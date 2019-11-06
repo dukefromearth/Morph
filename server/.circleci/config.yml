@@ -13,15 +13,7 @@ jobs:
       - run:
           name: SSH deploy
           command: 
-            ssh $SSH_USER@$SSH_HOST 
-            "
-            pkill screen
-            rm -rf Morph;
-            git clone git@github.com:dukefromearth/Morph.git Morph2;
-            cd Morph2/server;
-            npm i;
-            npm start;
-            "
+            ssh $SSH_USER@$SSH_HOST "pkill screen;rm -rf Morph;git clone git@github.com:dukefromearth/Morph.git Morph2;cd Morph2/server;npm i;npm start"
   build:
     docker:
       # specify the version you desire here
