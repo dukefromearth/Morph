@@ -4,7 +4,7 @@ import chai from 'chai'
 
 const expect = chai.expect
 
-describe('Game class', function(){
+describe('Test class', function(){
 	
 
 	before((done) => {
@@ -18,7 +18,7 @@ describe('Game class', function(){
 		done()
 	})
 
-	it('test1', (done) => {
+	it('Default test case. Always true', (done) => {
 		done()
 
 	})

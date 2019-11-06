@@ -20,7 +20,6 @@ export default class Game {
     }
     new_player(socketID){
         this.players[socketID] = new Player(socketID,this.game_width,this.game_height);
-        console.log(this.players[socketID]);
     }
     delete_player(socketID){
         delete this.players[socketID];
