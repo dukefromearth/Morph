@@ -20,7 +20,7 @@ var movement = {
 
 var bullet = false;
 var bomb = false;
-var asteroid = false;
+var stats = false;
 var _asteroids = [];
 var _bombs = [];
 var _players = {};
@@ -85,8 +85,8 @@ document.addEventListener('keydown', function(event) {
       case 16: // Shift
         bomb = true;
         break;
-      case 81: //q temp for asteroid testing
-        asteroid = true;
+      case 20: //capslock for stats
+        stats = true;
         break;
     } 
   });
@@ -111,8 +111,8 @@ document.addEventListener('keyup', function(event) {
       case 16: // Shift
           bomb = false;
           break;
-      case 81: //q for testing asteroids
-          asteroid = false;
+      case 20: //capslock for stats
+          stats = false;
           break;
     }
 });
@@ -132,7 +132,7 @@ setInterval(function() {
     socket.emit('movement', movement);
     if(bullet) socket.emit('shoot-bullet', movement.angle);
     if(bomb) socket.emit('shoot-bomb');
-    if(asteroid) socket.emit('new_asteroid', angle);
+    //if(asteroid) socket.emit('new_asteroid', angle);
 }, refresh_rate);
 
 socket.on('state', function(players) {
@@ -259,10 +259,24 @@ function Draw(){
       context.strokeStyle = 'blue';
       context.lineWidth = 1;
       context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, MAP_SIZE, MAP_SIZE);
+
+      //GUI
       context.fillStyle = 'white';
       context.font = "15px Courier";
       context.fillText("Score: " + myPlayer.score, canvas.width-100, 20);
-      context.fillText("Health: " + myPlayer.health.accumulator, canvas.width-100, 35); 
+      context.fillText("Health: " + myPlayer.health.accumulator, canvas.width-100, 35);
+      context.fillText("Exp: " + myPlayer.exp + "/" + "max", (canvas.width/2)-20, 20); // max will be level up
+
+      //stats and upgrades if capslock is on
+      if(stats==true){
+        context.fillText("Stat Levels:", 10, canvas.height - 250);
+        context.fillText("Health ->" + myPlayer.health.level, 10, canvas.height - 235); 
+        context.fillText("Damage ->" + myPlayer.dmg_multiplier.level, 10, canvas.height - 220);
+        context.fillText("Speed ->" + myPlayer.speed.level, 10, canvas.height - 205);
+      }
+      //if enough score, show you can upgrade
+      if(myPlayer.score >= 10) context.fillText("Damage Skill Available", 10, canvas.height-100);
+      if(myPlayer.score >= 10) context.fillText("Defense Skill Available", 10, canvas.height-85);
     }
   }
   //draw asteroids

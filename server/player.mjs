@@ -7,19 +7,25 @@ export default class Player {
         this.gun = 'img_gun';
         this.x = Math.floor(Math.random() * (game_width - 75));
         this.y = Math.floor(Math.random() * (game_height - 75));
-        this.health = new Ability("health",100);
+
+        //abilities
+        this.attack_speed = new Ability("attack_speed", 500);
+        this.health = new Ability("health", 100);
         this.speed = new Ability("speed", 10);
+        this.dmg_multiplier = new Ability("dmg_multiplier",1);
+
         this.size = 70;
         this.gun_angle = 1;
         this.id = socketID;
         this.mousex = 0;
         this.mousey = 0;
-        this.time_at_last_shot = 0;
-        this.bullets_per_sec = 1000/10;
+        this.time_at_last_shot = Date.now();
         this.time_at_last_bomb = 0;
         this.bomb_speed = 1000;
         this.score = 0;
+        this.exp = 0;
     }
+    
     update_pos(data,game_width,game_height){
         if (data.left) {
             if(this.x > this.size/2)
@@ -43,7 +49,9 @@ export default class Player {
     }
     bullet_available(){
         var curr_time = Date.now();
-        if (curr_time - this.time_at_last_shot > this.bullets_per_sec) return true;
+        var now = curr_time-this.time_at_last_shot;
+        //console.log(now + " " + this.attack_speed.accumulator );
+        if (now > this.attack_speed.accumulator) return true;
         else return false;
     }
 }
