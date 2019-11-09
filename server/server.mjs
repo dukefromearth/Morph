@@ -69,6 +69,4 @@ setInterval(function() {
   game.update();
 }, refresh_rate);
 
-export default app = {
-  server,io
-}
+export default io
