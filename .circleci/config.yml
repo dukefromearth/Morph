@@ -17,6 +17,7 @@ jobs:
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
             git checkout gameplay;
+            git pull origin gameplay;
             cd Morph/server;
             npm i;
             npm start'
