@@ -16,6 +16,7 @@ jobs:
             pkill screen;
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
+            git checkout gameplay;
             cd Morph/server;
             npm i;
             npm start'
