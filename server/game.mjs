@@ -11,7 +11,7 @@ export default class Game {
         this.players = {};
         this.asteroid_belt = [];
         this.open_asteroid_indexes = [];
-        this.max_asteroids = 10000;
+        this.max_asteroids = GAME_WIDTH/50;
         this.bomb = {};
         this.open_bullet_indexes = [];
         this.max_bullets = 10000;
@@ -141,7 +141,7 @@ export default class Game {
                     if(this.detect_collision(player,bullet) && bullet.owner != player.id){
                         if (player.health.accumulator <= 0) this.revive_player(player.id);
                         else {
-                            this.players[bullet.owner].score++;
+                            this.players[bullet.owner].score+=bullet.damage;
                             if(player.shield.accumulator > 0) player.shield.sub(bullet.damage/player.shield.level);
                             else player.health.sub(bullet.damage);
                             this.kill_bullet(bullet,bID);
