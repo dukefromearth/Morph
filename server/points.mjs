@@ -1,6 +1,6 @@
 export default class Points {
-    constructor(){
-        this.level = 1;
+    constructor(level){
+        this.level = level;
         this.levelMultiplier = 100;
         this.nextLevel = (this.level*this.level * this.levelMultiplier);
         this.points = 0;

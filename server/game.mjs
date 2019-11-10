@@ -3,6 +3,7 @@ import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
 import Bullet from './bullet.mjs';
 import Player from './player.mjs';
+import Ability from './ability.mjs';
 
 export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
@@ -21,7 +22,6 @@ export default class Game {
     }
     new_player(socketID){
         this.players[socketID] = new Player(socketID,this.game_width,this.game_height);
-        console.log(this.players[socketID]);
     }
     delete_player(socketID){
         delete this.players[socketID];
@@ -40,16 +40,18 @@ export default class Game {
         if (player.bullet_available()){
             var x = Math.cos(player.gun_angle) * player.size; //start away from player
             var y = Math.sin(player.gun_angle) * player.size; //start away from player.
-            var new_bullet = new Bullet(player.x+x,player.y+y,player.gun_angle,player.id);
+            var new_bullet = new Bullet(player.x+x,player.y+y,player.gun_angle,player.id,player.gun.accumulator,player.gun.level);
             if(this.bullets.length >= this.max_bullets && this.open_bullet_indexes.length < 1){
-                this.bullets.shift();
                 this.bullets.push(new_bullet);
+                this.bullets.shift();
             }
             else if(this.open_bullet_indexes.length > 0){
                 var free_bullet_index = this.open_bullet_indexes.pop();
                 this.bullets[free_bullet_index] = new_bullet;
             } 
-            else this.bullets.push(new_bullet);
+            else {
+                this.bullets.push(new_bullet);
+            }
             player.time_at_last_shot = Date.now();
         }
     }
@@ -76,17 +78,19 @@ export default class Game {
         const y = Math.random() * this.game_height;
         const angle = Math.random() * 360;
         var new_asteroid;
-        if(Math.random() > 0) {
-            new_asteroid = new Asteroid(x,y,angle,'health');
+        if(Math.random() < .05) {
+            new_asteroid = new Asteroid(x,y,angle,'l1_shield',1);
         }
-
+        else{
+            new_asteroid = new Asteroid(x,y,angle,'health',1);
+        }
         if(this.asteroid_belt.length >= this.max_asteroids && this.open_asteroid_indexes.length < 1){
             this.asteroid_belt.shift();
             this.asteroid_belt.push(new_asteroid);
         }
         else if(this.open_asteroid_indexes.length > 0){
             var index = this.open_asteroid_indexes.pop();
-            this.ast[index] = new_asteroid;
+            this.asteroid_belt[index] = new_asteroid;
         } 
         else this.asteroid_belt.push(new_asteroid);   
     }
@@ -104,46 +108,69 @@ export default class Game {
         this.open_bullet_indexes.push(bID);
         bullet.is_alive = false;
     }
-    update(){
-        this.time_counter++;
-        if(this.time_counter%60 === 1) this.update_health();
-        if(this.time_counter%30 === 1) this.new_asteroid();
-        for(var pID in this.players){
-            var player = this.players[pID];
-            //check bullets against players
-            for(var bID in this.bullets){
-                var bullet = this.bullets[bID];
-                if(this.detect_collision(player,bullet) && bullet.is_alive && bullet.owner != player.id){
-                    if (player.health.accumulator <= 0) this.revive_player(player.id);
-                    else {
-                        this.players[bullet.owner].score++;
-                        player.health.sub(1);
-                        this.kill_bullet(bullet,bID);
-                    }
-                }
-                bullet.update();
-                if(bullet.distance_from_origin > this.max_bullet_distance) {
-                    this.kill_bullet(bullet,bID);
-                }
-                if(this.out_of_bounds(bullet)){
-                    this.kill_bullet(bullet,bID);
+    kill_asteroid(asteroid,aID){
+        this.open_asteroid_indexes.push(aID);
+        asteroid.is_alive = false;
+    }
+    update_shield(){
+        for(var id in this.players){
+            var player = this.players[id];
+            if(player.shield.level > 0){
+                player.shield.sub(1);
+                if(player.shield.accumulator <= 0){
+                    player.shield.level = 0;
                 }
             }
-
+        }
+    }
+    update(){
+        this.time_counter++;
+        if(this.time_counter%60 === 1) {
+            this.update_health();
+        }
+        if(this.time_counter%30 === 1) {
+            this.new_asteroid();
+            this.update_shield();
+        }
+        for(var pID in this.players){
+            var player = this.players[pID];
+            for(var bID in this.bullets){
+                var bullet = this.bullets[bID];
+                bullet.update();
+                if(bullet.is_alive){
+                    if(this.detect_collision(player,bullet) && bullet.owner != player.id){
+                        if (player.health.accumulator <= 0) this.revive_player(player.id);
+                        else {
+                            this.players[bullet.owner].score++;
+                            if(player.shield.accumulator > 0) player.shield.sub(bullet.damage/player.shield.level);
+                            else player.health.sub(bullet.damage);
+                            this.kill_bullet(bullet,bID);
+                        }
+                    }
+                    else if(bullet.distance_from_origin > this.max_bullet_distanc) {
+                        this.kill_bullet(bullet,bID);
+                    }
+                    else if(this.out_of_bounds(bullet)){
+                        this.kill_bullet(bullet,bID);
+                    }
+                }     
+            }
             //check asteroids against players
             for(var id in this.asteroid_belt){
                 var ast = this.asteroid_belt[id];
                 ast.updatePos();
-                if (ast.x > this.game_width || ast.y > this.game_height || ast.x < 0 || ast.y < 0) {
-                    //wrap around?
-                    ast.is_alive = false; //die
-                } 
+                if(ast.is_alive && this.out_of_bounds(ast)){
+                    this.kill_asteroid(ast,id);
+                }
                 else if ((Math.abs(ast.x - player.x)) < 35 && (Math.abs(ast.y - player.y)) < 35 && ast.is_alive){
                     ast.is_alive = false;
-                    player.health.add(1);
+                    this.open_asteroid_indexes.push(id);
+                    if(ast.type == 'health') player.health.add(1);
+                    else if (ast.type == 'l1_shield') {
+                        player.shield = new Ability('shield',100,1);
+                    }
                 }
             }
-
         }
         this.update_bombs();
         if (this.bomb.is_alive){

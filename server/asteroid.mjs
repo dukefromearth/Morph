@@ -1,10 +1,9 @@
 import Projectile from './projectile.mjs';
 
 export default class Asteroid extends Projectile{
-    constructor(x,y,angle,type){
-        super(x,y,angle);
+    constructor(x,y,angle,type,speed){
+        super(x,y,angle,speed);
         this.type = type;
         this.size = 5;
-        this.speed = 2;
     }
 }

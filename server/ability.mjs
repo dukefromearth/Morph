@@ -1,9 +1,10 @@
 import Points from './points.mjs';
 
 export default class Ability extends Points {
-    constructor(name,max){
-        super();
+    constructor(name,max,level){
+        super(level);
         this.name = name;
+        this.level = level;
         this.accumulator = max; //The current points of the ability
         this.threshhold = max; //The max points of the ability
     }
