@@ -97,7 +97,7 @@ socket.emit('new player');
 // update player movement to server
 
 setInterval(function() {
-  console.log("bullet: ", bullet);
+
     socket.emit('movement', movement);
     if(bullet) socket.emit('shoot-bullet', movement.angle);
     if(bomb) socket.emit('shoot-bomb');
@@ -108,8 +108,9 @@ socket.on('state', function(players) {
   drawGame.players = players;
 });
 
-socket.on('bullets-update', function(bullets){
+socket.on('bullets-update', function(bullets, bullets_2){
   drawGame.bullets = bullets;
+  drawGame.bullets_2 = bullets_2;
 });
 
 socket.on('bombs-update', function(bomb_locs){

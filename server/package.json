@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start":"node --experimental-modules server.mjs",
     "server": "PORT=8080 ENV=server nodemon --experimental-modules server.mjs",
-    "dev": "ENV=dev nodemon --experimental-modules server.js",
+    "dev": "ENV=dev nodemon --experimental-modules server.js"
   },
   "keywords": [],
   "author": "",

@@ -11,6 +11,7 @@ export default class DrawGame {
         this.bombs = [];
         this.players = {};
         this.bullets = [];
+        this.bullets_2 = [];
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -72,13 +73,11 @@ export default class DrawGame {
         }
     }
     asteroid(asteroid, myPlayer) {
-        
         const canvasX = canvas.width / 2 + asteroid.x - myPlayer.x;
         const canvasY = canvas.height / 2 + asteroid.y - myPlayer.y;
         this.context.save();
         this.context.translate(canvasX, canvasY);
         var asteroid_img = document.getElementById(asteroid.type);
-        console.log(asteroid);
         this.context.drawImage(asteroid_img, -15, -15, 30, 30);
         this.context.restore();
     }
@@ -111,8 +110,20 @@ export default class DrawGame {
         this.context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, this.MAP_SIZE, this.MAP_SIZE);
         this.context.fillStyle = 'white';
         this.context.font = "15px Courier";
-        this.context.fillText("Score: " + myPlayer.score, canvas.width - 100, 20);
-        this.context.fillText("Health: " + myPlayer.health.accumulator, canvas.width - 100, 35);
+        this.context.fillText("Health: " + myPlayer.health.accumulator, canvas.width - 150, 20);
+        this.context.fillText("Level: " + myPlayer.score.level, canvas.width - 150, 35);
+        this.context.fillText("Points: " + myPlayer.score.points, canvas.width - 150, 50);
+        this.context.fillText("Gun Level: " + myPlayer.gun.level, canvas.width - 150, 65);
+        
+    }
+    projectile_weapons(myPlayer, player){
+        var bullet;
+        for(var bID in player.gun.bullets){
+            bullet = player.gun.bullets[bID];
+            if (bullet.is_alive) {
+                this.bullet(bullet, myPlayer, "img_blast");
+            }
+        }
     }
     all(socket_id) {
         var myPlayer = this.players[socket_id];
@@ -137,6 +148,7 @@ export default class DrawGame {
                     this.player(myPlayer, player, "img_enemy");
                     this.shield(myPlayer, player);
                 }
+                if(player.gun.bullets.length > 0) this.projectile_weapons(myPlayer,player);
             }
 
             //draw all asteroids
@@ -150,6 +162,14 @@ export default class DrawGame {
             //draw bullets
             for (var bid in this.bullets) {
                 var bullet = this.bullets[bid];
+                if (bullet.is_alive) {
+                    this.bullet(bullet, myPlayer, "img_blast");
+                }
+            }
+
+            //draw bullets_2
+            for (var bid in this.bullets_2) {
+                var bullet = this.bullets_2[bid];
                 if (bullet.is_alive) {
                     this.bullet(bullet, myPlayer, "img_blast");
                 }
