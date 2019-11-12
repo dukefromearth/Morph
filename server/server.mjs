@@ -19,7 +19,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-var refresh_rate = 1000/20;
+var refresh_rate = 1000/40;
 var port_num = 5000;
 
 app.set('port', port_num);
@@ -66,7 +66,6 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
-  console.log('server');
   io.sockets.emit('state', game.players);
   io.sockets.emit('asteroids_update', game.asteroid_belt);
   if(game.bomb.is_alive){

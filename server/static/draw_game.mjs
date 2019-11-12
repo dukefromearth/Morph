@@ -37,7 +37,7 @@ export default class DrawGame {
         backgroundGradient.addColorStop(0.2, 'purple');
         backgroundGradient.addColorStop(1, 'black');
 
-        this.context.fillStyle = backgroundGradient;
+        this.context.fillStyle = 'black';//backgroundGradient;
         this.context.fillRect(0, 0, canvas.width, canvas.height);
     }
     player(myPlayer, player, img_ship) {
@@ -168,7 +168,7 @@ export default class DrawGame {
             
 
             //draw background
-            //this.background(myPlayer.x, myPlayer.y);
+            this.background(myPlayer.x, myPlayer.y);
 
             this.movement(myPlayer,movement);
 
