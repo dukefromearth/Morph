@@ -52,16 +52,12 @@ io.on('connection', function(socket) {
   });
 
   socket.on('shoot-bullet', function(){
-    game.new_bullet(socket.id);
-    game.new_seeker(socket.id);
+    //game.new_bullet(socket.id);
+    //game.new_seeker(socket.id);
   });
 
   socket.on('shoot-bomb', function(){
-    game.new_bomb(socket.id);
-  });
-
-  socket.on('new_asteroid', function(){
-    game.new_asteroid();
+    //game.new_bomb(socket.id);
   });
 });
 
