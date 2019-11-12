@@ -168,7 +168,7 @@ export default class DrawGame {
             
 
             //draw background
-            this.background(myPlayer.x, myPlayer.y);
+            //this.background(myPlayer.x, myPlayer.y);
 
             this.movement(myPlayer,movement);
 
