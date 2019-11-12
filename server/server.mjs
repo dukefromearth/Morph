@@ -13,6 +13,8 @@ const environment = process.env.ENV || "prod";
 
 var game = new Game(2000,2000);
 
+var num_users = 0;
+
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
@@ -36,10 +38,12 @@ server.listen(port_num, function() {
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     game.new_player(socket.id);
+    num_users++;
   });
   
   socket.on('disconnect', function() {
     game.delete_player(socket.id);
+    num_users--;
   });
 
   socket.on('movement', function(data) {
@@ -61,12 +65,14 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
+  
   io.sockets.emit('state', game.players);
-  //io.sockets.emit('bullets-update', game.bullets,bullets);
   io.sockets.emit('asteroids_update', game.asteroid_belt);
   if(game.bomb.is_alive){
     io.sockets.emit('bombs-update',game.bomb.bomb_locations);
   }
-  game.update();
+  if (num_users)  {
+    game.update();
+  }
 }, refresh_rate);
 
