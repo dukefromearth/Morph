@@ -160,8 +160,8 @@ export default class Game {
             this.update_health();
         }
         if (this.time_counter % 30 === 1) {
-            //this.create_random_asteroid();
-            //this.update_shield();
+            this.create_random_asteroid();
+            this.update_shield();
         }
         this.update_players_serialized();
         //Cycle through every player
