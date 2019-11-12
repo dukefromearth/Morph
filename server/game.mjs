@@ -44,6 +44,7 @@ export default class Game {
         delete this.players[socketID];
     }
     revive_player(socketID) {
+        console.log('revive');
         this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
     }
     update_player_pos(socketID, data) {
@@ -70,7 +71,7 @@ export default class Game {
         for (var id in this.players) {
             player2 = this.players[id];
             if (player != player2) {
-                distance2 = Math.atan(player.y - player2.y, player.x - player2.x);
+                distance2 = Math.sqrt(Math.pow(player.y - player2.y,2), Math.pow(player.x - player2.x, 2));
                 if (distance2 < distance1) {
                     closest_player = player2;
                     distance1 = distance2;
@@ -181,23 +182,19 @@ export default class Game {
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
                         if (this.detect_collision(player2, bullet)) {
-                            //If a player dies, revive them as a new player
-                            if (player2.health.accumulator <= 0) {
-                                var rand_index;
-                                //Drop number of upgrades equal to player level
-                                for (var lvl = 0; lvl < player2.score.level; lvl++) {
-                                    rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
-                                    this.new_asteroid(player2.x, player2.y, rand_index)
-                                }
-                                this.revive_player(player2.id);
-                            }
-                            //Update health and score of players
-                            else {
-                                player.score.add(player2.gun.damage);
+                            player.score.add(player2.gun.damage);
                                 if (player2.shield.accumulator > 0) player2.shield.sub(player.gun.damage / player2.shield.level);
                                 else player2.health.sub(player.gun.damage);
-                                player.gun.kill_bullet(bullet, bID);
-                            }
+                                player.seeker.kill_bullet(bullet, bID);
+                                if (player2.health.accumulator <= 0) {
+                                    var rand_index;
+                                    //Drop number of upgrades equal to player level
+                                    for (var lvl = 0; lvl < player2.score.level; lvl++) {
+                                        rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
+                                        this.new_asteroid(player2.x, player2.y, rand_index)
+                                    }
+                                    this.revive_player(player2.id);
+                                }
                         }
                     }
                     else if (bullet.is_alive) {
@@ -214,23 +211,19 @@ export default class Game {
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
                         if (this.detect_collision(player2, bullet)) {
-                            //If a player dies, revive them as a new player
-                            if (player2.health.accumulator <= 0) {
-                                var rand_index;
-                                //Drop number of upgrades equal to player level
-                                for (var lvl = 0; lvl < player2.score.level; lvl++) {
-                                    rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
-                                    this.new_asteroid(player2.x, player2.y, rand_index)
-                                }
-                                this.revive_player(player2.id);
-                            }
-                            //Update health and score of players
-                            else {
                                 player.score.add(player2.seeker.damage);
                                 if (player2.shield.accumulator > 0) player2.shield.sub(player.seeker.damage / player2.shield.level);
                                 else player2.health.sub(player.seeker.damage);
                                 player.seeker.kill_seeker(bullet, bID);
-                            }
+                                if (player2.health.accumulator <= 0) {
+                                    var rand_index;
+                                    //Drop number of upgrades equal to player level
+                                    for (var lvl = 0; lvl < player2.score.level; lvl++) {
+                                        rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
+                                        this.new_asteroid(player2.x, player2.y, rand_index)
+                                    }
+                                    this.revive_player(player2.id);
+                                }
                         }
                     }
                     else if (bullet.is_alive) {
