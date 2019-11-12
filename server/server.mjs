@@ -4,7 +4,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import Game from './game.mjs';
+import Game from './src/game.mjs';
 
 var __dirname = path.resolve(path.dirname(''));
 

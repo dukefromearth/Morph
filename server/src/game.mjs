@@ -1,10 +1,8 @@
 /*jshint esversion: 6 */
+import Ability from './ability.mjs';
 import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
-import Bullet from './bullet.mjs';
 import Player from './player.mjs';
-import Ability from './ability.mjs';
-import Shields from './static/shields.mjs';
 
 'use strict';
 
