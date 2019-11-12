@@ -42,7 +42,6 @@ export default class Game {
         delete this.players[socketID];
     }
     revive_player(socketID) {
-        console.log('revive');
         this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
     }
     update_player_pos(socketID, data) {
@@ -167,6 +166,7 @@ export default class Game {
         this.update_players_serialized();
         //Cycle through every player
         for (var pID in this.players) {
+            
             var player = this.players[pID];
             //Check every player against eachother, searching for collisions
             for (var pID_2 in this.players) {

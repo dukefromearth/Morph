@@ -12,8 +12,8 @@ export default class Player {
         this.y = Math.floor(Math.random() * (game_height - 75));
         this.health = new Ability("health",100,1);
         this.speed = new Ability("speed", 10,1);
-        this.shield = new Ability("shield", 0, 0);
-        this.gun = new Gun("blaster",3,1);
+        this.shield = new Ability("shield", 0, );
+        this.gun = new Gun("blaster",3,8);
         this.seeker = new Seeker("seeker", 1, 1);
         //this.seeker = {};
         this.bomb = {};
