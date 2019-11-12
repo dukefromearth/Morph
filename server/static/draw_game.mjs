@@ -125,7 +125,7 @@ export default class DrawGame {
         for(var bID in player.gun.bullets){
             bullet = player.gun.bullets[bID];
             if (bullet.is_alive) {
-                this.bullet(bullet, myPlayer, "img_blast",30,30);
+                this.bullet(bullet, myPlayer, "img_blast",10*player.gun.damage,10*player.gun.damage);
             }
         }
     }
@@ -137,7 +137,7 @@ export default class DrawGame {
         for(var sID in player.seeker.bullets){
             seeker = player.seeker.bullets[sID];
             if (seeker.is_alive) {
-                this.bullet(seeker, myPlayer, missile_frame,80,40);
+                this.bullet(seeker, myPlayer, missile_frame,10*player.seeker.damage,3*player.seeker.damage);
             }
         }
     }
@@ -147,7 +147,6 @@ export default class DrawGame {
 
         this.context.save();
         this.context.translate(canvasX-50,canvasY-50);
-        console.log(movement);
         if(movement.left){
             this.context.drawImage(document.getElementById("beam_left"), 80, 0, 100, 100);
         }

@@ -36,9 +36,10 @@ server.listen(port_num, function() {
 });
 
 io.on('connection', function(socket) {
+  num_users++;
   socket.on('new player', function() {
     game.new_player(socket.id);
-    num_users++;
+    
   });
   
   socket.on('disconnect', function() {
@@ -65,7 +66,6 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
-  
   io.sockets.emit('state', game.players);
   io.sockets.emit('asteroids_update', game.asteroid_belt);
   if(game.bomb.is_alive){
