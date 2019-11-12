@@ -50,14 +50,14 @@ export default class Game {
         player.update_pos(data, this.game_width, this.game_height);
     }
     new_bullet(socketID) {
-
+        var time = Date.now();
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
         player.gun.shoot_gun(player.x, player.y, player.gun_angle);
-
+        console.log("Time new_bullet: ", time - Date.now());
     }
     new_seeker(socketID) {
-
+        var time = Date.now();
         var player = this.players[socketID];
         if (player === undefined || player.seeker.level < 1) return; //happens if server restarts
         if (!player.seeker.bullet_available()) return;
@@ -78,7 +78,7 @@ export default class Game {
         if (closest_player != undefined) {
             player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.gun_angle);
         }
-
+        console.log("Time new_seeker: ", time - Date.now());
 
     }
     new_bomb(socketID) {
@@ -160,8 +160,8 @@ export default class Game {
             this.update_health();
         }
         if (this.time_counter % 30 === 1) {
-            this.create_random_asteroid();
-            this.update_shield();
+            //this.create_random_asteroid();
+            //this.update_shield();
         }
         this.update_players_serialized();
         //Cycle through every player
