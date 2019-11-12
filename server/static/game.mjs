@@ -4,7 +4,7 @@
 import DrawGame from './draw_game.mjs';
 
 var socket = io();
-var refresh_rate = 1000/60;
+var refresh_rate = 1000/30;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 2000;
@@ -97,7 +97,6 @@ socket.emit('new player');
 // update player movement to server
 
 setInterval(function() {
-
     socket.emit('movement', movement);
     if(bullet) socket.emit('shoot-bullet', movement.angle);
     if(bomb) socket.emit('shoot-bomb');
