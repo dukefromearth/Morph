@@ -6,6 +6,8 @@ import Player from './player.mjs';
 import Ability from './ability.mjs';
 import Shields from './static/shields.mjs';
 
+'use strict';
+
 export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
         this.bullets = [];
@@ -14,9 +16,7 @@ export default class Game {
         this.open_asteroid_indexes = [];
         this.max_asteroids = GAME_WIDTH / 50;
         this.bomb = {};
-        this.open_bullet_indexes = [];
         this.max_bullets = 10000;
-        this.max_bullet_distance = 1000;
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
         this.time_counter = 0;
@@ -28,6 +28,14 @@ export default class Game {
             'l2_shield',
             'l3_shield'
         ];
+        this.serialized_players = {};
+    }
+    update_players_serialized() {
+        var player;
+        for (var pID in this.players) {
+            player = this.players[pID];
+            this.serialized_players[player.id] = { x: player.x, y: player.y };
+        }
     }
     new_player(socketID) {
         this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
@@ -44,9 +52,36 @@ export default class Game {
         player.update_pos(data, this.game_width, this.game_height);
     }
     new_bullet(socketID) {
+
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
         player.gun.shoot_gun(player.x, player.y, player.gun_angle);
+
+    }
+    new_seeker(socketID) {
+
+        var player = this.players[socketID];
+        if (player === undefined || player.seeker.level < 1) return; //happens if server restarts
+        if (!player.seeker.bullet_available()) return;
+        var player2;
+        var closest_player = {};
+        var distance1 = 10000;
+        var distance2 = 10000;
+        for (var id in this.players) {
+            player2 = this.players[id];
+            if (player != player2) {
+                distance2 = Math.atan(player.y - player2.y, player.x - player2.x);
+                if (distance2 < distance1) {
+                    closest_player = player2;
+                    distance1 = distance2;
+                }
+            }
+        }
+        if (closest_player != undefined) {
+            player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.gun_angle);
+        }
+
+
     }
     new_bomb(socketID) {
         var player = this.players[socketID];
@@ -130,6 +165,7 @@ export default class Game {
             this.create_random_asteroid();
             this.update_shield();
         }
+        this.update_players_serialized();
         //Cycle through every player
         for (var pID in this.players) {
             var player = this.players[pID];
@@ -165,13 +201,48 @@ export default class Game {
                         }
                     }
                     else if (bullet.is_alive) {
-                        if (bullet.distance_from_origin > this.max_bullet_distance || this.out_of_bounds(bullet)) {
-                            player.gun.kill_bullet(bullet,bID);
+                        if (bullet.distance_from_origin > bullet.decay || this.out_of_bounds(bullet)) {
+                            player.gun.kill_bullet(bullet, bID);
                         }
                     }
 
                 }
+                for (var bID in player.seeker.bullets) {
+                    var bullet = player.seeker.bullets[bID];
+                    bullet.update();
+                    //Bullet is not always removed every update, ensure that it is allive before detecting collision
+                    //If players are equal, don't check (Can't collide with own bullets)
+                    if (bullet.is_alive && !p_same_player) {
+                        if (this.detect_collision(player2, bullet)) {
+                            //If a player dies, revive them as a new player
+                            if (player2.health.accumulator <= 0) {
+                                var rand_index;
+                                //Drop number of upgrades equal to player level
+                                for (var lvl = 0; lvl < player2.score.level; lvl++) {
+                                    rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
+                                    this.new_asteroid(player2.x, player2.y, rand_index)
+                                }
+                                this.revive_player(player2.id);
+                            }
+                            //Update health and score of players
+                            else {
+                                player.score.add(player2.seeker.damage);
+                                if (player2.shield.accumulator > 0) player2.shield.sub(player.seeker.damage / player2.shield.level);
+                                else player2.health.sub(player.seeker.damage);
+                                player.seeker.kill_seeker(bullet, bID);
+                            }
+                        }
+                    }
+                    else if (bullet.is_alive) {
+                        if (bullet.distance_from_origin > bullet.decay || this.out_of_bounds(bullet)) {
+                            player.seeker.kill_seeker(bullet, bID);
+                        }
+                    }
+                }
             }
+
+            player.seeker.update_trajectories(this.serialized_players);
+
             var asteroid;
             for (var aID in this.asteroid_belt) {
                 asteroid = this.asteroid_belt[aID];

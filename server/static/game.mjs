@@ -122,7 +122,7 @@ socket.on('asteroids_update',function(asteroid){
 });
 
 function Draw(){
-  drawGame.all(socket.id);
+  drawGame.all(socket.id, movement);
   window.requestAnimationFrame(Draw);
 }
 window.requestAnimationFrame(Draw);

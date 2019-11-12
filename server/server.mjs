@@ -48,6 +48,7 @@ io.on('connection', function(socket) {
 
   socket.on('shoot-bullet', function(){
     game.new_bullet(socket.id);
+    game.new_seeker(socket.id);
   });
 
   socket.on('shoot-bomb', function(){

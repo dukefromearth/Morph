@@ -1,4 +1,5 @@
 import Shields from './shields.mjs';
+import Missiles from './missiles.mjs';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -7,6 +8,7 @@ export default class DrawGame {
         this.setCanvasDimensions();
         this.MAP_SIZE = map_size;
         this.shields = new Shields();
+        this.missiles = new Missiles();
         this.asteroids = [];
         this.bombs = [];
         this.players = {};
@@ -81,14 +83,14 @@ export default class DrawGame {
         this.context.drawImage(asteroid_img, -15, -15, 30, 30);
         this.context.restore();
     }
-    bullet(bullet, myPlayer, img_name) {
+    bullet(bullet, myPlayer, img_name,sizex,sizey) {
         var bullet_img = document.getElementById(img_name);
         const canvasX = canvas.width / 2 + bullet.x - myPlayer.x;
         const canvasY = canvas.height / 2 + bullet.y - myPlayer.y;
         this.context.save();
         this.context.translate(canvasX, canvasY);
         this.context.rotate(bullet.angle);
-        this.context.drawImage(bullet_img, -15, -15, 30, 30);
+        this.context.drawImage(bullet_img, -sizex/2, -sizey/2, sizex, sizey);
         this.context.restore();
     }
     bomb(bomb, myPlayer) {
@@ -114,6 +116,8 @@ export default class DrawGame {
         this.context.fillText("Level: " + myPlayer.score.level, canvas.width - 150, 35);
         this.context.fillText("Points: " + myPlayer.score.points, canvas.width - 150, 50);
         this.context.fillText("Gun Level: " + myPlayer.gun.level, canvas.width - 150, 65);
+        this.context.fillText("Shield Lvl: " + myPlayer.shield.level, canvas.width - 150, 80);
+        this.context.fillText("Shield Acc: " + myPlayer.shield.accumulator, canvas.width - 150, 95);
         
     }
     projectile_weapons(myPlayer, player){
@@ -121,16 +125,53 @@ export default class DrawGame {
         for(var bID in player.gun.bullets){
             bullet = player.gun.bullets[bID];
             if (bullet.is_alive) {
-                this.bullet(bullet, myPlayer, "img_blast");
+                this.bullet(bullet, myPlayer, "img_blast",30,30);
             }
         }
     }
-    all(socket_id) {
+    seeker(myPlayer, player){
+        if (++this.missiles.counter[0] > this.missiles.missiles.length-1)  this.missiles.counter[0] = 0;
+        var index = this.missiles.counter[0];
+        var missile_frame = this.missiles.missiles[index];
+        var seeker;
+        for(var sID in player.seeker.bullets){
+            seeker = player.seeker.bullets[sID];
+            if (seeker.is_alive) {
+                this.bullet(seeker, myPlayer, missile_frame,80,40);
+            }
+        }
+    }
+    movement(myPlayer,movement){
+        const canvasX = canvas.width / 2 + myPlayer.x - myPlayer.x;
+        const canvasY = canvas.height / 2 + myPlayer.y - myPlayer.y;
+
+        this.context.save();
+        this.context.translate(canvasX-50,canvasY-50);
+        console.log(movement);
+        if(movement.left){
+            this.context.drawImage(document.getElementById("beam_left"), 80, 0, 100, 100);
+        }
+        if(movement.right){
+            this.context.drawImage(document.getElementById("beam_right"), -80, 0, 100, 100);
+        }
+        if(movement.up){
+            this.context.drawImage(document.getElementById("beam_up"), 0, 80, 100, 100);
+        }
+        if(movement.down){
+            this.context.drawImage(document.getElementById("beam_down"), 0, -80, 100, 100);
+        }
+        this.context.restore();
+    }
+
+    all(socket_id, movement) {
         var myPlayer = this.players[socket_id];
         if (myPlayer != undefined) {
+            
 
             //draw background
             this.background(myPlayer.x, myPlayer.y);
+
+            this.movement(myPlayer,movement);
 
             //draw my player
             this.player(myPlayer, myPlayer, "img_ship");
@@ -149,6 +190,7 @@ export default class DrawGame {
                     this.shield(myPlayer, player);
                 }
                 if(player.gun.bullets.length > 0) this.projectile_weapons(myPlayer,player);
+                if(player.seeker.bullets.length > 0) this.seeker(myPlayer,player);
             }
 
             //draw all asteroids

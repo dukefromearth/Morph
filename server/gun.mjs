@@ -16,7 +16,7 @@ export default class Gun extends Ability {
     //Checks to see if the time delay since the last shot was good enough
     bullet_available() {
         var curr_time = Date.now();
-        if (curr_time - this.time_at_last_shot > this.speed) return true;
+        if (curr_time - this.time_at_last_shot > this.bullets_per_second) return true;
         else return false;
     }
     push_bullet(bullet_x, bullet_y, angle, p_shift) {
@@ -37,7 +37,6 @@ export default class Gun extends Ability {
         if (p_shift) this.bullets.shift();
     }
     shoot_gun(x, y, angle) {
-
         if (this.bullet_available()) {
             var bullet_x = x + Math.cos(angle) * 75; //start away from player
             var bullet_y = y + Math.sin(angle) * 75; //start away from player.
