@@ -4,7 +4,7 @@
 import DrawGame from './draw_game.mjs';
 
 var socket = io();
-var refresh_rate = 1000 / 30;
+var refresh_rate = 1000 / 40;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 1000;
@@ -103,10 +103,12 @@ setInterval(function () {
   if (bullet) socket.emit('shoot-bullet', movement.angle);
   if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate);
-
+var time1,time2;
 socket.on('state', function (players) {
+  time1 = performance.now();
   drawGame.players = players;
-  console.log(drawGame.players);
+  console.log(time1 - time2);
+  time2 = time1;
 });
 
 socket.on('bombs-update', function (bomb_locs) {
