@@ -48,7 +48,7 @@ export function getCurrentState() {
 
     const base = getBaseUpdate();
     const serverTime = currentServerTime();
-    // console.log("BASE:", base,"Length:", gameUpdates.length, "Server Time:", serverTime);
+    console.log("BASE:", base,"Length:", gameUpdates.length, "Server Time:", serverTime);
     // If base is the most recent update we have, use its state.
     // Else, interpolate between its state and the state of (base + 1).
     if (base < 0) {
@@ -78,12 +78,10 @@ function interpolateObject(object1, object2, ratio) {
     if (!object2 || objectInSameLocation(object1, object2)) {
         return object1;
     } else {
-        console.log("object in: ", object1);
         var angle = Math.atan2(object2.y - object1.y, object2.x - object1.x);
         object1.x += Math.floor(Math.cos(angle) * object1.speed * ratio);
         object1.y += Math.floor(Math.sin(angle) * object1.speed * ratio);
     }
-    console.log("object out: ", object1);
     return object1;
 }
 
