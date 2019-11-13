@@ -14,7 +14,6 @@ export default class Game {
         this.open_asteroid_indexes = [];
         this.max_asteroids = GAME_WIDTH / 50;
         this.bomb = {};
-        this.max_bullets = 10000;
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
         this.time_counter = 0;
@@ -26,13 +25,17 @@ export default class Game {
             'l2_shield',
             'l3_shield'
         ];
-        this.serialized_players = {};
+        this.players_locations = {};
+        this.players_serialized = {};
     }
     update_players_serialized() {
         var player;
         for (var pID in this.players) {
             player = this.players[pID];
-            this.serialized_players[player.id] = { x: player.x, y: player.y };
+            this.players_locations[player.id] = {
+                x: player.x,
+                y: player.y
+             };
         }
     }
     new_player(socketID) {
@@ -50,14 +53,11 @@ export default class Game {
         player.update_pos(data, this.game_width, this.game_height);
     }
     new_bullet(socketID) {
-        var time = Date.now();
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
         player.gun.shoot_gun(player.x, player.y, player.gun_angle);
-        console.log("Time new_bullet: ", time - Date.now());
     }
     new_seeker(socketID) {
-        var time = Date.now();
         var player = this.players[socketID];
         if (player === undefined || player.seeker.level < 1) return; //happens if server restarts
         if (!player.seeker.bullet_available()) return;
@@ -68,7 +68,7 @@ export default class Game {
         for (var id in this.players) {
             player2 = this.players[id];
             if (player != player2) {
-                distance2 = Math.sqrt(Math.pow(player.y - player2.y,2), Math.pow(player.x - player2.x, 2));
+                distance2 = Math.sqrt(Math.pow(player.y - player2.y, 2), Math.pow(player.x - player2.x, 2));
                 if (distance2 < distance1) {
                     closest_player = player2;
                     distance1 = distance2;
@@ -78,7 +78,6 @@ export default class Game {
         if (closest_player != undefined) {
             player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.gun_angle);
         }
-        console.log("Time new_seeker: ", time - Date.now());
 
     }
     new_bomb(socketID) {
@@ -164,10 +163,11 @@ export default class Game {
             this.update_shield();
         }
         this.update_players_serialized();
+        
         //Cycle through every player
         for (var pID in this.players) {
-            
             var player = this.players[pID];
+            
             //Check every player against eachother, searching for collisions
             for (var pID_2 in this.players) {
                 var player2 = this.players[pID_2];
@@ -181,18 +181,18 @@ export default class Game {
                     if (bullet.is_alive && !p_same_player) {
                         if (this.detect_collision(player2, bullet)) {
                             player.score.add(player2.gun.damage);
-                                if (player2.shield.accumulator > 0) player2.shield.sub(player.gun.damage / player2.shield.level);
-                                else player2.health.sub(player.gun.damage);
-                                player.seeker.kill_bullet(bullet, bID);
-                                if (player2.health.accumulator <= 0) {
-                                    var rand_index;
-                                    //Drop number of upgrades equal to player level
-                                    for (var lvl = 0; lvl < player2.score.level; lvl++) {
-                                        rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
-                                        this.new_asteroid(player2.x, player2.y, rand_index)
-                                    }
-                                    this.revive_player(player2.id);
+                            if (player2.shield.accumulator > 0) player2.shield.sub(player.gun.damage / player2.shield.level);
+                            else player2.health.sub(player.gun.damage);
+                            player.seeker.kill_bullet(bullet, bID);
+                            if (player2.health.accumulator <= 0) {
+                                var rand_index;
+                                //Drop number of upgrades equal to player level
+                                for (var lvl = 0; lvl < player2.score.level; lvl++) {
+                                    rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
+                                    this.new_asteroid(player2.x, player2.y, rand_index)
                                 }
+                                this.revive_player(player2.id);
+                            }
                         }
                     }
                     else if (bullet.is_alive) {
@@ -209,19 +209,19 @@ export default class Game {
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
                         if (this.detect_collision(player2, bullet)) {
-                                player.score.add(player2.seeker.damage);
-                                if (player2.shield.accumulator > 0) player2.shield.sub(player.seeker.damage / player2.shield.level);
-                                else player2.health.sub(player.seeker.damage);
-                                player.seeker.kill_seeker(bullet, bID);
-                                if (player2.health.accumulator <= 0) {
-                                    var rand_index;
-                                    //Drop number of upgrades equal to player level
-                                    for (var lvl = 0; lvl < player2.score.level; lvl++) {
-                                        rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
-                                        this.new_asteroid(player2.x, player2.y, rand_index)
-                                    }
-                                    this.revive_player(player2.id);
+                            player.score.add(player2.seeker.damage);
+                            if (player2.shield.accumulator > 0) player2.shield.sub(player.seeker.damage / player2.shield.level);
+                            else player2.health.sub(player.seeker.damage);
+                            player.seeker.kill_seeker(bullet, bID);
+                            if (player2.health.accumulator <= 0) {
+                                var rand_index;
+                                //Drop number of upgrades equal to player level
+                                for (var lvl = 0; lvl < player2.score.level; lvl++) {
+                                    rand_index = this.upgrades[Math.floor(this.upgrades.length * Math.random())];
+                                    this.new_asteroid(player2.x, player2.y, rand_index)
                                 }
+                                this.revive_player(player2.id);
+                            }
                         }
                     }
                     else if (bullet.is_alive) {
@@ -232,7 +232,8 @@ export default class Game {
                 }
             }
 
-            player.seeker.update_trajectories(this.serialized_players);
+            player.seeker.update_trajectories(this.players_locations);
+            this.players_serialized[player.id] = player.get_serialized();
 
             var asteroid;
             for (var aID in this.asteroid_belt) {
@@ -270,21 +271,21 @@ export default class Game {
             }
         }
 
-    //     this.update_bombs();
-    //     if (this.bomb.is_alive) {
-    //         for (var bombID in this.bomb.bomb_locations) {
-    //             var bomb = this.bomb.bomb_locations[bombID];
-    //             for (var playerID in this.players) {
-    //                 var _player = this.players[playerID];
-    //                 if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-    //                     if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-    //                     else {
-    //                         _player.health.sub(0.1);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
+        //     this.update_bombs();
+        //     if (this.bomb.is_alive) {
+        //         for (var bombID in this.bomb.bomb_locations) {
+        //             var bomb = this.bomb.bomb_locations[bombID];
+        //             for (var playerID in this.players) {
+        //                 var _player = this.players[playerID];
+        //                 if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
+        //                     if (_player.health.accumulator <= 0) this.revive_player(_player.id);
+        //                     else {
+        //                         _player.health.sub(0.1);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
 
     }
 

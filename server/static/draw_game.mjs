@@ -37,9 +37,10 @@ export default class DrawGame {
         backgroundGradient.addColorStop(0.2, 'purple');
         backgroundGradient.addColorStop(1, 'black');
 
-        this.context.fillStyle = 'black';//backgroundGradient;
+        this.context.fillStyle = backgroundGradient;
         this.context.fillRect(0, 0, canvas.width, canvas.height);
     }
+
     player(myPlayer, player, img_ship) {
         const canvasX = canvas.width / 2 + player.x - myPlayer.x;
         const canvasY = canvas.height / 2 + player.y - myPlayer.y;
@@ -55,19 +56,19 @@ export default class DrawGame {
         this.context.globalAlpha = 0.4;
         this.context.lineWidth = 8;
         this.context.strokeStyle = 'blue';
-        this.context.arc(canvasX, canvasY, player.size, 0, player.health.accumulator * 2 * Math.PI / player.health.threshhold);
+        this.context.arc(canvasX, canvasY, player.size, 0, player.health_accumulator * 2 * Math.PI / player.health.threshhold);
         this.context.stroke();
         this.context.globalAlpha = 1;
         this.context.closePath();
     }
     shield(myPlayer, player) {
-        if(player.shield.level > 0) {
-            var level = player.shield.level;
+        if(player.shield_level > 0) {
+            var level = player.shield_level;
             var shield = this.shields.shields[level-1];
             const canvasX = canvas.width / 2 + player.x - myPlayer.x;
             const canvasY = canvas.height / 2 + player.y - myPlayer.y;
             this.context.save();
-            this.context.globalAlpha = player.shield.accumulator/100;
+            this.context.globalAlpha = player.shield_accumulator/100;
             this.context.translate(canvasX, canvasY);
             this.context.drawImage(shield[++this.shields.counter[level-1]], 0 - ((myPlayer.size * 2) / 2), 0 - ((myPlayer.size * 2) / 2), myPlayer.size * 2, myPlayer.size * 2);
             if (this.shields.counter[level-1] >= shield.length - 1) this.shields.counter[level-1] = 0;
@@ -112,21 +113,19 @@ export default class DrawGame {
         this.context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, this.MAP_SIZE, this.MAP_SIZE);
         this.context.fillStyle = 'white';
         this.context.font = "15px Courier";
-        this.context.fillText("Health: " + myPlayer.health.accumulator, canvas.width - 150, 20);
-        this.context.fillText("Level: " + myPlayer.score.level, canvas.width - 150, 35);
-        this.context.fillText("Points: " + myPlayer.score.points, canvas.width - 150, 50);
-        this.context.fillText("Gun Level: " + myPlayer.gun.level, canvas.width - 150, 65);
-        this.context.fillText("Shield Lvl: " + myPlayer.shield.level, canvas.width - 150, 80);
-        this.context.fillText("Shield Acc: " + myPlayer.shield.accumulator, canvas.width - 150, 95);
+        this.context.fillText("Health: " + myPlayer.health_accumulator, canvas.width - 150, 20);
+        this.context.fillText("Level: " + myPlayer.score_level, canvas.width - 150, 35);
+        this.context.fillText("Points: " + myPlayer.score_points, canvas.width - 150, 50);
+        this.context.fillText("Gun Level: " + myPlayer.gun_level, canvas.width - 150, 65);
+        this.context.fillText("Shield Lvl: " + myPlayer.shield_level, canvas.width - 150, 80);
+        this.context.fillText("Shield Acc: " + myPlayer.shield_accumulator, canvas.width - 150, 95);
         
     }
     projectile_weapons(myPlayer, player){
         var bullet;
-        for(var bID in player.gun.bullets){
-            bullet = player.gun.bullets[bID];
-            if (bullet.is_alive) {
-                this.bullet(bullet, myPlayer, "img_blast",10*player.gun.damage,10*player.gun.damage);
-            }
+        for(var bID in player.gun_bullets){
+            bullet = player.gun_bullets[bID];
+            this.bullet(bullet, myPlayer, "img_blast",10*player.gun_damage,10*player.gun_damage);
         }
     }
     seeker(myPlayer, player){
@@ -134,11 +133,9 @@ export default class DrawGame {
         var index = this.missiles.counter[0];
         var missile_frame = this.missiles.missiles[index];
         var seeker;
-        for(var sID in player.seeker.bullets){
-            seeker = player.seeker.bullets[sID];
-            if (seeker.is_alive) {
-                this.bullet(seeker, myPlayer, missile_frame,10*player.seeker.damage,3*player.seeker.damage);
-            }
+        for(var sID in player.seeker_bullets){
+            seeker = player.seeker_bullets[sID];
+            this.bullet(seeker, myPlayer, missile_frame,10*player.seeker_damage,3*player.seeker_damage);
         }
     }
     movement(myPlayer,movement){
@@ -176,7 +173,7 @@ export default class DrawGame {
             this.player(myPlayer, myPlayer, "img_ship");
 
             //draw my score
-            this.score(myPlayer);
+            //this.score(myPlayer);
 
             //draw my shield
             this.shield(myPlayer, myPlayer);
@@ -188,8 +185,8 @@ export default class DrawGame {
                     this.player(myPlayer, player, "img_enemy");
                     this.shield(myPlayer, player);
                 }
-                if(player.gun.bullets.length > 0) this.projectile_weapons(myPlayer,player);
-                if(player.seeker.bullets.length > 0) this.seeker(myPlayer,player);
+                if(player.gun_bullets.length > 0) this.projectile_weapons(myPlayer,player);
+                if(player.seeker_bullets.length > 0) this.seeker(myPlayer,player);
             }
 
             //draw all asteroids
