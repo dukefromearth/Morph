@@ -122,9 +122,13 @@ socket.on('asteroids_update', function (asteroid) {
   //drawGame.asteroids = asteroid;
 });
 
+var drawTime1,drawTime2;
 function Draw() {
+  drawTime1 = performance.now();
   drawGame.players = getCurrentState();
   drawGame.all(socket.id, movement);
+  console.log("Time since last draw: ", drawTime1 - drawTime2);
+  drawTime2 = drawTime1;
   window.requestAnimationFrame(Draw);
 }
 window.requestAnimationFrame(Draw);
