@@ -10,6 +10,7 @@ export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
         this.bullets = [];
         this.players = {};
+        this.counter = {bullet: 0, seeker: 0};
         this.asteroid_belt = [];
         this.open_asteroid_indexes = [];
         this.max_asteroids = GAME_WIDTH / 50;
@@ -27,6 +28,9 @@ export default class Game {
         ];
         this.players_locations = {};
         this.players_serialized = {};
+    }
+    get_bullet_id(){
+        return this.counter.bullet++;
     }
     update_players_serialized() {
         var player;
@@ -56,7 +60,7 @@ export default class Game {
     new_bullet(socketID) {
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
-        player.gun.shoot_gun(player.x, player.y, player.gun_angle);
+        player.gun.shoot_gun(player.x, player.y, player.gun_angle, this.counter.bullet++);
     }
     new_seeker(socketID) {
         var player = this.players[socketID];

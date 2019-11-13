@@ -49,13 +49,15 @@ export default class Player {
         this.mousey = data.mousey;
         this.gun_angle = data.angle;
     }
-    serialized_weapon(ammo_type){
+    serialized_weapon(ammo_type,speed){
         var ammo = [];
         for(var id in ammo_type){
             if (ammo_type[id].is_alive){
                 ammo.push({
                     x: Math.floor(ammo_type[id].x),
                     y: Math.floor(ammo_type[id].y),
+                    speed: speed,
+                    id: ammo_type[id].id,
                     angle: ammo_type[id].angle,
                 })
             }
@@ -66,6 +68,7 @@ export default class Player {
     serialize() {
         this.serialized =  {
             id: this.id,
+            speed: this.speed.accumulator,
             x: Math.floor(this.x),
             y: Math.floor(this.y),
             gun_angle: this.gun_angle,
@@ -79,10 +82,11 @@ export default class Player {
             score_points: this.score.points,
             gun_level: this.gun.level,
             gun_damage: this.gun.damage,
-            gun_bullets: this.serialized_weapon(this.gun.bullets),
-            seeker_bullets: this.serialized_weapon(this.seeker.bullets),
+            gun_bullets: this.serialized_weapon(this.gun.bullets,this.gun.accumulator),
+            seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
             seeker_damage: this.seeker.damage
         }
+        console.log(this.serialized.gun_bullets);
     }
     get_serialized(){
         this.serialize();
