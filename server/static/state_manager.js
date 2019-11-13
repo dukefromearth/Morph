@@ -61,8 +61,7 @@ export function getCurrentState() {
         const r = (serverTime - baseUpdate.t) / (next.t - baseUpdate.t);
         var interpolated;
         interpolated = interpolatePlayers(baseUpdate.update, next.update, r);
-        console.log(baseUpdate.update);
-        return baseUpdate.update;
+        return interpolated;
     }
 }
 
@@ -90,7 +89,6 @@ function interpolateObject(object1, object2, ratio) {
 
 //This is n^2, shouldn't do this. Switch to a map
 function interpolatePlayers(players1, players2, ratio) {
-    console.log(players1, players2);
     var player1, player2, bullet1, bullet2, seeker1, seeker2;
     for (var id in players1) {
         player1 = players1[id];
@@ -100,7 +98,6 @@ function interpolatePlayers(players1, players2, ratio) {
                 player1 = interpolateObject(player1, player2, ratio)
             }
         }
-        console.log(player1.gun_bullets);
         for (var bID in player1.gun_bullets) {
             bullet1 = player1.gun_bullets[bID];
             for (var bID2 in player2.gun_bullets) {
