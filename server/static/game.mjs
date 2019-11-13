@@ -100,11 +100,11 @@ socket.emit('new player');
 initState();
 // update player movement to server
 
-setInterval(function () {
-  socket.emit('movement', movement);
-  if (bullet) socket.emit('shoot-bullet', movement.angle);
-  if (bomb) socket.emit('shoot-bomb');
-}, refresh_rate);
+// setInterval(function () {
+//   socket.emit('movement', movement);
+//   if (bullet) socket.emit('shoot-bullet', movement.angle);
+//   if (bomb) socket.emit('shoot-bomb');
+// }, refresh_rate);
 
 var time1,time2;
 socket.on('state', function (players,time) {
@@ -132,6 +132,9 @@ setInterval(function() {
   drawGame.all(socket.id, movement);
   console.log("Time since last draw: ", drawTime1 - drawTime2);
   drawTime2 = drawTime1;
+  socket.emit('movement', movement);
+  if (bullet) socket.emit('shoot-bullet', movement.angle);
+  if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)
 
 
