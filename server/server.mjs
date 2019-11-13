@@ -21,7 +21,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-var refresh_rate = 1000 / 30;
+var refresh_rate = 1000 / 24;
 var port_num = 5000;
 
 app.set('port', port_num);
