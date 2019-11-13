@@ -66,9 +66,9 @@ io.on('connection', function (socket) {
 
 setInterval(function () {
   if (num_users) {
-    
+
     game.update();
-    io.sockets.emit('state', game.players_serialized);
+    io.sockets.emit('state', game.players_serialized,Date.now());
     io.sockets.emit('asteroids_update', game.asteroid_belt);
     if (game.bomb.is_alive) {
       io.sockets.emit('bombs-update', game.bomb.bomb_locations);

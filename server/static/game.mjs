@@ -2,6 +2,7 @@
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
 import DrawGame from './draw_game.mjs';
+import {initState, processGameUpdate, getCurrentState} from './state_manager.js'
 
 var socket = io();
 var refresh_rate = 1000 / 40;
@@ -90,12 +91,13 @@ document.addEventListener('keyup', function (event) {
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
-
+  
   socket.on('disconnect', function () {
     drawGame.players[socket.id].disconnect();
   });
 });
 socket.emit('new player');
+initState();
 // update player movement to server
 
 setInterval(function () {
@@ -103,11 +105,12 @@ setInterval(function () {
   if (bullet) socket.emit('shoot-bullet', movement.angle);
   if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate);
+
 var time1,time2;
-socket.on('state', function (players) {
+socket.on('state', function (players,time) {
   time1 = performance.now();
-  drawGame.players = players;
-  console.log(time1 - time2);
+  processGameUpdate(players,time);
+  //console.log(time1 - time2);
   time2 = time1;
 });
 
@@ -116,10 +119,11 @@ socket.on('bombs-update', function (bomb_locs) {
 });
 
 socket.on('asteroids_update', function (asteroid) {
-  drawGame.asteroids = asteroid;
+  //drawGame.asteroids = asteroid;
 });
 
 function Draw() {
+  drawGame.players = getCurrentState();
   drawGame.all(socket.id, movement);
   window.requestAnimationFrame(Draw);
 }
