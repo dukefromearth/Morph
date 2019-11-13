@@ -43,6 +43,7 @@ export default class Game {
     }
     delete_player(socketID) {
         delete this.players[socketID];
+        delete this.players_serialized[socketID];
     }
     revive_player(socketID) {
         this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
