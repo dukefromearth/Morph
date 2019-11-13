@@ -110,7 +110,7 @@ function interpolatePlayers(players1, players2, ratio) {
             seeker1 = player1.seeker_bullets[bID];
             for (var bID2 in player2.seeker_bullets) {
                 seeker2 = player2.seeker_bullets[bID2];
-                if (bullet1.id === bullet2.id) {
+                if (seeker1.id === seeker2.id) {
                     seeker1 = interpolateObject(seeker1, seeker2, ratio);
                 }
             }
