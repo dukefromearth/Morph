@@ -60,7 +60,6 @@ export default class Player {
                 })
             }
         }
-        console.log(ammo);
         return ammo;
         
     }
