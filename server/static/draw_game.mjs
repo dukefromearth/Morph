@@ -1,5 +1,5 @@
-import Shields from './shields.mjs';
 import Missiles from './missiles.mjs';
+import Shields from './shields.mjs';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -173,7 +173,7 @@ export default class DrawGame {
             this.player(myPlayer, myPlayer, "img_ship");
 
             //draw my score
-            //this.score(myPlayer);
+            this.score(myPlayer);
 
             //draw my shield
             this.shield(myPlayer, myPlayer);

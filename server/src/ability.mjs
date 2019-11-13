@@ -15,5 +15,8 @@ export default class Ability extends Points {
         if(this.accumulator-x > 0) this.accumulator -= x;
         else this.accumulator = 0;
     }
+    upgrade(){
+        this.level++;
+    }
 
 }

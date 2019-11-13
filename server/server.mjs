@@ -13,7 +13,7 @@ var __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
 
-var game = new Game(1000, 1000);
+var game = new Game(2000, 2000);
 
 var num_users = 0;
 

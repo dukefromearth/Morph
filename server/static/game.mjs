@@ -2,13 +2,13 @@
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
 import DrawGame from './draw_game.mjs';
-import {initState, processGameUpdate, getCurrentState} from './state_manager.js'
+import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 
 var socket = io();
 var refresh_rate = 1000 / 35;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var MAP_SIZE = 1000;
+var MAP_SIZE = 2000;
 var drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
 var gameStates = [];
@@ -100,11 +100,11 @@ socket.emit('new player');
 initState();
 // update player movement to server
 
-// setInterval(function () {
-//   socket.emit('movement', movement);
-//   if (bullet) socket.emit('shoot-bullet', movement.angle);
-//   if (bomb) socket.emit('shoot-bomb');
-// }, refresh_rate);
+ setInterval(function () {
+   socket.emit('movement', movement);
+   if (bullet) socket.emit('shoot-bullet', movement.angle);
+   if (bomb) socket.emit('shoot-bomb');
+ }, refresh_rate);
 
 var time1,time2;
 socket.on('state', function (players,time) {
@@ -119,7 +119,7 @@ socket.on('bombs-update', function (bomb_locs) {
 });
 
 socket.on('asteroids_update', function (asteroid) {
-  //drawGame.asteroids = asteroid;
+  drawGame.asteroids = asteroid;
 });
 
 
@@ -138,12 +138,12 @@ setInterval(function() {
 }, refresh_rate)
 
 
-// function Draw() {
-//   drawTime1 = performance.now();
-//   drawGame.players = getCurrentState();
-//   drawGame.all(socket.id, movement);
-//   console.log("Time since last draw: ", drawTime1 - drawTime2);
-//   drawTime2 = drawTime1;
-//   window.requestAnimationFrame(Draw);
-// }
-// window.requestAnimationFrame(Draw);
+ function Draw() {
+   drawTime1 = performance.now();
+   drawGame.players = getCurrentState();
+   drawGame.all(socket.id, movement);
+   console.log("Time since last draw: ", drawTime1 - drawTime2);
+   drawTime2 = drawTime1;
+   window.requestAnimationFrame(Draw);
+ }
+ window.requestAnimationFrame(Draw);

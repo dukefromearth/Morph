@@ -1,8 +1,8 @@
 /*jshint esversion: 6 */
 import Ability from './ability.mjs';
 import Gun from './gun.mjs';
-import Seeker from './seeker.mjs';
 import Points from './points.mjs';
+import Seeker from './seeker.mjs';
 
 export default class Player {
     constructor(socketID, game_width, game_height) {
@@ -10,11 +10,10 @@ export default class Player {
         this.x = Math.floor(Math.random() * (game_width - 75));
         this.y = Math.floor(Math.random() * (game_height - 75));
         this.health = new Ability("health", 100, 1);
-        this.speed = new Ability("speed", 15, 1);
+        this.speed = new Ability("speed", 5, 1);
         this.shield = new Ability("shield", 0, 0);
         this.gun = new Gun("blaster", 3, 1);
         this.seeker = new Seeker("seeker", 1, 1);
-        //this.seeker = {};
         this.bomb = {};
         this.size = 70;
         this.gun_angle = 1;
@@ -86,10 +85,18 @@ export default class Player {
             seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
             seeker_damage: this.seeker.damage
         }
-        console.log(this.serialized.gun_bullets);
+        //console.log(this.serialized.gun_bullets);
     }
     get_serialized(){
         this.serialize();
         return this.serialized
+    }
+    //upgrades an ability at random (Anything in the Ability class)
+    upgrade_ability(){
+
+    }
+    //upgrades a random gun stat (damage speed reload time)
+    upgrade_gun(){
+
     }
 }

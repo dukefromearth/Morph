@@ -7,6 +7,7 @@ export default class Bullet extends Projectile {
         this.id = Math.random();
         this.decay = 3000;
         this.distance_from_origin = 0;
+        this.speed = speed;
     }
     update(){
         this.updatePos();

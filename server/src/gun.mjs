@@ -1,13 +1,16 @@
 import Ability from "./ability.mjs";
 import Bullet from "./bullet_2.mjs";
 
+//NOTE FOR ANYONE ON THIS
+//ACCUMULATOR DNE
+
 export default class Gun extends Ability {
     constructor(name, max, level) {
         super(name, max, level);
         this.open_bullet_indexes = [];
         this.max_bullets = 250;
         this.time_at_last_shot = 0;
-        this.speed = 1000 / this.accumulator;
+        this.bullet_speed = 15 * this.level;
         this.reload_speed = 3;
         this.bullets_per_second = 1000 / this.reload_speed;
         this.damage = 3;
@@ -21,17 +24,17 @@ export default class Gun extends Ability {
     }
     push_bullet(bullet_x, bullet_y, angle, p_shift) {
         //shoot a bullet directly from the center of the player
-        this.bullets.push(new Bullet(bullet_x, bullet_y, angle, this.accumulator));
+        this.bullets.push(new Bullet(bullet_x, bullet_y, angle, this.bullet_speed));
 
         //shoot bullets to the left or right of the player
         for (var level = 2; level <= this.level; level++) {
             if (!(level % 2)) {
                 var bullet_angle = angle - level * Math.PI / 20;
-                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator));
+                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.bullet_speed));
             }
             else {
                 var bullet_angle = angle + (level - 1) * Math.PI / 20;
-                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator));
+                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.bullet_speed));
             }
         }
         if (p_shift) this.bullets.shift();
