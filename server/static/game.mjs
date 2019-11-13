@@ -110,7 +110,7 @@ var time1,time2;
 socket.on('state', function (players,time) {
   time1 = performance.now();
   processGameUpdate(players,time);
-  //console.log(time1 - time2);
+  console.log("Time since last update: ", time1 - time2);
   time2 = time1;
 });
 
