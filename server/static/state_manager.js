@@ -33,7 +33,7 @@ function currentServerTime() {
 function getBaseUpdate() {
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        //console.log(i,gameUpdates[i].t,serverTime);
+        console.log(i,gameUpdates[i].t,serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }
