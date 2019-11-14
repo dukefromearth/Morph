@@ -1,4 +1,4 @@
-const RENDER_DELAY = 30;
+const RENDER_DELAY = 20;
 
 const gameUpdates = [];
 var gameStart = 0;
