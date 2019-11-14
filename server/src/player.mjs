@@ -14,7 +14,6 @@ export default class Player {
         this.shield = new Ability("shield", 0, 0);
         this.gun = new Gun("blaster", 3, 1);
         this.seeker = new Seeker("seeker", 1, 1);
-        //this.seeker = {};
         this.bomb = {};
         this.size = 70;
         this.gun_angle = 1;

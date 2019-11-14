@@ -125,6 +125,7 @@ export default class DrawGame {
         var bullet;
         for(var bID in player.gun_bullets){
             bullet = player.gun_bullets[bID];
+            console.log(bullet);
             this.bullet(bullet, myPlayer, "img_blast",10*player.gun_damage,10*player.gun_damage);
         }
     }
@@ -197,29 +198,29 @@ export default class DrawGame {
                 }
             }
 
-            //draw bullets
-            for (var bid in this.bullets) {
-                var bullet = this.bullets[bid];
-                if (bullet.is_alive) {
-                    this.bullet(bullet, myPlayer, "img_blast");
-                }
-            }
+            // //draw bullets
+            // for (var bid in this.bullets) {
+            //     var bullet = this.bullets[bid];
+            //     if (bullet.is_alive) {
+            //         this.bullet(bullet, myPlayer, "img_blast");
+            //     }
+            // }
 
-            //draw bullets_2
-            for (var bid in this.bullets_2) {
-                var bullet = this.bullets_2[bid];
-                if (bullet.is_alive) {
-                    this.bullet(bullet, myPlayer, "img_blast");
-                }
-            }
+            // //draw bullets_2
+            // for (var bid in this.bullets_2) {
+            //     var bullet = this.bullets_2[bid];
+            //     if (bullet.is_alive) {
+            //         this.bullet(bullet, myPlayer, "img_blast");
+            //     }
+            // }
 
-            //draw bombs
-            for (var bombID in this.bombs) {
-                var bomb = drawGame.bombs[bombID];
-                this.bomb(bomb, myPlayer);
-            }
-            //clears the bombs array
-            this.bombs = [];
+            // //draw bombs
+            // for (var bombID in this.bombs) {
+            //     var bomb = drawGame.bombs[bombID];
+            //     this.bomb(bomb, myPlayer);
+            // }
+            // //clears the bombs array
+            // this.bombs = [];
 
         }
     }
