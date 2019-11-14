@@ -5,7 +5,7 @@ import DrawGame from './draw_game.mjs';
 import {initState, processGameUpdate, getCurrentState} from './state_manager.js'
 
 var socket = io();
-var refresh_rate = 1000 / 35;
+var refresh_rate = 1000 / 45;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 1000;
