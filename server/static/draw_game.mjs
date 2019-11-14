@@ -173,7 +173,7 @@ export default class DrawGame {
             this.player(myPlayer, myPlayer, "img_ship");
 
             //draw my score
-            //this.score(myPlayer);
+            this.score(myPlayer);
 
             //draw my shield
             this.shield(myPlayer, myPlayer);
