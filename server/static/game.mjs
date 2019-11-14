@@ -119,7 +119,7 @@ socket.on('bombs-update', function (bomb_locs) {
 });
 
 socket.on('asteroids_update', function (asteroid) {
-  //drawGame.asteroids = asteroid;
+  drawGame.asteroids = asteroid;
 });
 
 
