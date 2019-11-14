@@ -58,7 +58,7 @@ export default class Game {
         player.update_pos(data, this.game_width, this.game_height);
     }
     new_bullet(socketID) {
-        console.log("Bullet Created");
+        //console.log("Bullet Created");
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
         player.gun.shoot_gun(player.x, player.y, player.gun_angle, this.counter.bullet++);

@@ -125,7 +125,6 @@ export default class DrawGame {
         var bullet;
         for(var bID in player.gun_bullets){
             bullet = player.gun_bullets[bID];
-            console.log(bullet);
             this.bullet(bullet, myPlayer, "img_blast",10*player.gun_damage,10*player.gun_damage);
         }
     }
