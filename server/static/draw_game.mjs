@@ -50,7 +50,7 @@ export default class DrawGame {
         var player_img = document.getElementById(img_ship);
         this.context.save();
         this.context.translate(canvasX, canvasY);
-        this.context.rotate(player.gun_angle);
+        this.context.rotate(player.angle);
         this.context.drawImage(player_img, 0 - (player.size / 2), 0 - (player.size / 2), player.size, player.size);
         this.context.restore();
     }

@@ -8,6 +8,8 @@ var time_at_last_receipt = 0;
 var average_time_between_server_updates = 1;
 var server_updates_count = 0;
 
+var latest_server_updates = [];
+
 export function initState() {
     gameStart = 0;
     firstServerTimestamp = 0;
@@ -32,9 +34,23 @@ export function processGameUpdate(update, time) {
     console.log("SERVER AVG: ", average_time_between_server_updates);
 }
 
+//Takes in the last 30 server updates and averages them.
+//Skews the average using the longest update time 
 function update_server_update_avg(){
-    average_time_between_server_updates = 
-        ((average_time_between_server_updates * server_updates_count++) + Date.now()-time_at_last_receipt)/server_updates_count;
+    var sum = 0;
+    var max = 0;
+    var update = 0;
+    if(latest_server_updates.length < 30) latest_server_updates.push(Date.now()-time_at_last_receipt);
+    else{
+        latest_server_updates.shift();
+        latest_server_updates.push(Date.now()-time_at_last_receipt);
+    }
+    for(var id in latest_server_updates){
+        update = latest_server_updates[id];
+        if(update > max) max = update;
+        sum+=latest_server_updates[id];
+    }
+    average_time_between_server_updates = (sum+max)/latest_server_updates.length;
     time_at_last_receipt = Date.now();
 }
 
@@ -45,10 +61,9 @@ function currentServerTime() {
 // Returns the index of the base update, the first game update before
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
-    console.log('Getting Base Update');
     const serverTime = currentServerTime()-average_time_between_server_updates;
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        console.log(i, gameUpdates[i].t, serverTime);
+        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }
@@ -94,8 +109,8 @@ function interpolateObject(object1, object2, ratio) {
         return object1;
     } else {
         var angle = Math.atan2(object2.y - object1.y, object2.x - object1.x);
-        object1.x += Math.floor(Math.cos(angle) * object1.speed * ratio);
-        object1.y += Math.floor(Math.sin(angle) * object1.speed * ratio);
+        object1.x += Math.floor(Math.cos(angle) * ratio);
+        object1.y += Math.floor(Math.sin(angle) * ratio);
     }
     return object1;
 }

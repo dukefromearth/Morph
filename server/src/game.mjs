@@ -61,7 +61,7 @@ export default class Game {
         //console.log("Bullet Created");
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
-        player.gun.shoot_gun(player.x, player.y, player.gun_angle, this.counter.bullet++);
+        player.gun.shoot_gun(player.x, player.y, player.angle, this.counter.bullet++);
     }
     new_seeker(socketID) {
         var player = this.players[socketID];
@@ -82,7 +82,7 @@ export default class Game {
             }
         }
         if (closest_player != undefined) {
-            player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.gun_angle);
+            player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.angle);
         }
 
     }

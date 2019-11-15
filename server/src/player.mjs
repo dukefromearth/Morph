@@ -16,7 +16,7 @@ export default class Player {
         this.seeker = new Seeker("seeker", 1, 1);
         this.bomb = {};
         this.size = 70;
-        this.gun_angle = 1;
+        this.angle = 1;
         this.id = socketID;
         this.mousex = 0;
         this.mousey = 0;
@@ -46,15 +46,15 @@ export default class Player {
         }
         this.mousex = data.mousex;
         this.mousey = data.mousey;
-        this.gun_angle = data.angle;
+        this.angle = data.angle;
     }
     serialized_weapon(ammo_type,speed){
         var ammo = [];
         for(var id in ammo_type){
             if (ammo_type[id].is_alive){
                 ammo.push({
-                    x: Math.floor(ammo_type[id].x),
-                    y: Math.floor(ammo_type[id].y),
+                    x: ammo_type[id].x,
+                    y: ammo_type[id].y,
                     speed: speed,
                     id: ammo_type[id].id,
                     angle: ammo_type[id].angle,
@@ -68,9 +68,9 @@ export default class Player {
         this.serialized =  {
             id: this.id,
             speed: this.speed.accumulator,
-            x: Math.floor(this.x),
-            y: Math.floor(this.y),
-            gun_angle: this.gun_angle,
+            x: this.x,
+            y: this.y,
+            angle: this.angle,
             size: this.size,
             health_accumulator: this.health.accumulator,
             health_threshhold: this.health.threshhold,
