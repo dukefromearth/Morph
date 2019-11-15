@@ -1,10 +1,10 @@
-const RENDER_DELAY = -70;
+const RENDER_DELAY = 0;
 
 const gameUpdates = [];
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
-var time_at_last_receipt = 0;
+var time_at_last_receipt = 0;ß
 var average_time_between_server_updates = 1;
 var server_updates_count = 0;
 
@@ -45,7 +45,7 @@ function currentServerTime() {
 // Returns the index of the base update, the first game update before
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
-    const serverTime = currentServerTime();
+    const serverTime = currentServerTime()+average_time_between_server_updates;
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
         if (gameUpdates[i].t <= serverTime) {
             return i;
