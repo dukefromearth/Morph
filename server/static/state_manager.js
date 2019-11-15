@@ -1,4 +1,4 @@
-const RENDER_DELAY = 0;
+const RENDER_DELAY = 60;
 
 const gameUpdates = [];
 var gameStart = 0;
@@ -55,7 +55,7 @@ function update_server_update_avg(){
 }
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - 30 + average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart) - RENDER_DELAY + average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before

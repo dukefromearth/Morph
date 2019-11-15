@@ -85,7 +85,6 @@ export default class Player {
             seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
             seeker_damage: this.seeker.damage
         }
-        console.log(this.serialized.gun_bullets);
     }
     get_serialized(){
         this.serialize();
