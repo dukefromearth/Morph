@@ -10,7 +10,7 @@ export default class Gun extends Ability {
         this.speed = 1000 / this.accumulator;
         this.reload_speed = 3;
         this.bullets_per_second = 1000 / this.reload_speed;
-        this.damage = 3;
+        this.damage = 10;
         this.bullets = [];
     }
     //Checks to see if the time delay since the last shot was good enough

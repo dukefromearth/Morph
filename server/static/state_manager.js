@@ -46,7 +46,7 @@ function currentServerTime() {
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
     console.log('Getting Base Update');
-    const serverTime = currentServerTime()+average_time_between_server_updates;
+    const serverTime = currentServerTime()-average_time_between_server_updates;
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
         console.log(i, gameUpdates[i].t, serverTime);
         if (gameUpdates[i].t <= serverTime) {
