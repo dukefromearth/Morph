@@ -1,5 +1,3 @@
-const RENDER_DELAY = 60;
-
 const gameUpdates = [];
 var gameStart = 0;
 var firstServerTimestamp = 0;
@@ -7,6 +5,7 @@ var firstServerTimestamp = 0;
 var time_at_last_receipt = 0;
 var average_time_between_server_updates = 0;
 var max = 1;
+var server_refresh_rate = 1000/30;
 
 var latest_server_updates = [];
 
@@ -50,7 +49,7 @@ function update_server_update_avg(){
         if(update > max) max = update;
         sum+=latest_server_updates[id];
     }
-    average_time_between_server_updates = sum/latest_server_updates.length;
+    average_time_between_server_updates = Math.max(server_refresh_rate,sum/latest_server_updates.length);
     time_at_last_receipt = Date.now();
 }
 
