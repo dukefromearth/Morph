@@ -17,7 +17,7 @@ export function initState() {
 export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = Date.now();
-        gameStart = time; //Changed from Date.now();
+        gameStart = Date.now(); //Changed from Date.now();
         time_at_last_receipt = Date.now();
     } else {
         update_server_update_avg();
