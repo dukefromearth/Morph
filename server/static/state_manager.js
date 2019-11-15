@@ -6,6 +6,7 @@ var firstServerTimestamp = 0;
 
 var time_at_last_receipt = 0;
 var average_time_between_server_updates = 0;
+var max = 1;
 
 var latest_server_updates = [];
 
@@ -33,13 +34,13 @@ export function processGameUpdate(update, time) {
     console.log("SERVER AVG: ", average_time_between_server_updates);
 }
 
-//Takes in the last 30 server updates and averages them.
+//Takes in the last server updates and averages them.
 //Skews the average using the longest update time 
 function update_server_update_avg(){
     var sum = 0;
-    var max = 0;
     var update = 0;
-    if(latest_server_updates.length < 30) latest_server_updates.push(Date.now()-time_at_last_receipt);
+    if(max > average_time_between_server_updates+1) max--;
+    if(latest_server_updates.length < 100) latest_server_updates.push(Date.now()-time_at_last_receipt);
     else{
         latest_server_updates.shift();
         latest_server_updates.push(Date.now()-time_at_last_receipt);
@@ -49,12 +50,13 @@ function update_server_update_avg(){
         if(update > max) max = update;
         sum+=latest_server_updates[id];
     }
-    average_time_between_server_updates = (sum+max)/latest_server_updates.length;
+    average_time_between_server_updates = sum/latest_server_updates.length;
     time_at_last_receipt = Date.now();
 }
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - RENDER_DELAY + average_time_between_server_updates;
+    console.log(max);
+    return firstServerTimestamp + (Date.now() - gameStart) - (max/average_time_between_server_updates)*average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
