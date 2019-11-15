@@ -16,7 +16,7 @@ export function initState() {
 
 export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
-        firstServerTimestamp = time;
+        firstServerTimestamp = Date.now();
         gameStart = time; //Changed from Date.now();
         time_at_last_receipt = Date.now();
     } else {
@@ -56,7 +56,6 @@ function update_server_update_avg(){
 
 
 function currentServerTime() {
-    max = Math.max(max,1.25*average_time_between_server_updates);
     return firstServerTimestamp + (Date.now() - gameStart) - (max/average_time_between_server_updates)*average_time_between_server_updates;
 }
 
