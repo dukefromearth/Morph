@@ -39,6 +39,9 @@ export default class DrawGame {
 
         this.context.fillStyle = backgroundGradient;
         this.context.fillRect(0, 0, canvas.width, canvas.height);
+        this.context.strokeStyle = 'blue';
+        this.context.lineWidth = 10;
+        this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
 
     player(myPlayer, player, img_ship) {
@@ -108,9 +111,7 @@ export default class DrawGame {
         this.context.restore();
     }
     score(myPlayer) {
-        this.context.strokeStyle = 'blue';
-        this.context.lineWidth = 1;
-        this.context.strokeRect(canvas.width / 2 - myPlayer.x, canvas.height / 2 - myPlayer.y, this.MAP_SIZE, this.MAP_SIZE);
+        
         this.context.fillStyle = 'white';
         this.context.font = "15px Courier";
         this.context.fillText("Health: " + myPlayer.health_accumulator, canvas.width - 150, 20);

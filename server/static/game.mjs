@@ -11,8 +11,6 @@ var context = canvas.getContext('2d');
 var MAP_SIZE = 1000;
 var drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
-var gameStates = [];
-
 var movement = {
   up: false,
   down: false,
