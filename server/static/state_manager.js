@@ -4,7 +4,7 @@ const gameUpdates = [];
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
-var time_at_last_receipt = 0;ß
+var time_at_last_receipt = 0;
 var average_time_between_server_updates = 1;
 var server_updates_count = 0;
 
