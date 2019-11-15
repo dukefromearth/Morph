@@ -5,8 +5,7 @@ var gameStart = 0;
 var firstServerTimestamp = 0;
 
 var time_at_last_receipt = 0;
-var average_time_between_server_updates = 1;
-var server_updates_count = 0;
+var average_time_between_server_updates = 0;
 
 var latest_server_updates = [];
 
@@ -55,13 +54,13 @@ function update_server_update_avg(){
 }
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - RENDER_DELAY - average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart) - RENDER_DELAY + average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
-    const serverTime = currentServerTime()-average_time_between_server_updates;
+    const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
         console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
