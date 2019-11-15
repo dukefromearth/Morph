@@ -57,7 +57,7 @@ function update_server_update_avg(){
 
 
 function currentServerTime() {
-    max = Math.max(server_refresh_rate,max);
+    max = Math.max(2*server_refresh_rate,max);
     return firstServerTimestamp + (Date.now() - gameStart) - (max/average_time_between_server_updates)*average_time_between_server_updates;
 }
 
