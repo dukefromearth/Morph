@@ -54,8 +54,10 @@ function update_server_update_avg(){
     time_at_last_receipt = Date.now();
 }
 
+
+
 function currentServerTime() {
-    console.log(max);
+    max = Math.max(max,2*average_time_between_server_updates);
     return firstServerTimestamp + (Date.now() - gameStart) - (max/average_time_between_server_updates)*average_time_between_server_updates;
 }
 
