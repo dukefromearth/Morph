@@ -4,6 +4,10 @@ const gameUpdates = [];
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
+var time_at_last_receipt = 0;
+var average_time_between_server_updates = 1;
+var server_updates_count = 0;
+
 export function initState() {
     gameStart = 0;
     firstServerTimestamp = 0;
@@ -13,6 +17,9 @@ export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
         gameStart = Date.now();
+        time_at_last_receipt = Date.now();
+    } else {
+        update_server_update_avg();
     }
 
     gameUpdates.push({ update: update, t: time });
@@ -22,6 +29,13 @@ export function processGameUpdate(update, time) {
     if (base > 0) {
         gameUpdates.splice(0, base);
     }
+    console.log("SERVER AVG: ", average_time_between_server_updates);
+}
+
+function update_server_update_avg(){
+    average_time_between_server_updates = 
+        ((average_time_between_server_updates * server_updates_count++) + Date.now()-time_at_last_receipt)/server_updates_count;
+    time_at_last_receipt = Date.now();
 }
 
 function currentServerTime() {
