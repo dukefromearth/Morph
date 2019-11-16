@@ -14,7 +14,7 @@
   "dependencies": {
     "eslint": "^6.5.1",
     "express": "^4.17.1",
-    "jshint": "^2.10.2",
+    "jshint": "^2.10.3",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {},

@@ -25,7 +25,9 @@ export function processGameUpdate(update, time) {
     gameUpdates.push({ update: update, t: time });
 
     // Keep only one game update before the current server time
+    var time = Date.now();
     const base = getBaseUpdate();
+    //console.log("time in getBaseUpdate()", Date.now() - time);
     if (base > 0) {
         gameUpdates.splice(0, base);
     }
@@ -36,7 +38,7 @@ export function processGameUpdate(update, time) {
 function update_server_update_avg() {
     var sum = 0;
     var update = 0;
-    console.log(latest_server_updates);
+    //console.log(latest_server_updates);
     if (max > average_time_between_server_updates + 1) max--;
     if (latest_server_updates.length < 100) latest_server_updates.push(Date.now() - time_at_last_receipt);
     else {
@@ -63,7 +65,7 @@ function currentServerTime() {
 function getBaseUpdate() {
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
+        //console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }
@@ -77,7 +79,7 @@ export function getCurrentState() {
     }
     const base = getBaseUpdate();
     const serverTime = currentServerTime();
-    console.log("BASE:", base, "Length:", gameUpdates.length, "Server Time:", serverTime);
+    //console.log("BASE:", base, "Length:", gameUpdates.length, "Server Time:", serverTime);
     // If base is the most recent update we have, use its state.
     // Else, interpolate between its state and the state of (base + 1).
     if (base < 0) {

@@ -108,7 +108,7 @@ var time1,time2;
 socket.on('state', function (players,time) {
   time1 = performance.now();
   processGameUpdate(players,time);
-  console.log("Time since last update: ", time1 - time2);
+  //console.log("Time since last update: ", time1 - time2);
   time2 = time1;
 });
 
@@ -128,7 +128,7 @@ setInterval(function() {
   drawTime1 = performance.now();
   drawGame.players = getCurrentState();
   drawGame.all(socket.id, movement);
-  console.log("Time since last draw: ", drawTime1 - drawTime2);
+  //console.log("Time since last draw: ", drawTime1 - drawTime2);
   drawTime2 = drawTime1;
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);
