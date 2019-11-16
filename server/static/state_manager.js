@@ -38,7 +38,7 @@ export function processGameUpdate(update, time) {
 function update_server_update_avg() {
     var sum = 0;
     var update = 0;
-    //console.log(latest_server_updates);
+    console.log(latest_server_updates);
     if (max > average_time_between_server_updates + 1) max--;
     if (latest_server_updates.length < 100) latest_server_updates.push(Date.now() - time_at_last_receipt);
     else {
@@ -65,7 +65,7 @@ function currentServerTime() {
 function getBaseUpdate() {
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        //console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
+        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }
