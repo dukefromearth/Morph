@@ -5,7 +5,6 @@ var firstServerTimestamp = 0;
 var time_at_last_receipt = 0;
 var average_time_between_server_updates = 0;
 var max = 1;
-var server_refresh_rate = 1000/30;
 
 var latest_server_updates = [];
 
@@ -17,9 +16,8 @@ export function initState() {
 export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
-        gameStart = Date.now(); //Changed from Date.now();
+        gameStart = Date.now();
         time_at_last_receipt = Date.now();
-        console.log("first time", gameStart - time);
     } else {
         update_server_update_avg();
     }
@@ -31,34 +29,33 @@ export function processGameUpdate(update, time) {
     if (base > 0) {
         gameUpdates.splice(0, base);
     }
-    console.log("SERVER AVG: ", average_time_between_server_updates);
 }
 
 //Takes in the last server updates and averages them.
 //Skews the average using the longest update time 
-function update_server_update_avg(){
+function update_server_update_avg() {
     var sum = 0;
     var update = 0;
     console.log(latest_server_updates);
-    if(max > average_time_between_server_updates+1) max--;
-    if(latest_server_updates.length < 100) latest_server_updates.push(Date.now()-time_at_last_receipt);
-    else{
+    if (max > average_time_between_server_updates + 1) max--;
+    if (latest_server_updates.length < 100) latest_server_updates.push(Date.now() - time_at_last_receipt);
+    else {
         latest_server_updates.shift();
-        latest_server_updates.push(Date.now()-time_at_last_receipt);
+        latest_server_updates.push(Date.now() - time_at_last_receipt);
     }
-    for(var id in latest_server_updates){
+    for (var id in latest_server_updates) {
         update = latest_server_updates[id];
-        if(update > max) max = Math.min(update,200);
-        sum+=latest_server_updates[id];
+        if (update > max) max = Math.min(update, 200);
+        sum += latest_server_updates[id];
     }
-    average_time_between_server_updates = sum/latest_server_updates.length;
+    average_time_between_server_updates = sum / latest_server_updates.length;
     time_at_last_receipt = Date.now();
 }
 
 
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - (max/average_time_between_server_updates)*average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart) - (max / average_time_between_server_updates) * average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
@@ -78,10 +75,9 @@ export function getCurrentState() {
     if (!firstServerTimestamp) {
         return {};
     }
-
     const base = getBaseUpdate();
     const serverTime = currentServerTime();
-    console.log("BASE:", base,"Length:", gameUpdates.length, "Server Time:", serverTime);
+    console.log("BASE:", base, "Length:", gameUpdates.length, "Server Time:", serverTime);
     // If base is the most recent update we have, use its state.
     // Else, interpolate between its state and the state of (base + 1).
     if (base < 0) {
@@ -114,11 +110,13 @@ function interpolateObject(object1, object2, ratio) {
         var angle = Math.atan2(object2.y - object1.y, object2.x - object1.x);
         object1.x += Math.floor(Math.cos(angle) * ratio);
         object1.y += Math.floor(Math.sin(angle) * ratio);
+        //object1.angle = interpolateDirection(object1.angle,object2.angle,ratio);
     }
     return object1;
 }
 
-//This is n^2, shouldn't do this. Switch to a map
+//TODO: This is n^2, shouldn't do this. Switch to a map
+//Run through the current player position as well as their different objects and interpolated
 function interpolatePlayers(players1, players2, ratio) {
     var player1, player2, bullet1, bullet2, seeker1, seeker2;
     for (var id in players1) {
@@ -138,7 +136,6 @@ function interpolatePlayers(players1, players2, ratio) {
                 }
             }
         }
-
         for (var bID in player1.seeker_bullets) {
             seeker1 = player1.seeker_bullets[bID];
             for (var bID2 in player2.seeker_bullets) {
@@ -150,11 +147,6 @@ function interpolatePlayers(players1, players2, ratio) {
         }
     }
     return players1;
-}
-
-function interpolateObjectArray(objects1, objects2, ratio) {
-    console.log(objects1, objects2);
-
 }
 
 // Determines the best way to rotate (cw or ccw) when interpolating a direction.
