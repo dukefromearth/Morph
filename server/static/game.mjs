@@ -130,8 +130,8 @@ socket.on('pop', function(){
     ping_sent = Date.now();
     socket.emit('pip');
   } else {
-    console.log("TCL: ping_avg", ping_avg)
     ping_avg = ping_avg/2;
+    console.log("TCL: ping_avg", ping_avg);
     modifyGamestart(Math.min(110,ping_avg));
   }
 });
