@@ -40,7 +40,10 @@ function update_server_update_avg() {
     var sum = 0;
     var update = 0;
     if (max > average_time_between_server_updates + 1) max--;
-    if (latest_server_updates.length < 100) latest_server_updates.push(Date.now() - time_at_last_receipt);
+    if (latest_server_updates.length < 100) {
+        latest_server_updates.push(Date.now() - time_at_last_receipt);
+        average_time_between_server_updates = RENDER_DELAY;
+    }
     else {
         latest_server_updates.shift();
         latest_server_updates.push(Date.now() - time_at_last_receipt);
@@ -51,7 +54,7 @@ function update_server_update_avg() {
             average_time_between_server_updates = sum / latest_server_updates.length;
         }
     }
-    average_time_between_server_updates = RENDER_DELAY;
+    
     time_at_last_receipt = Date.now();
 }
 
