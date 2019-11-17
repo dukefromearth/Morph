@@ -2,7 +2,7 @@
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
 import DrawGame from './draw_game.mjs';
-import {initState, processGameUpdate, getCurrentState, modifyGameStart} from './state_manager.js'
+import {initState, processGameUpdate, getCurrentState, modifyGamestart} from './state_manager.js'
 
 var socket = io();
 var refresh_rate = 1000 / 60;
@@ -129,18 +129,13 @@ socket.on('pop', function(){
     socket.emit('pip');
   } else {
     console.log("TCL: ping_avg", ping_avg)
-    modifyGameStart(ping_avg/2);
+    modifyGamestart(ping_avg/2);
   }
 });
 
-var drawTime1,drawTime2;
-
 setInterval(function() {
-  drawTime1 = performance.now();
   drawGame.players = getCurrentState();
   drawGame.all(socket.id, movement);
-  //console.log("Time since last draw: ", drawTime1 - drawTime2);
-  drawTime2 = drawTime1;
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);
   if (bomb) socket.emit('shoot-bomb');

@@ -14,7 +14,7 @@ export function initState() {
     firstServerTimestamp = 0;
 }
 
-export function modifyGameStart(avg_ping){
+export function modifyGamestart(avg_ping){
     gameStart+=avg_ping;
 }
 
