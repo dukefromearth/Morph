@@ -52,7 +52,7 @@ function update_server_update_avg() {
         latest_server_updates.push(Date.now() - time_at_last_receipt);
         for (var id in latest_server_updates) {
             update = latest_server_updates[id];
-            if (update > max) max = Math.min(update, 200);
+            if (update > max) max = Math.min(update, 100);
             sum += latest_server_updates[id];
             average_time_between_server_updates = sum / latest_server_updates.length;
         }
