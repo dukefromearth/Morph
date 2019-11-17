@@ -38,7 +38,6 @@ export function processGameUpdate(update, time) {
 function update_server_update_avg() {
     var sum = 0;
     var update = 0;
-    console.log(latest_server_updates);
     if (max > average_time_between_server_updates + 1) max--;
     if (latest_server_updates.length < 100) latest_server_updates.push(Date.now() - time_at_last_receipt);
     else {
