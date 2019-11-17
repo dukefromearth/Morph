@@ -122,8 +122,8 @@ socket.on('asteroids_update', function (asteroid) {
 //Adds that delay to our gamestart in state_manager
 socket.on('pop', function(){
   if(ping_count<100){
-    if(ping_count > 25){
-      ping_avg = (ping_count*ping_avg + (Date.now()-ping_sent))/++ping_count;
+    if(ping_count > 50){
+      ping_avg = ((ping_count-50)*ping_avg + (Date.now()-ping_sent))/(++ping_count-50);
     } else {
       ping_count++;
     }
@@ -132,7 +132,7 @@ socket.on('pop', function(){
   } else {
     console.log("TCL: ping_avg", ping_avg)
     ping_avg = ping_avg/2;
-    modifyGamestart(ping_avg);
+    modifyGamestart(Math.min(110,ping_avg));
   }
 });
 
