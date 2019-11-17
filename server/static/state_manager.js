@@ -1,5 +1,5 @@
+var RENDER_DELAY = 60;
 var gameUpdates = [];
-const RENDER_DELAY = 60;
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
@@ -14,12 +14,12 @@ export function initState() {
     firstServerTimestamp = 0;
 }
 
-export function processGameUpdate(update, time) {
+export function processGameUpdate(update, time, pinged_delay) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
-        console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = Math.min(Date.now(),time+RENDER_DELAY);
-        console.log("TCL: processGameUpdate -> gameStart", gameStart)
+        // console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
+        gameStart = Math.min(Date.now(),time+pinged_delay);
+        // console.log("TCL: processGameUpdate -> gameStart", gameStart)
         
         time_at_last_receipt = Date.now();
     } else {

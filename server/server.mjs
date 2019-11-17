@@ -57,7 +57,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('pip', function() {
-    console.log('ping');
+    // console.log('ping');
     io.sockets.emit('pop');
   });
 

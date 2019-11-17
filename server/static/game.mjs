@@ -97,6 +97,7 @@ socket.on('connection', function (socket) {
     drawGame.players[socket.id].disconnect();
   });
 });
+
 socket.emit('new player');
 initState();
 ping_sent = Date.now();
@@ -113,7 +114,7 @@ socket.emit('pip','ping_sent');
 var time1,time2;
 socket.on('state', function (players,time) {
   time1 = performance.now();
-  processGameUpdate(players,time);
+  processGameUpdate(players,time,ping_avg);
   //console.log("Time since last update: ", time1 - time2);
   time2 = time1;
 });
@@ -127,12 +128,14 @@ socket.on('asteroids_update', function (asteroid) {
 });
 
 socket.on('pop', function(){
-  console.log('pong_received');
-  ping_avg = (ping_count*ping_avg + (Date.now()-ping_sent))/++ping_count;
-  console.log("TCL: ping_count", ping_count)
-  console.log("TCL: ping_avg", ping_avg);
-  ping_sent = Date.now();
-  socket.emit('pip');
+  if(ping_count<400){
+    // console.log('pong_received');
+    ping_avg = (ping_count*ping_avg + (Date.now()-ping_sent))/++ping_count;
+    // console.log("TCL: ping_count", ping_count)
+    // console.log("TCL: ping_avg", ping_avg);
+    ping_sent = Date.now();
+    socket.emit('pip');
+  }
 });
 
 var drawTime1,drawTime2;

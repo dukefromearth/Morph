@@ -24,7 +24,7 @@ export default class Seeker extends Gun {
             enemy = enemies[this.enemies[sID]];
             var new_angle = Math.atan2(enemy.y - bullet.y, enemy.x - bullet.x);
             var abs_diff = Math.abs(new_angle - bullet.angle);
-            console.log(bullet.angle,new_angle);
+            // console.log(bullet.angle,new_angle);
             if(abs_diff > .04 || abs_diff < -.04) {
                 if(new_angle < bullet.angle) bullet.angle -= .04;
                 else bullet.angle += .04;
