@@ -13,7 +13,7 @@ export default class Game {
         this.counter = {bullet: 0, seeker: 0};
         this.asteroid_belt = [];
         this.open_asteroid_indexes = [];
-        this.max_asteroids = GAME_WIDTH / 50;
+        this.max_asteroids = GAME_WIDTH / 5;
         this.bomb = {};
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
