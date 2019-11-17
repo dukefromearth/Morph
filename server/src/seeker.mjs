@@ -5,7 +5,7 @@ export default class Seeker extends Gun {
         super(name, max, level);
         this.enemy_id = enemy_id;
         this.damage = level*10;
-        this.speed = 5;
+        this.speed = 15;
         this.reload_speed = 0.2;
         this.bullets_per_second = 1000 / this.reload_speed;
         this.enemies = []
