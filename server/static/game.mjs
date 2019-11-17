@@ -10,6 +10,9 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 4000;
 var drawGame = new DrawGame(canvas, context, MAP_SIZE);
+var ping_sent = 0;
+var ping_count = 1;
+var ping_avg = 0;
 
 var movement = {
   up: false,
@@ -96,6 +99,9 @@ socket.on('connection', function (socket) {
 });
 socket.emit('new player');
 initState();
+ping_sent = Date.now();
+socket.emit('pip','ping_sent');
+
 // update player movement to server
 
 // setInterval(function () {
@@ -108,7 +114,7 @@ var time1,time2;
 socket.on('state', function (players,time) {
   time1 = performance.now();
   processGameUpdate(players,time);
-  console.log("Time since last update: ", time1 - time2);
+  //console.log("Time since last update: ", time1 - time2);
   time2 = time1;
 });
 
@@ -120,7 +126,14 @@ socket.on('asteroids_update', function (asteroid) {
   drawGame.asteroids = asteroid;
 });
 
-
+socket.on('pop', function(){
+  console.log('pong_received');
+  ping_avg = (ping_count*ping_avg + (Date.now()-ping_sent))/++ping_count;
+  console.log("TCL: ping_count", ping_count)
+  console.log("TCL: ping_avg", ping_avg);
+  ping_sent = Date.now();
+  socket.emit('pip');
+});
 
 var drawTime1,drawTime2;
 
@@ -128,7 +141,7 @@ setInterval(function() {
   drawTime1 = performance.now();
   drawGame.players = getCurrentState();
   drawGame.all(socket.id, movement);
-  console.log("Time since last draw: ", drawTime1 - drawTime2);
+  //console.log("Time since last draw: ", drawTime1 - drawTime2);
   drawTime2 = drawTime1;
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);

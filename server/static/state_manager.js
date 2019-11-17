@@ -25,7 +25,7 @@ export function processGameUpdate(update, time) {
     } else {
         update_server_update_avg();
     }
-    console.log(latest_server_updates);
+    //console.log(latest_server_updates);
     gameUpdates.push({ update: update, t: time });
 
     // Keep only one game update before the current server time
@@ -73,7 +73,7 @@ function getBaseUpdate() {
     
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
+        //console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }

@@ -56,6 +56,11 @@ io.on('connection', function (socket) {
     game.new_seeker(socket.id);
   });
 
+  socket.on('pip', function() {
+    console.log('ping');
+    io.sockets.emit('pop');
+  });
+
   socket.on('shoot-bomb', function () {
     //game.new_bomb(socket.id);
   });
