@@ -18,7 +18,7 @@ export function processGameUpdate(update, time, pinged_delay) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
         // console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = Math.min(Date.now(),time+pinged_delay);
+        gameStart = Math.min(Date.now(),time+pinged_delay/2);
         // console.log("TCL: processGameUpdate -> gameStart", gameStart)
         
         time_at_last_receipt = Date.now();
