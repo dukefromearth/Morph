@@ -1,4 +1,5 @@
-const gameUpdates = [];
+var gameUpdates = [];
+const RENDER_DELAY = 60;
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
@@ -43,13 +44,14 @@ function update_server_update_avg() {
     else {
         latest_server_updates.shift();
         latest_server_updates.push(Date.now() - time_at_last_receipt);
+        for (var id in latest_server_updates) {
+            update = latest_server_updates[id];
+            if (update > max) max = Math.min(update, 200);
+            sum += latest_server_updates[id];
+            average_time_between_server_updates = sum / latest_server_updates.length;
+        }
     }
-    for (var id in latest_server_updates) {
-        update = latest_server_updates[id];
-        if (update > max) max = Math.min(update, 200);
-        sum += latest_server_updates[id];
-    }
-    average_time_between_server_updates = sum / latest_server_updates.length;
+    average_time_between_server_updates = RENDER_DELAY;
     time_at_last_receipt = Date.now();
 }
 
@@ -62,6 +64,7 @@ function currentServerTime() {
 // Returns the index of the base update, the first game update before
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
+    
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
         console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
