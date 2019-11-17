@@ -1,6 +1,7 @@
 
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
+//Duke from Earth
 import DrawGame from './draw_game.mjs';
 import {initState, processGameUpdate, getCurrentState, modifyGamestart} from './state_manager.js'
 
@@ -129,7 +130,8 @@ socket.on('pop', function(){
     socket.emit('pip');
   } else {
     console.log("TCL: ping_avg", ping_avg)
-    modifyGamestart(ping_avg/2);
+    ping_avg = ping_avg/2;
+    modifyGamestart(ping_avg);
   }
 });
 
