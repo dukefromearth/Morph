@@ -57,7 +57,7 @@ function update_server_update_avg() {
 
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - average_time_between_server_updates;//(max / average_time_between_server_updates) * average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart) - (max / average_time_between_server_updates) * average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
