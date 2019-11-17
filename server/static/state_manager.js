@@ -15,14 +15,14 @@ export function initState() {
 }
 
 export function modifyGamestart(avg_ping){
-    gameStart+=avg_ping;
+    gameStart+=avg_ping-RENDER_DELAY;
 }
 
 export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
         console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = time; //Changed from Date.now();
+        gameStart = time+RENDER_DELAY; //Changed from Date.now();
         console.log("TCL: processGameUpdate -> gameStart", gameStart)
         
         time_at_last_receipt = Date.now();
