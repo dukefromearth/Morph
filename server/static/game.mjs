@@ -26,7 +26,6 @@ var movement = {
 
 var bullet = false;
 var bomb = false;
-var asteroid = false;
 
 socket.on('message', function (data) {
   console.log(data);
@@ -58,9 +57,6 @@ document.addEventListener('keydown', function (event) {
     case 16: // Shift
       bomb = true;
       break;
-    case 81: //q temp for asteroid testing
-      asteroid = true;
-      break;
   }
 });
 
@@ -83,9 +79,6 @@ document.addEventListener('keyup', function (event) {
       break;
     case 16: // Shift
       bomb = false;
-      break;
-    case 81: //q for testing asteroids
-      asteroid = false;
       break;
   }
 });

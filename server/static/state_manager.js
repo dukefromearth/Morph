@@ -1,4 +1,4 @@
-var RENDER_DELAY = 60;
+var RENDER_DELAY = 70;
 var gameUpdates = [];
 var gameStart = 0;
 var firstServerTimestamp = 0;
