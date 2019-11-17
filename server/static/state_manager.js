@@ -22,7 +22,7 @@ export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
         console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = Date.now();
+        gameStart = time; //Changed from Date.now();
         console.log("TCL: processGameUpdate -> gameStart", gameStart)
         
         time_at_last_receipt = Date.now();
