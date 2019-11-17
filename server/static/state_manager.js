@@ -17,12 +17,15 @@ export function initState() {
 export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
-        gameStart = Date.now();
+        console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
+        gameStart = Math.min(Date.now(),time+100);
+        console.log("TCL: processGameUpdate -> gameStart", gameStart)
+        
         time_at_last_receipt = Date.now();
     } else {
         update_server_update_avg();
     }
-
+    console.log(latest_server_updates);
     gameUpdates.push({ update: update, t: time });
 
     // Keep only one game update before the current server time
