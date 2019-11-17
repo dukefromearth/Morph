@@ -14,12 +14,16 @@ export function initState() {
     firstServerTimestamp = 0;
 }
 
-export function processGameUpdate(update, time, pinged_delay) {
+export function modifyGameStart(avg_ping){
+    gameStart+=avg_ping;
+}
+
+export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
-        // console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = Math.min(Date.now(),time+RENDER_DELAY);
-        // console.log("TCL: processGameUpdate -> gameStart", gameStart)
+        console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
+        gameStart = Date.now();
+        console.log("TCL: processGameUpdate -> gameStart", gameStart)
         
         time_at_last_receipt = Date.now();
     } else {
@@ -73,7 +77,7 @@ function getBaseUpdate() {
     
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        //console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
+        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
         if (gameUpdates[i].t <= serverTime) {
             return i;
         }

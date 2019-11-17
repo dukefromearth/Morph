@@ -2,7 +2,7 @@
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
 import DrawGame from './draw_game.mjs';
-import {initState, processGameUpdate, getCurrentState} from './state_manager.js'
+import {initState, processGameUpdate, getCurrentState, modifyGameStart} from './state_manager.js'
 
 var socket = io();
 var refresh_rate = 1000 / 60;
@@ -127,14 +127,16 @@ socket.on('asteroids_update', function (asteroid) {
   drawGame.asteroids = asteroid;
 });
 
+//Sends a number of packets back and forth between server to determine the average server ping
+//Adds that delay to our gamestart in state_manager
 socket.on('pop', function(){
   if(ping_count<400){
-    // console.log('pong_received');
     ping_avg = (ping_count*ping_avg + (Date.now()-ping_sent))/++ping_count;
-    // console.log("TCL: ping_count", ping_count)
-    // console.log("TCL: ping_avg", ping_avg);
     ping_sent = Date.now();
     socket.emit('pip');
+  } else {
+    console.log("TCL: ping_avg", ping_avg)
+    modifyGameStart(ping_avg/2);
   }
 });
 
