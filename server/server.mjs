@@ -62,7 +62,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('shoot-bomb', function () {
-    //game.new_bomb(socket.id);
+    game.new_bomb(socket.id);
   });
 });
 

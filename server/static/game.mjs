@@ -3,7 +3,7 @@
 //Thanks to https://github.com/vzhou842
 //Duke from Earth
 import DrawGame from './draw_game.mjs';
-import {initState, processGameUpdate, getCurrentState, modifyGamestart} from './state_manager.js'
+import { getCurrentState, initState, modifyGamestart, processGameUpdate } from './state_manager.js';
 
 var socket = io();
 var refresh_rate = 1000 / 60;
@@ -99,11 +99,6 @@ socket.emit('pip','ping_sent');
 
 // update player movement to server
 
-// setInterval(function () {
-//   socket.emit('movement', movement);
-//   if (bullet) socket.emit('shoot-bullet', movement.angle);
-//   if (bomb) socket.emit('shoot-bomb');
-// }, refresh_rate);
 
 socket.on('state', function (players,time) {
   processGameUpdate(players,time);
