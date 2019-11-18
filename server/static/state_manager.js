@@ -83,7 +83,6 @@ function getBaseUpdate() {
 }
 
 export function getCurrentState() {
-    console.log(gameUpdates);
     if (!firstServerTimestamp) {
         return {};
     }
@@ -102,7 +101,8 @@ export function getCurrentState() {
         const r = (serverTime - baseUpdate.update.time) / (next.update.time - baseUpdate.update.time);
         return {
             players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
-            asteroids: interpolateObjects(baseUpdate.update.asteroids, next.update.asteroids,r)
+            asteroids: interpolateObjects(baseUpdate.update.asteroids, next.update.asteroids,r),
+            bombs: baseUpdate.update.bombs
         };
     }
 }

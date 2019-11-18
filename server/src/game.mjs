@@ -2,8 +2,8 @@
 import Ability from './ability.mjs';
 import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
-import Player from './player.mjs';
 import Gravity from './gravity.mjs';
+import Player from './player.mjs';
 
 'use strict';
 

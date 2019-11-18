@@ -3,7 +3,7 @@
 //Thanks to https://github.com/vzhou842
 //Duke from Earth
 import DrawGame from './draw_game.mjs';
-import { getCurrentState, initState, modifyGamestart, processGameUpdate } from './state_manager.js';
+import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 
 var socket = io();
 var refresh_rate = 1000 / 60;
@@ -99,32 +99,19 @@ socket.on('state', function (state) {
   processGameUpdate(state);
 });
 
-// socket.on('bombs-update', function (bomb_locs) {
-//   drawGame.bombs = bomb_locs;
-// });
+ socket.on('bombs-update', function (bomb_locs) {
+   drawGame.bombs = bomb_locs;
+ });
 
-// socket.on('asteroids_update', function (asteroid) {
-//   drawGame.asteroids = asteroid;
-// });
 
 var current_state = {};
 setInterval(function() {
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
+  drawGame.bombs = current_state.bombs.bomb_locations;
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);
   if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)
-
-
-// function Draw() {
-//   drawTime1 = performance.now();
-//   drawGame.players = getCurrentState();
-//   drawGame.all(socket.id, movement);
-//   console.log("Time since last draw: ", drawTime1 - drawTime2);
-//   drawTime2 = drawTime1;
-//   window.requestAnimationFrame(Draw);
-// }
-// window.requestAnimationFrame(Draw);
