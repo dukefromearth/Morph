@@ -175,7 +175,7 @@ export default class Game {
         //Cycle through every player
         for (var pID in this.players) {
             var player = this.players[pID];
-            
+            this.planet.gravity(player);
             //Check every player against eachother, searching for collisions
             for (var pID_2 in this.players) {
                 var player2 = this.players[pID_2];
@@ -243,6 +243,7 @@ export default class Game {
 
             player.seeker.update_trajectories(this.players_locations);
             this.players_serialized[player.id] = player.get_serialized();
+
             var asteroid;
             for (var aID in this.asteroid_belt) {
                 asteroid = this.asteroid_belt[aID];

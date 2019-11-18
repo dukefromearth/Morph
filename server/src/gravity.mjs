@@ -7,7 +7,7 @@ export default class Gravity extends Projectile{
         this.G = 10;
     }
     distance(object){
-        return Math.sqrt(Math.pow(this.x-object.x,2) + Math.pow(this.y-object.y,2));
+        return Math.sqrt(Math.pow(this.x+this.mass-object.x,2) + Math.pow(this.y-object.y,2))-this.mass;
     }
     force(object,r){
         return (this.G*this.mass*object.mass)/Math.pow(r,2)
@@ -30,10 +30,13 @@ export default class Gravity extends Projectile{
         }
     }
     gravity(object){
-        var r = this.distance(object) - this.mass;
+        var r = this.distance(object);
         var F = this.force(object,r);
         if(F > 1) F = 1;
         var new_angle = this.angle_between(object);
         object.angle = this.rotate_object(object.angle,new_angle,F);
+        console.log(object);
+        object.x += Math.cos(new_angle) * (object.mass-this.mass)*F;
+        object.y += Math.sin(new_angle) * (object.mass-this.mass)*F; 
     }
 }
