@@ -280,21 +280,21 @@ export default class Game {
             }
         }
 
-        //     this.update_bombs();
-        //     if (this.bomb.is_alive) {
-        //         for (var bombID in this.bomb.bomb_locations) {
-        //             var bomb = this.bomb.bomb_locations[bombID];
-        //             for (var playerID in this.players) {
-        //                 var _player = this.players[playerID];
-        //                 if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-        //                     if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-        //                     else {
-        //                         _player.health.sub(0.1);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
+             this.update_bombs();
+             if (this.bomb.is_alive) {
+                 for (var bombID in this.bomb.bomb_locations) {
+                     var bomb = this.bomb.bomb_locations[bombID];
+                     for (var playerID in this.players) {
+                         var _player = this.players[playerID];
+                         if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
+                             if (_player.health.accumulator <= 0) this.revive_player(_player.id);
+                             else {
+                                 _player.health.sub(0.1);
+                             }
+                         }
+                     }
+                 }
+             }
 
     }
 
