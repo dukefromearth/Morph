@@ -8,7 +8,6 @@ export default class Projectile {
         this.speed = speed;
         this.size = 3;
         this.is_alive = true;
-
     }
     updatePos(){
         this.x += Math.cos(this.angle) * this.speed;

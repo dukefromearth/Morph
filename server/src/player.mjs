@@ -3,12 +3,16 @@ import Ability from './ability.mjs';
 import Gun from './gun.mjs';
 import Seeker from './seeker.mjs';
 import Points from './points.mjs';
+import Projectile from './projectile.mjs'
 
-export default class Player {
+export default class Player extends Projectile {
     constructor(socketID, game_width, game_height) {
+        super(
+            Math.floor(Math.random() * (game_width - 75)), 
+            Math.floor(Math.random() * (game_height - 75)),
+            1,
+            3);
         this.image = 'img_ship';
-        this.x = Math.floor(Math.random() * (game_width - 75));
-        this.y = Math.floor(Math.random() * (game_height - 75));
         this.health = new Ability("health", 100, 1);
         this.speed = new Ability("speed", 4, 1);
         this.shield = new Ability("shield", 0, 0);
@@ -16,7 +20,6 @@ export default class Player {
         this.seeker = new Seeker("seeker", 1, 1);
         this.bomb = {};
         this.size = 70;
-        this.angle = 1;
         this.id = socketID;
         this.mousex = 0;
         this.mousey = 0;
@@ -26,6 +29,7 @@ export default class Player {
         this.bomb_speed = 1000;
         this.score = new Points(1);
         this.serialized = {};
+        this.mass = 40;
     }
     update_pos(data, game_width, game_height) {
         if (data.left) {
@@ -74,7 +78,6 @@ export default class Player {
             size: this.size,
             health_accumulator: this.health.accumulator,
             health_threshhold: this.health.threshhold,
-            level: this.level,
             shield_accumulator: this.shield.accumulator,
             shield_level: this.shield.level,
             score_level: this.score.level,
