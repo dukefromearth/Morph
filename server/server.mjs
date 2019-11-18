@@ -56,26 +56,26 @@ io.on('connection', function (socket) {
     game.new_seeker(socket.id);
   });
 
-  socket.on('pip', function() {
-    // console.log('ping');
-    io.sockets.emit('pop');
-  });
-
   socket.on('shoot-bomb', function () {
     //game.new_bomb(socket.id);
   });
 });
+
+function currentState(){
+  var state = {
+    players: game.players_serialized,
+    time: Date.now(),
+    asteroids: game.asteroid_belt
+  }
+  return state;
+}
 
 
 
 setInterval(function () {
   if (num_users) {
     game.update();
-    io.sockets.emit('state', game.players_serialized,Date.now());
-    io.sockets.emit('asteroids_update', game.asteroid_belt);
-    if (game.bomb.is_alive) {
-      io.sockets.emit('bombs-update', game.bomb.bomb_locations);
-    }
+    io.sockets.emit('state', currentState());
   }
 }, refresh_rate);
 

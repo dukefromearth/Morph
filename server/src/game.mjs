@@ -3,6 +3,7 @@ import Ability from './ability.mjs';
 import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
 import Player from './player.mjs';
+import Gravity from './gravity.mjs';
 
 'use strict';
 
@@ -28,6 +29,7 @@ export default class Game {
         ];
         this.players_locations = {};
         this.players_serialized = {};
+        this.planet = new Gravity(GAME_WIDTH/2,GAME_HEIGHT/2,0,0,10);
     }
     get_bullet_id(){
         return this.counter.bullet++;
@@ -182,6 +184,7 @@ export default class Game {
                 for (var bID in player.gun.bullets) {
                     var bullet = player.gun.bullets[bID];
                     bullet.update();
+                    this.planet.gravity(bullet);
                     //Bullet is not always removed every update, ensure that it is allive before detecting collision
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
@@ -240,7 +243,6 @@ export default class Game {
 
             player.seeker.update_trajectories(this.players_locations);
             this.players_serialized[player.id] = player.get_serialized();
-
             var asteroid;
             for (var aID in this.asteroid_belt) {
                 asteroid = this.asteroid_belt[aID];
