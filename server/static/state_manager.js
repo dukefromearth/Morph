@@ -1,11 +1,12 @@
 var RENDER_DELAY = 100;
 var gameUpdates = [];
+var gameStartOrigin = 0;
 var gameStart = 0;
 var firstServerTimestamp = 0;
 
 var time_at_last_receipt = 0;
 var average_time_between_server_updates = 0;
-var max = 1;
+var max_time_between_server_updates = 1;
 
 var latest_server_updates = [];
 
@@ -22,9 +23,8 @@ export function processGameUpdate(update, time) {
     if (!firstServerTimestamp) {
         firstServerTimestamp = time;
         console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
-        gameStart = time+RENDER_DELAY; //Changed from Date.now();
-        console.log("TCL: processGameUpdate -> gameStart", gameStart)
-        
+        gameStart = Date.now();
+        gameStartOrigin = time;
         time_at_last_receipt = Date.now();
     } else {
         update_server_update_avg();
@@ -46,7 +46,7 @@ export function processGameUpdate(update, time) {
 function update_server_update_avg() {
     var sum = 0;
     var update = 0;
-    if (max > average_time_between_server_updates + 1) max--;
+    if (max_time_between_server_updates > average_time_between_server_updates + 1) max_time_between_server_updates--;
     if (latest_server_updates.length < 100) {
         latest_server_updates.push(Date.now() - time_at_last_receipt);
         average_time_between_server_updates = RENDER_DELAY;
@@ -56,19 +56,19 @@ function update_server_update_avg() {
         latest_server_updates.push(Date.now() - time_at_last_receipt);
         for (var id in latest_server_updates) {
             update = latest_server_updates[id];
-            if (update > max) max = Math.min(update, 100);
+            if (update > max_time_between_server_updates) max_time_between_server_updates = Math.min(update, 100);
             sum += latest_server_updates[id];
             average_time_between_server_updates = sum / latest_server_updates.length;
         }
     }
-    
+    gameStart = gameStartOrigin + average_time_between_server_updates;
     time_at_last_receipt = Date.now();
 }
 
 
 
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - (max / average_time_between_server_updates) * average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart) - (max_time_between_server_updates / average_time_between_server_updates) * average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
