@@ -19,21 +19,19 @@ export function modifyGamestart(avg_ping){
     gameStart+=avg_ping-RENDER_DELAY;
 }
 
-export function processGameUpdate(update, time) {
+export function processGameUpdate(update) {
     if (!firstServerTimestamp) {
-        firstServerTimestamp = time;
+        firstServerTimestamp = update.time;
         console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
         gameStart = Date.now();
-        gameStartOrigin = time;
+        gameStartOrigin = update.time;
         time_at_last_receipt = Date.now();
     } else {
         update_server_update_avg();
     }
     //console.log(latest_server_updates);
-    gameUpdates.push({ update: update, t: time });
-
-    // Keep only one game update before the current server time
-    var time = Date.now();
+    gameUpdates.push({update});
+    
     const base = getBaseUpdate();
     //console.log("time in getBaseUpdate()", Date.now() - time);
     if (base > 0) {
@@ -56,7 +54,7 @@ function update_server_update_avg() {
         latest_server_updates.push(Date.now() - time_at_last_receipt);
         for (var id in latest_server_updates) {
             update = latest_server_updates[id];
-            if (update > max_time_between_server_updates) max_time_between_server_updates = Math.min(update, 100);
+            if (update > max_time_between_server_updates) max_time_between_server_updates = Math.min(update, 150);
             sum += latest_server_updates[id];
             average_time_between_server_updates = sum / latest_server_updates.length;
         }
@@ -74,11 +72,10 @@ function currentServerTime() {
 // Returns the index of the base update, the first game update before
 // current server time, or -1 if N/A.
 function getBaseUpdate() {
-    
     const serverTime = currentServerTime();
     for (let i = gameUpdates.length - 1; i >= 0; i--) {
-        console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
-        if (gameUpdates[i].t <= serverTime) {
+        //console.log(i, "Update time: ", gameUpdates[i].t, "Server Time: ", serverTime);
+        if (gameUpdates[i].update.time <= serverTime) {
             return i;
         }
     }
@@ -86,6 +83,7 @@ function getBaseUpdate() {
 }
 
 export function getCurrentState() {
+    console.log(gameUpdates);
     if (!firstServerTimestamp) {
         return {};
     }
@@ -101,10 +99,11 @@ export function getCurrentState() {
     } else {
         const baseUpdate = gameUpdates[base];
         const next = gameUpdates[base + 1];
-        const r = (serverTime - baseUpdate.t) / (next.t - baseUpdate.t);
-        var interpolated;
-        interpolated = interpolatePlayers(baseUpdate.update, next.update, r);
-        return interpolated;
+        const r = (serverTime - baseUpdate.update.time) / (next.update.time - baseUpdate.update.time);
+        return {
+            players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
+            asteroids: interpolateObjects(baseUpdate.update.asteroids, next.update.asteroids,r)
+        };
     }
 }
 
@@ -124,7 +123,7 @@ function interpolateObject(object1, object2, ratio) {
         var angle = Math.atan2(object2.y - object1.y, object2.x - object1.x);
         object1.x += Math.floor(Math.cos(angle) * ratio);
         object1.y += Math.floor(Math.sin(angle) * ratio);
-        //object1.angle = interpolateDirection(object1.angle,object2.angle,ratio);
+        object1.angle = interpolateDirection(object1.angle,object2.angle,ratio);
     }
     return object1;
 }
@@ -161,6 +160,20 @@ function interpolatePlayers(players1, players2, ratio) {
         }
     }
     return players1;
+}
+
+function interpolateObjects(objects1,objects2,ratio){
+    var object1,object2;
+    for(var id in objects1){
+        object1 = objects1[id];
+        for(var id2 in objects2){
+            object2 = objects2[id2];
+            if(object1.id === object2.id){
+                object1 = interpolateObject(object1,object2,ratio);
+            }
+        }
+    }
+    return objects1;
 }
 
 // Determines the best way to rotate (cw or ccw) when interpolating a direction.

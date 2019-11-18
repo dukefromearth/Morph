@@ -11,9 +11,6 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var MAP_SIZE = 4000;
 var drawGame = new DrawGame(canvas, context, MAP_SIZE);
-var ping_sent = 0;
-var ping_count = 1;
-var ping_avg = 0;
 
 var movement = {
   up: false,
@@ -94,45 +91,27 @@ socket.on('connection', function (socket) {
 
 socket.emit('new player');
 initState();
-ping_sent = Date.now();
-socket.emit('pip','ping_sent');
 
 // update player movement to server
 
 
-socket.on('state', function (players,time) {
-  processGameUpdate(players,time);
-
+socket.on('state', function (state) {
+  processGameUpdate(state);
 });
 
-socket.on('bombs-update', function (bomb_locs) {
-  drawGame.bombs = bomb_locs;
-});
+// socket.on('bombs-update', function (bomb_locs) {
+//   drawGame.bombs = bomb_locs;
+// });
 
-socket.on('asteroids_update', function (asteroid) {
-  drawGame.asteroids = asteroid;
-});
+// socket.on('asteroids_update', function (asteroid) {
+//   drawGame.asteroids = asteroid;
+// });
 
-//Sends a number of packets back and forth between server to determine the average server ping
-//Adds that delay to our gamestart in state_manager
-socket.on('pop', function(){
-  if(ping_count<100){
-    if(ping_count > 50){
-      ping_avg = ((ping_count-50)*ping_avg + (Date.now()-ping_sent))/(++ping_count-50);
-    } else {
-      ping_count++;
-    }
-    ping_sent = Date.now();
-    socket.emit('pip');
-  } else {
-    ping_avg = ping_avg/2;
-    console.log("TCL: ping_avg", ping_avg);
-    modifyGamestart(Math.min(110,ping_avg));
-  }
-});
-
+var current_state = {};
 setInterval(function() {
-  drawGame.players = getCurrentState();
+  current_state = getCurrentState();
+  drawGame.players = current_state.players;
+  drawGame.asteroids = current_state.asteroids;
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);

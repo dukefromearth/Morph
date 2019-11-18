@@ -14,5 +14,4 @@ export default class Bullet extends Projectile {
         this.updatePos();
         this.distance_from_origin += this.speed;
     }
-
 }
