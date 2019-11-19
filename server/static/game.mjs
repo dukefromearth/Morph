@@ -33,7 +33,7 @@ function updateDirection(x,y){
   movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
-document.addEventListener('touchmove', function(event) {
+window.addEventListener('touchmove', function(event) {
   const touch = event.touches[1];
   updateDirection(touch.clientX, touch.clientY);
 })
