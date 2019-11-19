@@ -30,43 +30,101 @@ socket.on('message', function (data) {
 });
 
 function updateDirection(x,y){
-  movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
+  return Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
 canvas.addEventListener('touchmove', function(event) {
   event.preventDefault();
   const touch1 = event.touches[0];
-  updateDirection(touch1.clientX, touch1.clientY);
+  movement.angle = updateDirection(touch1.clientX, touch1.clientY);
 })
 
 canvas.addEventListener('touchstart', function(event){
   event.preventDefault();
   const touch = event.touches[1];
-  if(touch.clientX < canvas.width/2-canvas.width/6) {
-    movement.left = true;
-    movement.right = false;
-  }
-  if(touch.clientX > canvas.width/2+canvas.width/6) {
-    movement.left = false;
+  const direction = updateDirection(touch.clientX, touch.clientY);
+  //down right
+  if (direction < Math.PI/8-Math.PI/16){
     movement.right = true;
-  }
-  if(touch.clientY < canvas.height/2-canvas.height/6) {
-    movement.up = true;
-    movement.down = false;
-  }
-  if(touch.clientY > canvas.height/2+canvas.height/6) {
     movement.down = true;
+    movement.left = false;
     movement.up = false;
   }
+  //down
+  else if (direction < 2*Math.PI/8-Math.PI/16){
+    movement.right = false;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down left
+  else if (direction < 3*Math.PI/8-Math.PI/16){
+    movement.right = false;
+    movement.down = true;
+    movement.left = true;
+    movement.up = false;
+  }
+  //left
+  else if (direction < 4*Math.PI/8-Math.PI/16){
+    movement.right = false;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //up left
+  else if (direction < 5*Math.PI/8-Math.PI/16){
+    movement.right = false;
+    movement.down = false;
+    movement.left = true;
+    movement.up = true;
+  }
+  //up
+  else if (direction < 6*Math.PI/8-Math.PI/16){
+    movement.right = false;
+    movement.down = false;
+    movement.left = false;
+    movement.up = true;
+  }
+  //up right
+  else if (direction < 7*Math.PI/8-Math.PI/16){
+    movement.right = true;
+    movement.down = false;
+    movement.left = false;
+    movement.up = true;
+  }
+  //right
+  else{
+    movement.right = true;
+    movement.down = false;
+    movement.left = false;
+    movement.up = false;
+  }
+
+  // if(touch.clientX < canvas.width/2-canvas.width/6) {
+  //   movement.left = true;
+  //   movement.right = false;
+  // }
+  // if(touch.clientX > canvas.width/2+canvas.width/6) {
+  //   movement.left = false;
+  //   movement.right = true;
+  // }
+  // if(touch.clientY < canvas.height/2-canvas.height/6) {
+  //   movement.up = true;
+  //   movement.down = false;
+  // }
+  // if(touch.clientY > canvas.height/2+canvas.height/6) {
+  //   movement.down = true;
+  //   movement.up = false;
+  // }
 })
 
-canvas.addEventListener("mousemove", function (event) {
+document.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
-  updateDirection(movement.mousex,movement.mousey);
+  movement.angle = updateDirection(movement.mousex,movement.mousey);
 });
 
-canvas.addEventListener('keydown', function (event) {
+document.addEventListener('keydown', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = true;
@@ -89,7 +147,7 @@ canvas.addEventListener('keydown', function (event) {
   }
 });
 
-canvas.addEventListener('keyup', function (event) {
+document.addEventListener('keyup', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = false;
@@ -111,24 +169,6 @@ canvas.addEventListener('keyup', function (event) {
       break;
   }
 });
-
-
-// Prevent scrolling when touching the canvas
-document.body.addEventListener("touchstart", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchend", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchmove", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
@@ -155,6 +195,7 @@ socket.on('state', function (state) {
 
 var current_state = {};
 setInterval(function() {
+  console.log(movement.angle);
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
