@@ -36,7 +36,7 @@ function updateDirection(x, y) {
 canvas.addEventListener('touchmove', function (event) {
   event.preventDefault();
   const touch = event.touches[0];
-  movement.angle = updateDirection(touch0.clientX, touch1.clientY);
+  movement.angle = updateDirection(touch.clientX, touch.clientY);
 })
 
 canvas.addEventListener('touchstart', function (event) {
