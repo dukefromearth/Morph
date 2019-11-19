@@ -138,7 +138,7 @@ export default class Game {
         else this.planets.push(new_planet);
     }
     detect_collision(projectile1, projectile2) {
-        if (Math.abs(projectile1.x - projectile2.x) < projectile1.size / 2 + projectile2.size / 2 && Math.abs(projectile1.y - projectile2.y) < projectile1.size + projectile2.size) {
+        if (Math.abs(projectile1.x - projectile2.x) < projectile1.mass / 2 + projectile2.mass / 2 && Math.abs(projectile1.y - projectile2.y) < projectile1.mass + projectile2.mass) {
             return true;
         }
         else return false;
