@@ -33,22 +33,7 @@ function updateDirection(x,y){
   movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
-// Prevent scrolling when touching the canvas
-document.body.addEventListener("touchstart", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchend", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
-document.body.addEventListener("touchmove", function (e) {
-  if (e.target == canvas) {
-    e.preventDefault();
-  }
-}, false);
+
 
 canvas.addEventListener('touchmove', function(event) {
   const touch1 = event.touches[0];
@@ -104,7 +89,7 @@ canvas.addEventListener('keydown', function (event) {
   }
 });
 
-window.addEventListener('keyup', function (event) {
+canvas.addEventListener('keyup', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = false;
@@ -127,6 +112,23 @@ window.addEventListener('keyup', function (event) {
   }
 });
 
+
+// Prevent scrolling when touching the canvas
+document.body.addEventListener("touchstart", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchend", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchmove", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
