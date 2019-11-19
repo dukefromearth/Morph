@@ -38,13 +38,13 @@ window.addEventListener('touchmove', function(event) {
   updateDirection(touch.clientX, touch.clientY);
 })
 
-document.addEventListener("mousemove", function (event) {
+window.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
   updateDirection(movement.mousex,movement.mousey);
 });
 
-document.addEventListener('keydown', function (event) {
+window.addEventListener('keydown', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = true;
@@ -67,7 +67,7 @@ document.addEventListener('keydown', function (event) {
   }
 });
 
-document.addEventListener('keyup', function (event) {
+window.addEventListener('keyup', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = false;
