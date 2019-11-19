@@ -141,7 +141,6 @@ export default class DrawGame {
         }
     }
     planet(myPlayer, planet){
-        console.log(planet);
         var planet_img = document.getElementById("planet_01");
         const canvasX = canvas.width / 2 + planet.x - myPlayer.x;
         const canvasY = canvas.height / 2 + planet.y - myPlayer.y;
