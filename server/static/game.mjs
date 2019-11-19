@@ -44,7 +44,7 @@ canvas.addEventListener('touchstart', function (event) {
   const touch = event.touches[0];
   const direction = updateDirection(touch.clientX, touch.clientY);
   //right
-  if (direction > -Math.PI / 16 && direction < Math.PI / 16) {
+  if (direction > -Math.PI / 16 && direction < 0 || direction > 0 && direction < Math.PI / 16) {
     movement.right = true;
     movement.down = false;
     movement.left = false;
@@ -72,7 +72,7 @@ canvas.addEventListener('touchstart', function (event) {
     movement.up = false;
   }
   //left
-  else if (direction > 7 * Math.PI / 16 && direction < -7 * Math.PI / 16) {
+  else if (direction < Math.PI && direction > 7 * Math.PI / 16 || direction > -Math.PI && direction < -7 * Math.PI / 16) {
     movement.right = false;
     movement.down = false;
     movement.left = true;
