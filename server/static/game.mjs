@@ -179,7 +179,6 @@ socket.on('bombs-update', function (bomb_locs) {
 
 var current_state = {};
 setInterval(function () {
-  console.log(movement.angle);
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
