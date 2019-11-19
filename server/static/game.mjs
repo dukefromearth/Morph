@@ -85,7 +85,7 @@ canvas.addEventListener('touchstart', function (event) {
     movement.left = true;
     movement.up = true;
   }
-  //up up and away
+  //up
   else if (direction > -5 * Math.PI / 8 && direction < -3 * Math.PI / 8) {
     movement.right = false;
     movement.down = false;
