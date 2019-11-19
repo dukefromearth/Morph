@@ -161,9 +161,9 @@ export default class DrawGame {
     }
 
     all(socket_id, movement) {
+        if(!this.players) return;
         var myPlayer = this.players[socket_id];
         if (myPlayer != undefined) {
-            
 
             //draw background
             this.background(myPlayer.x, myPlayer.y);

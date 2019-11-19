@@ -81,6 +81,8 @@ document.addEventListener('keyup', function (event) {
   }
 });
 
+document.removeEventListener('keyup', event);
+
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
   
@@ -109,10 +111,10 @@ setInterval(function() {
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
-  if(current_state.bombs.is_alive){
-    drawGame.bombs = current_state.bombs.bomb_locations;
-  }
-  else drawGame.bombs = [];
+  // if(current_state.bombs.is_alive){
+  //   drawGame.bombs = current_state.bombs.bomb_locations;
+  // }
+  // else drawGame.bombs = [];
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);

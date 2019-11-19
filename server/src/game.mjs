@@ -150,11 +150,6 @@ export default class Game {
         }
     }
     create_random_asteroid() {
-        const used = process.memoryUsage();
-        console.log("\nAsteroid");
-        for (let key in used) {
-        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
-        }
         const rand = Math.random();
         const x = Math.random() * this.game_width;
         const y = Math.random() * this.game_height;
@@ -182,11 +177,6 @@ export default class Game {
         }
         this.update_players_serialized();
         
-        used = process.memoryUsage();
-        console.log("\nUpdate Before Players");
-        for (let key in used) {
-        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
-        }
         //Cycle through every player
         for (var pID in this.players) {
             var player = this.players[pID];
@@ -295,12 +285,6 @@ export default class Game {
                     }
                 }
             }
-        }
-
-        used = process.memoryUsage();
-        console.log("\nUpdate After Players");
-        for (let key in used) {
-        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
         }
 
              this.update_bombs();
