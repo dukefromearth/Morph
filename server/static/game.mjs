@@ -57,19 +57,19 @@ canvas.addEventListener('touchmove', function(event) {
 
 canvas.addEventListener('touchstart', function(event){
   const touch = event.touches[1];
-  if(touch.clientX < canvas.width/2) {
+  if(touch.clientX < canvas.width/2-canvas.width/6) {
     movement.left = true;
     movement.right = false;
   }
-  if(touch.clientX > canvas.width/2) {
+  if(touch.clientX > canvas.width/2+canvas.width/6) {
     movement.left = false;
     movement.right = true;
   }
-  if(touch.clientY < canvas.height/2) {
+  if(touch.clientY < canvas.height/2-canvas.height/6) {
     movement.up = true;
     movement.down = false;
   }
-  if(touch.clientY > canvas.height/2) {
+  if(touch.clientY > canvas.height/2+canvas.height/6) {
     movement.down = true;
     movement.up = false;
   }
