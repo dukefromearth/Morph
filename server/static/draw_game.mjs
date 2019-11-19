@@ -197,6 +197,7 @@ export default class DrawGame {
                     this.asteroid(asteroid, myPlayer);
                 }
             }
+
              //draw bombs
              for (var bombID in this.bombs) {
                  var bomb = this.bombs[bombID];

@@ -71,8 +71,6 @@ function currentState(){
   return state;
 }
 
-
-
 setInterval(function () {
   if (num_users) {
     game.update();

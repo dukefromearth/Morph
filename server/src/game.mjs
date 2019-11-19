@@ -192,7 +192,7 @@ export default class Game {
                             player.score.add(player2.gun.damage);
                             if (player2.shield.accumulator > 0) player2.shield.sub(player.gun.damage / player2.shield.level);
                             else player2.health.sub(player.gun.damage);
-                            player.seeker.kill_bullet(bullet, bID);
+                            player.gun.kill_bullet(bullet, bID);
                             if (player2.health.accumulator <= 0) {
                                 var rand_index;
                                 //Drop number of upgrades equal to player level
