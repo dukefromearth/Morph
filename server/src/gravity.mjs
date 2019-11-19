@@ -2,8 +2,7 @@ import Projectile from './projectile.mjs';
 
 export default class Gravity extends Projectile{
     constructor(x,y,angle,speed,mass){
-        super(x,y,angle,speed);
-        this.mass = mass;
+        super(x,y,angle,speed,mass);
         this.G = 10;
     }
     distance(object){

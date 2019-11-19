@@ -109,7 +109,7 @@ export default class Game {
     new_asteroid(x, y, type) {
         var rand = Math.random();
         const angle = rand * 360;
-        var new_asteroid = new Asteroid(x, y, angle, type, 1);
+        var new_asteroid = new Asteroid(x, y, angle, type, 1,5);
         if (this.asteroid_belt.length >= this.max_asteroids && this.open_asteroid_indexes.length < 1) {
             this.asteroid_belt.shift();
             this.asteroid_belt.push(new_asteroid);

@@ -8,7 +8,7 @@ export default class Gun extends Ability {
         this.max_bullets = 10000;
         this.time_at_last_shot = 0;
         this.speed = 1000 / this.accumulator;
-        this.reload_speed = 5;
+        this.reload_speed = 10;
         this.bullets_per_second = 1000 / this.reload_speed;
         this.damage = 10;
         this.bullets = [];
@@ -21,17 +21,17 @@ export default class Gun extends Ability {
     }
     push_bullet(bullet_x, bullet_y, angle, p_shift) {
         //shoot a bullet directly from the center of the player
-        this.bullets.push(new Bullet(bullet_x, bullet_y, angle, this.accumulator));
+        this.bullets.push(new Bullet(bullet_x, bullet_y, angle, this.accumulator, this.damage));
 
         //shoot bullets to the left or right of the player
         for (var level = 2; level <= this.level; level++) {
             if (!(level % 2)) {
                 var bullet_angle = angle - level * Math.PI / 20;
-                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator));
+                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator, this.damage));
             }
             else {
                 var bullet_angle = angle + (level - 1) * Math.PI / 20;
-                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator));
+                this.bullets.push(new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator, this.damage));
             }
         }
         if (p_shift) this.bullets.shift();
@@ -53,17 +53,17 @@ export default class Gun extends Ability {
             if (this.open_bullet_indexes.length > this.level) {
                 var free_bullet_index = this.open_bullet_indexes.pop();
                 var bullet_angle;
-                this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, angle, this.accumulator);
+                this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, angle, this.accumulator, this.damage);
                 //shoot bullets to the left or right of the player
                 for (var level = 2; level <= this.level; level++) {
                     free_bullet_index = this.open_bullet_indexes.pop();
                     if (!(level % 2)) {
                         bullet_angle = angle - level * Math.PI / 20;
-                        this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator);
+                        this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator, this.damage);
                     }
                     else {
                         bullet_angle = angle + (level - 1) * Math.PI / 20;
-                        this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator);
+                        this.bullets[free_bullet_index] = new Bullet(bullet_x, bullet_y, bullet_angle, this.accumulator, this.damage);
                     }
                 }
             }

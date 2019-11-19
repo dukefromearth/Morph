@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 export default class Projectile {
-    constructor(x,y,angle,speed){
+    constructor(x,y,angle,speed, mass){
         this.x = x;
         this.y = y;
         this.angle = angle;
@@ -8,6 +8,7 @@ export default class Projectile {
         this.speed = speed;
         this.size = 3;
         this.is_alive = true;
+        this.mass = mass;
     }
     updatePos(){
         this.x += Math.cos(this.angle) * this.speed;

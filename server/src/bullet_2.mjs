@@ -2,9 +2,8 @@
 import Projectile from './projectile.mjs';
 
 export default class Bullet extends Projectile {
-    constructor(x,y,angle,speed){
-        super(x,y,angle,speed);
-        this.mass = 5;
+    constructor(x,y,angle,speed,mass){
+        super(x,y,angle,speed,mass);
         this.id = Math.random();
         this.decay = 3000;
         this.distance_from_origin = 0;
