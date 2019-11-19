@@ -116,5 +116,5 @@ setInterval(function() {
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
   if (bullet) socket.emit('shoot-bullet', movement.angle);
-  if (bomb) socket.emit('shoot-bomb');
+  //if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)
