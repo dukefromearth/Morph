@@ -59,13 +59,20 @@ canvas.addEventListener('touchstart', function (event) {
   }
   //down
   else if (direction > 3 * Math.PI / 16 && direction < 5 * Math.PI / 16) {
-    movement.right = true;
+    movement.right = false;
     movement.down = true;
     movement.left = false;
     movement.up = false;
   }
   //down left
   else if (direction > 5 * Math.PI / 16 && direction < 7 * Math.PI / 16) {
+    movement.right = false;
+    movement.down = true;
+    movement.left = true;
+    movement.up = false;
+  }
+  //left
+  else if (direction > 7 * Math.PI / 16 && direction < 9 * Math.PI / 16) {
     movement.right = true;
     movement.down = true;
     movement.left = false;
