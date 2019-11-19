@@ -33,6 +33,23 @@ function updateDirection(x,y){
   movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
+// Prevent scrolling when touching the canvas
+document.body.addEventListener("touchstart", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchend", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+document.body.addEventListener("touchmove", function (e) {
+  if (e.target == canvas) {
+    e.preventDefault();
+  }
+}, false);
+
 canvas.addEventListener('touchmove', function(event) {
   const touch1 = event.touches[0];
   updateDirection(touch1.clientX, touch1.clientY);
