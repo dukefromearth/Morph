@@ -5,7 +5,7 @@ export default class Gun extends Ability {
     constructor(name, max, level) {
         super(name, max, level);
         this.open_bullet_indexes = [];
-        this.max_bullets = 250;
+        this.max_bullets = 10000;
         this.time_at_last_shot = 0;
         this.speed = 1000 / this.accumulator;
         this.reload_speed = 500;
