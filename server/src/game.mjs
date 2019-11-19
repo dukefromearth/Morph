@@ -3,6 +3,7 @@ import Ability from './ability.mjs';
 import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
 import Gravity from './gravity.mjs';
+import Planet from './planet.mjs';
 import Player from './player.mjs';
 
 'use strict';
@@ -14,7 +15,10 @@ export default class Game {
         this.counter = {bullet: 0, seeker: 0};
         this.asteroid_belt = [];
         this.open_asteroid_indexes = [];
-        this.max_asteroids = GAME_WIDTH / 5;
+        this.max_asteroids = GAME_WIDTH / 50;
+        this.planets= [];
+        this.open_planet_indexes = [];
+        this.max_planets = 10;
         this.bomb = {};
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
@@ -29,7 +33,6 @@ export default class Game {
         ];
         this.players_locations = {};
         this.players_serialized = {};
-        this.planet = new Gravity(GAME_WIDTH/2,GAME_HEIGHT/2,0,0,10);
     }
     get_bullet_id(){
         return this.counter.bullet++;
@@ -120,6 +123,20 @@ export default class Game {
         }
         else this.asteroid_belt.push(new_asteroid);
     }
+    new_planet(x, y, type) {
+        var rand = Math.random();
+        const angle = rand * 360;
+        var new_planet = new Planet(x, y, angle, type, 1,Math.max(rand*250,50));
+        if (this.planets.length >= this.max_planets && this.open_planet_indexes.length < 1) {
+            this.planets.shift();
+            this.planets.push(new_planet);
+        }
+        else if (this.open_planet_indexes.length > 0) {
+            var index = this.open_planet_indexes.pop();
+            this.planets[index] = new_planet;
+        }
+        else this.planets.push(new_planet);
+    }
     detect_collision(projectile1, projectile2) {
         if (Math.abs(projectile1.x - projectile2.x) < projectile1.size / 2 + projectile2.size / 2 && Math.abs(projectile1.y - projectile2.y) < projectile1.size + projectile2.size) {
             return true;
@@ -137,6 +154,10 @@ export default class Game {
     kill_asteroid(asteroid, aID) {
         this.open_asteroid_indexes.push(aID);
         asteroid.is_alive = false;
+    }
+    kill_planet(planet, pID){
+        this.open_planet_indexes.push(pID);
+        planet.is_alive = false;
     }
     update_shield() {
         for (var id in this.players) {
@@ -161,6 +182,11 @@ export default class Game {
         else if (rand < .3) this.new_asteroid(x, y, 'l3_shield');
         else this.new_asteroid(x, y, 'health');
     }
+    create_random_planet(){
+        const x = Math.random() * this.game_width;
+        const y = Math.random() * this.game_height;
+        this.new_planet(x,y,"planet_01");
+    }
     update() {
         var used = process.memoryUsage();
         console.log("\nUpdate Beginning");
@@ -172,8 +198,13 @@ export default class Game {
             this.update_health();
         }
         if (this.time_counter % 30 === 1) {
-            this.create_random_asteroid();
             this.update_shield();
+        }
+        if (this.asteroid_belt.length < this.max_asteroids || this.open_asteroid_indexes.length > 0){
+            this.create_random_asteroid();
+        }
+        if (this.planets.length < this.max_planets || this.open_planet_indexes.length > 0){
+            this.create_random_planet();
         }
         this.update_players_serialized();
         
@@ -189,7 +220,21 @@ export default class Game {
                 for (var bID in player.gun.bullets) {
                     var bullet = player.gun.bullets[bID];
                     bullet.update();
-                    this.planet.gravity(bullet);
+
+                    //Check bullets against planets
+                    var closest_planet = {};
+                    var min_distance = this.game_height*this.game_width
+                    for(var planetID in this.planets){
+                        var planet = this.planets[planetID];
+                        var planet_distance = planet.distance(bullet);
+                        if (planet_distance < min_distance){
+                            closest_planet = planet;
+                            min_distance = planet_distance;
+                        }
+                    }
+                    if(closest_planet!= {}) closest_planet.gravity(bullet);
+
+
                     //Bullet is not always removed every update, ensure that it is alive before detecting collision
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
@@ -287,21 +332,26 @@ export default class Game {
             }
         }
 
-             this.update_bombs();
-             if (this.bomb.is_alive) {
-                 for (var bombID in this.bomb.bomb_locations) {
-                     var bomb = this.bomb.bomb_locations[bombID];
-                     for (var playerID in this.players) {
-                         var _player = this.players[playerID];
-                         if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-                             if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-                             else {
-                                 _player.health.sub(0.1);
-                             }
-                         }
-                     }
-                 }
-             }
+        for(var plID in this.planets){
+            var planet = this.planets[plID];
+            planet.updatePos();
+            if(this.out_of_bounds(planet)) this.kill_planet(planet, plID);
+        }
+            //  this.update_bombs();
+            //  if (this.bomb.is_alive) {
+            //      for (var bombID in this.bomb.bomb_locations) {
+            //          var bomb = this.bomb.bomb_locations[bombID];
+            //          for (var playerID in this.players) {
+            //              var _player = this.players[playerID];
+            //              if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
+            //                  if (_player.health.accumulator <= 0) this.revive_player(_player.id);
+            //                  else {
+            //                      _player.health.sub(0.1);
+            //                  }
+            //              }
+            //          }
+            //      }
+            //  }
 
     }
 

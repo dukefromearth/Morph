@@ -65,7 +65,8 @@ function currentState(){
     players: game.players_serialized,
     time: Date.now(),
     asteroids: game.asteroid_belt,
-    bombs: game.bomb
+    bombs: game.bomb,
+    planets: game.planets
   }
   return state;
 }

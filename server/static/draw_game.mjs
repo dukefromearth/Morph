@@ -14,6 +14,7 @@ export default class DrawGame {
         this.players = {};
         this.bullets = [];
         this.bullets_2 = [];
+        this.planets = [];
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -139,6 +140,16 @@ export default class DrawGame {
             this.bullet(seeker, myPlayer, missile_frame,10*player.seeker_damage,3*player.seeker_damage);
         }
     }
+    planet(myPlayer, planet){
+        console.log(planet);
+        var planet_img = document.getElementById("planet_01");
+        const canvasX = canvas.width / 2 + planet.x - myPlayer.x;
+        const canvasY = canvas.height / 2 + planet.y - myPlayer.y;
+        this.context.save();
+        this.context.translate(canvasX, canvasY);
+        this.context.drawImage(planet_img, -planet.mass/2, -planet.mass/2, planet.mass, planet.mass);
+        this.context.restore();
+    }
     movement(myPlayer,movement){
         const canvasX = canvas.width / 2 + myPlayer.x - myPlayer.x;
         const canvasY = canvas.height / 2 + myPlayer.y - myPlayer.y;
@@ -196,6 +207,12 @@ export default class DrawGame {
                 if (asteroid.is_alive) {
                     this.asteroid(asteroid, myPlayer);
                 }
+            }
+
+            //draw all planets
+            for(var planetID in this.planets){
+                var planet = this.planets[planetID];
+                this.planet(myPlayer,planet);
             }
 
              //draw bombs

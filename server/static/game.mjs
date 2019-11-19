@@ -198,7 +198,7 @@ setInterval(function() {
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
-  console.log(drawGame.asteroids);
+  drawGame.planets = current_state.planets;
     // if(current_state.bombs.is_alive){
   //   drawGame.bombs = current_state.bombs.bomb_locations;
   // }
