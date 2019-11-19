@@ -18,7 +18,7 @@ export default class Game {
         this.max_asteroids = GAME_WIDTH / 50;
         this.planets= [];
         this.open_planet_indexes = [];
-        this.max_planets = 10;
+        this.max_planets = 30;
         this.bomb = {};
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;

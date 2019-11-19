@@ -20,6 +20,8 @@ export function modifyGamestart(avg_ping){
 }
 
 export function processGameUpdate(update) {
+    console.log("Average ping: ", average_time_between_server_updates);
+    console.log("Worst Ping: ", max_time_between_server_updates);
     if (!firstServerTimestamp) {
         firstServerTimestamp = update.time;
         console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
