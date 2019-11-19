@@ -8,7 +8,7 @@ export default class Gun extends Ability {
         this.max_bullets = 10000;
         this.time_at_last_shot = 0;
         this.speed = 1000 / this.accumulator;
-        this.reload_speed = 500;
+        this.reload_speed = 5;
         this.bullets_per_second = 1000 / this.reload_speed;
         this.damage = 10;
         this.bullets = [];

@@ -19,7 +19,7 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-var refresh_rate = 1000 / 40;
+var refresh_rate = 1000 / 30;
 var port_num = 5000;
 
 app.set('port', port_num);
@@ -61,7 +61,7 @@ io.on('connection', function (socket) {
 });
 
 function currentState(){
-  var state = {
+  const state = {
     players: game.players_serialized,
     time: Date.now(),
     asteroids: game.asteroid_belt,
@@ -69,10 +69,9 @@ function currentState(){
   }
   return state;
 }
-var used;
+
 setInterval(function () {
-  used = null;
-  used = process.memoryUsage();
+  const used = process.memoryUsage();
         console.log("\nUpdate Beginning");
         for (let key in used) {
         console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
