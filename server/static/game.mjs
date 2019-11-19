@@ -29,10 +29,19 @@ socket.on('message', function (data) {
   console.log(data);
 });
 
+function updateDirection(x,y){
+  movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
+}
+
+document.addEventListener('touchmove', function(event) {
+  const touch = event.touches[1];
+  updateDirection(touch.clientX, touch.clientY);
+})
+
 document.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
-  movement.angle = Math.atan2(movement.mousey - canvas.height / 2, movement.mousex - canvas.width / 2);
+  updateDirection(movement.mousex,movement.mousey);
 });
 
 document.addEventListener('keydown', function (event) {
@@ -81,7 +90,6 @@ document.addEventListener('keyup', function (event) {
   }
 });
 
-document.removeEventListener('keyup', event);
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
