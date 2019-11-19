@@ -150,6 +150,11 @@ export default class Game {
         }
     }
     create_random_asteroid() {
+        const used = process.memoryUsage();
+        console.log("\nAsteroid");
+        for (let key in used) {
+        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+        }
         const rand = Math.random();
         const x = Math.random() * this.game_width;
         const y = Math.random() * this.game_height;
@@ -162,6 +167,11 @@ export default class Game {
         else this.new_asteroid(x, y, 'health');
     }
     update() {
+        var used = process.memoryUsage();
+        console.log("\nUpdate Beginning");
+        for (let key in used) {
+        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+        }
         this.time_counter++;
         if (this.time_counter % 60 === 1) {
             this.update_health();
@@ -172,20 +182,25 @@ export default class Game {
         }
         this.update_players_serialized();
         
+        used = process.memoryUsage();
+        console.log("\nUpdate Before Players");
+        for (let key in used) {
+        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+        }
         //Cycle through every player
         for (var pID in this.players) {
             var player = this.players[pID];
-            this.planet.gravity(player);
+            //this.planet.gravity(player);
             //Check every player against eachother, searching for collisions
             for (var pID_2 in this.players) {
                 var player2 = this.players[pID_2];
-                var p_same_player = player === player2;
+                var p_same_player = (player === player2);
                 //Check collisions against bullets
                 for (var bID in player.gun.bullets) {
                     var bullet = player.gun.bullets[bID];
                     bullet.update();
                     this.planet.gravity(bullet);
-                    //Bullet is not always removed every update, ensure that it is allive before detecting collision
+                    //Bullet is not always removed every update, ensure that it is alive before detecting collision
                     //If players are equal, don't check (Can't collide with own bullets)
                     if (bullet.is_alive && !p_same_player) {
                         if (this.detect_collision(player2, bullet)) {
@@ -241,6 +256,8 @@ export default class Game {
                 }
             }
 
+
+
             player.seeker.update_trajectories(this.players_locations);
             this.players_serialized[player.id] = player.get_serialized();
 
@@ -278,6 +295,12 @@ export default class Game {
                     }
                 }
             }
+        }
+
+        used = process.memoryUsage();
+        console.log("\nUpdate After Players");
+        for (let key in used) {
+        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
         }
 
              this.update_bombs();

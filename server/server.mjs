@@ -6,7 +6,6 @@ import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
 
-
 var __dirname = path.resolve(path.dirname(''));
 
 const HOST = process.env.HOST || '0.0.0.0';
@@ -73,7 +72,9 @@ function currentState(){
 
 setInterval(function () {
   if (num_users) {
+    console.time('update');
     game.update();
+    console.timeEnd('update');
     io.sockets.emit('state', currentState());
   }
 }, refresh_rate);
