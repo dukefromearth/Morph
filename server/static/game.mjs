@@ -33,12 +33,12 @@ function updateDirection(x,y){
   movement.angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
-window.addEventListener('touchmove', function(event) {
+canvas.addEventListener('touchmove', function(event) {
   const touch1 = event.touches[0];
   updateDirection(touch1.clientX, touch1.clientY);
 })
 
-window.addEventListener('touchstart', function(event){
+canvas.addEventListener('touchstart', function(event){
   const touch = event.touches[1];
   if(touch.clientX < canvas.width/2) {
     movement.left = true;
@@ -58,13 +58,13 @@ window.addEventListener('touchstart', function(event){
   }
 })
 
-window.addEventListener("mousemove", function (event) {
+canvas.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
   updateDirection(movement.mousex,movement.mousey);
 });
 
-window.addEventListener('keydown', function (event) {
+canvas.addEventListener('keydown', function (event) {
   switch (event.keyCode) {
     case 65: // A
       movement.left = true;
