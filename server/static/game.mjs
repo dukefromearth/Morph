@@ -34,8 +34,28 @@ function updateDirection(x,y){
 }
 
 window.addEventListener('touchmove', function(event) {
+  const touch1 = event.touches[0];
+  updateDirection(touch1.clientX, touch1.clientY);
+})
+
+window.addEventListener('touchstart', function(event){
   const touch = event.touches[1];
-  updateDirection(touch.clientX, touch.clientY);
+  if(touch.clientX < canvas.width/2) {
+    movement.left = true;
+    movement.right = false;
+  }
+  if(touch.clientX > canvas.width/2) {
+    movement.left = false;
+    movement.right = true;
+  }
+  if(touch.clientY < canvas.height/2) {
+    movement.up = true;
+    movement.down = false;
+  }
+  if(touch.clientY > canvas.height/2) {
+    movement.down = true;
+    movement.up = false;
+  }
 })
 
 window.addEventListener("mousemove", function (event) {
