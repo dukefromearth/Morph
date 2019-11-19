@@ -29,89 +29,55 @@ socket.on('message', function (data) {
   console.log(data);
 });
 
-function updateDirection(x,y){
+function updateDirection(x, y) {
   return Math.atan2(y - canvas.height / 2, x - canvas.width / 2);
 }
 
-canvas.addEventListener('touchmove', function(event) {
+canvas.addEventListener('touchmove', function (event) {
   event.preventDefault();
-  const touch1 = event.touches[0];
-  movement.angle = updateDirection(touch1.clientX, touch1.clientY);
+  const touch = event.touches[0];
+  movement.angle = updateDirection(touch0.clientX, touch1.clientY);
 })
 
-canvas.addEventListener('touchstart', function(event){
+canvas.addEventListener('touchstart', function (event) {
   event.preventDefault();
-  const touch = event.touches[1];
+  const touch = event.touches[0];
   const direction = updateDirection(touch.clientX, touch.clientY);
-
-  if(direction < Math.PI/16  || direction > Math.PI-Math.PI/16){
+  //right
+  if (direction > -Math.PI / 16 || direction < Math.PI / 16) {
     movement.right = true;
     movement.down = false;
     movement.left = false;
     movement.up = false;
   }
   //down right
-  // if (direction > Math.PI - 3*Math.PI/16 || direction < Math.PI/16){
-  //   movement.right = true;
-  //   movement.down = true;
-  //   movement.left = false;
-  //   movement.up = false;
-  // }
-  // //down
-  // else if (direction > Math.PI - 3*Math.PI/16){
-  //   movement.right = false;
-  //   movement.down = true;
-  //   movement.left = false;
-  //   movement.up = false;
-  // }
-  // //down left
-  // else if (direction > 3*Math.PI/8+Math.PI/16){
-  //   movement.right = false;
-  //   movement.down = true;
-  //   movement.left = true;
-  //   movement.up = false;
-  // }
-  // //left
-  // else if (direction > 4*Math.PI/8+Math.PI/16){
-  //   movement.right = false;
-  //   movement.down = false;
-  //   movement.left = true;
-  //   movement.up = false;
-  // }
-  // //up left
-  // else if (direction > 5*Math.PI/8+Math.PI/16){
-  //   movement.right = false;
-  //   movement.down = false;
-  //   movement.left = true;
-  //   movement.up = true;
-  // }
-  // //up
-  // else if (direction > 6*Math.PI/8+Math.PI/16){
-  //   movement.right = false;
-  //   movement.down = false;
-  //   movement.left = false;
-  //   movement.up = true;
-  // }
-  // //up right
-  // else if (direction > 7*Math.PI/8+Math.PI/16){
-  //   movement.right = true;
-  //   movement.down = false;
-  //   movement.left = false;
-  //   movement.up = false;
-  // }
-  // //right
-  // else{
-  //   movement.right = true;
-  //   movement.down = false;
-  //   movement.left = false;
-  //   movement.up = false;
-  // }
+  else if (direction > Math.PI / 16 && direction < 3 * Math.PI / 16) {
+    movement.right = true;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down
+  else if (direction > 3 * Math.PI / 16 && direction < 5 * Math.PI / 16) {
+    movement.right = true;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down left
+  else if (direction > 5 * Math.PI / 16 && direction < 7 * Math.PI / 16) {
+    movement.right = true;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+
 })
 
 document.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
-  movement.angle = updateDirection(movement.mousex,movement.mousey);
+  movement.angle = updateDirection(movement.mousex, movement.mousey);
 });
 
 document.addEventListener('keydown', function (event) {
@@ -162,7 +128,7 @@ document.addEventListener('keyup', function (event) {
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
-  
+
   socket.on('disconnect', function () {
     drawGame.players[socket.id].disconnect();
   });
@@ -178,18 +144,19 @@ socket.on('state', function (state) {
   processGameUpdate(state);
 });
 
- socket.on('bombs-update', function (bomb_locs) {
-   drawGame.bombs = bomb_locs;
- });
+socket.on('bombs-update', function (bomb_locs) {
+  drawGame.bombs = bomb_locs;
+});
 
 
 var current_state = {};
-setInterval(function() {
+setInterval(function () {
+  console.log(movement.angle);
   current_state = getCurrentState();
   drawGame.players = current_state.players;
   drawGame.asteroids = current_state.asteroids;
   drawGame.planets = current_state.planets;
-    // if(current_state.bombs.is_alive){
+  // if(current_state.bombs.is_alive){
   //   drawGame.bombs = current_state.bombs.bomb_locations;
   // }
   // else drawGame.bombs = [];
