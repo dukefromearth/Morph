@@ -24,7 +24,7 @@ export default class Gun extends Ability {
         if (curr_time - this.time_at_last_shot > this.bullets_per_second) return true;
         else return false;
     }
-    push_bullet(bullet_x, bullet_y, angle, p_shift, parasite) {
+    push_bullet(bullet_x, bullet_y, angle, p_shift) {
         //shoot a bullet directly from the center of the player
         this.bullets.push(new Bullet(bullet_x, bullet_y, angle, this.accumulator, this.damage,this.parasite));
 

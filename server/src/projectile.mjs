@@ -3,13 +3,14 @@ import Parasite from "./parasite.mjs";
 /*jshint esversion: 6 */
 
 export default class Projectile {
-    constructor(x,y,angle){
+    constructor(x,y,angle,speed,mass){
         this.x = x;
         this.y = y;
         this.angle = angle;
         this.epoch = Date.now();
-        this.speed = 30;
+        this.speed = speed;
         this.size = 3;
+        this.mass = mass
         this.is_alive = true;
     }
     updatePos(){

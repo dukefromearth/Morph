@@ -128,7 +128,8 @@ export default class DrawGame {
         var bullet,img;
         for(var bID in player.gun_bullets){
             bullet = player.gun_bullets[bID];
-            if(bullet.parasite) img = "t-cell";
+            console.log(bullet);
+            if(bullet.parasite.is_alive) img = "t-cell";
             else img = "img_blast";
             this.bullet(bullet, myPlayer, img,player.gun_damage*3,player.gun_damage*3);
         }
@@ -214,7 +215,6 @@ export default class DrawGame {
             //draw all planets
             for(var planetID in this.planets){
                 var planet = this.planets[planetID];
-                console.log(planet);
                 this.planet(myPlayer,planet);
             }
 
