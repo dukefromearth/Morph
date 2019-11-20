@@ -18,9 +18,13 @@ export default class Player {
         this.bullets_per_sec = 1000/10;
         this.time_at_last_bomb = 0;
         this.bomb_speed = 1000;
-        this.score = 0;
-    }
-    update_pos(data,game_width,game_height){
+        this.score = new Points(1);
+        this.serialized = {};
+        this.mass = 40;
+        this.collected_asteroids = 0;    }
+    update_pos(data, game_width, game_height) {
+        if(this.gun.parasite) this.speed.accumulator = 2;
+        else this.speed.accumulator = 4;
         if (data.left) {
             if(this.x > this.size/2)
                 this.x -= this.speed.accumulator;
@@ -41,10 +45,53 @@ export default class Player {
         this.mousey = data.mousey;
         this.gun_angle = data.angle;
     }
-    bullet_available(){
-        var curr_time = Date.now();
-        if (curr_time - this.time_at_last_shot > this.bullets_per_sec) return true;
-        else return false;
+    serialized_weapon(ammo_type,speed){
+        var ammo = [];
+        for(var id in ammo_type){
+            if (ammo_type[id].is_alive){
+                ammo.push({
+                    x: ammo_type[id].x,
+                    y: ammo_type[id].y,
+                    speed: speed,
+                    id: ammo_type[id].id,
+                    angle: ammo_type[id].angle,
+                    parasite: ammo_type[id].parasite.is_alive
+                })
+            }
+        }
+        return ammo;
+        
+    }
+    serialize() {
+        this.serialized =  {
+            id: this.id,
+            speed: this.speed.accumulator,
+            x: this.x,
+            y: this.y,
+            angle: this.angle,
+            size: this.size,
+            health_accumulator: this.health.accumulator,
+            health_threshhold: this.health.threshhold,
+            shield_accumulator: this.shield.accumulator,
+            shield_level: this.shield.level,
+            score_level: this.score.level,
+            score_points: this.score.points,
+            gun_level: this.gun.level,
+            gun_damage: this.gun.damage,
+            gun_bullets: this.serialized_weapon(this.gun.bullets,this.gun.accumulator),
+            seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
+            seeker_damage: this.seeker.damage,
+            collected_asteroids: this.collected_asteroids
+        }
+    }
+    parasite(){
+        this.gun.parasite = true;
+        this.gun.parasite_timer = 500;
+        this.collected_asteroids = 0;
+    }
+    get_serialized(){
+        this.serialize();
+        return this.serialized
     }
 }
 

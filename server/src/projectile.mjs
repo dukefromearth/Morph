@@ -1,3 +1,5 @@
+import Parasite from "./parasite.mjs";
+
 /*jshint esversion: 6 */
 
 export default class Projectile {
@@ -9,5 +11,13 @@ export default class Projectile {
         this.speed = 30;
         this.size = 3;
         this.is_alive = true;
+    }
+    updatePos(){
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+    }
+    parasiticUpdatePos(angle){
+        this.x += Math.cos(angle) * this.speed;
+        this.y += Math.sin(angle) * this.speed;
     }
 }
