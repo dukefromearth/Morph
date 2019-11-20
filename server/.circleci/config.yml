@@ -11,11 +11,20 @@ jobs:
       enabled: true
     steps:
       - run:
-        command: |
-        ssh $SSH_USER@$SSH_HOST     <-'ENDSSH'
-          pkill screen
-          rm -rf Morph
-    ENDSSH
+          name: ssh
+          command: ssh $SSH_USER@$SSH_HOST bash -c '
+            pkill screen;
+            pkill node;
+            pkill nodemon;
+            rm -rf Morph;
+            git clone git@github.com:dukefromearth/Morph.git Morph;
+            cd Morph/server;
+            git checkout parasitic_gameplay;
+            git pull origin parasitic_gameplay;
+            npm i;
+            screen -d -m npm start'
+          
+
     #"pkill screen;rm -rf Morph;git clone git@github.com:dukefromearth/Morph.git Morph2;cd Morph2/server;npm i;npm start"
   build:
     docker:
@@ -54,3 +63,6 @@ workflows:
   deploy:
     jobs:
       - deploy
+×
+Drag and Drop
+The image will be downloaded
