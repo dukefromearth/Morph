@@ -1,20 +1,22 @@
 export default class Points {
-    constructor(){
-        this.level = 1;
+    constructor(level){
+        this.level = level;
         this.levelMultiplier = 100;
-        this.nextLevel = (this.level*this.level * this.levelMultiplier);
+        this.nextLevel = this.level * this.level * this.levelMultiplier;
         this.points = 0;
     }
     upgradeLevel(){
-        if(this.points > this.nextLevel.points) {
+        if(this.points > this.nextLevel) {
             this.level++;
+            this.nextLevel = this.level * this.level * this.levelMultiplier;
             return true;
         } else return false;
     }
-    addPoints(points){
+    add(points){
         this.points += points;
+        this.upgradeLevel();
     }
-    subtractPoints(points){
+    sub(points){
         this.points += points;
     }
 }

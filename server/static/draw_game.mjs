@@ -214,6 +214,7 @@ export default class DrawGame {
             //draw all planets
             for(var planetID in this.planets){
                 var planet = this.planets[planetID];
+                console.log(planet);
                 this.planet(myPlayer,planet);
             }
 

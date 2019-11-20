@@ -35,7 +35,7 @@ export default class Game {
         this.players_serialized = {};
     }
     get_bullet_id(){
-        return this.counter.bullet++;dw
+        return this.counter.bullet++;
     }
     update_players_serialized() {
         var player;

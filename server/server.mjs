@@ -78,7 +78,9 @@ setInterval(function () {
   //       console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
   //       }
   if (num_users) {
+    // console.time('update');
     game.update();
+    // console.timeEnd('update');
     io.sockets.emit('state', currentState());
   }
 }, refresh_rate);
