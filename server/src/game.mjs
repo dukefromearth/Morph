@@ -19,7 +19,7 @@ export default class Game {
         this.max_asteroids = GAME_WIDTH / 50;
         this.planets = [];
         this.open_planet_indexes = [];
-        this.max_planets = 60;
+        this.max_planets = 40;
         this.bomb = {};
         this.game_width = GAME_WIDTH;
         this.game_height = GAME_HEIGHT;
@@ -258,24 +258,21 @@ export default class Game {
                 bullet.update();
                 this.home_planet.reverse_gravity(bullet);
                 //Check bullets against planets
-                var closest_planet;
-                var min_distance = this.game_height * this.game_width
-                for (var planetID in this.planets) {
-                    var planet = this.planets[planetID];
-                    var planet_distance = planet.distance(bullet);
-                    if (planet_distance < min_distance) {
-                        closest_planet = planet;
-                        min_distance = planet_distance;
-                    }
-                }
-
-                if (closest_planet) closest_planet.gravity(bullet);
+                // var closest_planet;
+                // var min_distance = this.game_height * this.game_width
+                // for (var planetID in this.planets) {
+                //     var planet = this.planets[planetID];
+                //     var planet_distance = planet.distance(bullet);
+                //     if (planet_distance < min_distance) {
+                //         closest_planet = planet;
+                //         min_distance = planet_distance;
+                //     }
+                // }
+                // if (closest_planet) closest_planet.gravity(bullet);
                 //Check every player against eachother, searching for collisions
                 for (var pID_2 in this.players) {
                     var player2 = this.players[pID_2];
                     var p_same_player = (player === player2);
-
-
 
                     //Bullet is not always removed every update, ensure that it is alive before detecting collision
                     //If players are equal, don't check (Can't collide with own bullets)
@@ -309,7 +306,6 @@ export default class Game {
             var asteroid;
             for (var aID in this.asteroid_belt) {
                 asteroid = this.asteroid_belt[aID];
-                asteroid.updatePos();
                 if (asteroid.is_alive) {
                     if (this.detect_collision(player, asteroid)) {
                         if (asteroid.parasite) {
@@ -355,6 +351,12 @@ export default class Game {
             }
         }
 
+        for (var aID in this.asteroid_belt) {
+            asteroid = this.asteroid_belt[aID];
+            asteroid.updatePos();
+        }
+
     }
+    
 
 }

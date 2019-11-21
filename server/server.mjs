@@ -74,11 +74,11 @@ function currentState(){
 }
 
 setInterval(function () {
-  // const used = process.memoryUsage();
-  //       console.log("\nUpdate Beginning");
-  //       for (let key in used) {
-  //       console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
-  //       }
+  const used = process.memoryUsage();
+        console.log("\nUpdate Beginning");
+        for (let key in used) {
+        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+        }
   if (num_users) {
     console.time('update');
     game.update();
