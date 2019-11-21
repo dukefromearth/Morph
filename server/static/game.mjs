@@ -1,7 +1,6 @@
-
 /*jshint esversion: 6 */
 //Thanks to https://github.com/vzhou842
-//Duke from Earth
+
 import DrawGame from './draw_game.mjs';
 import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 
@@ -21,9 +20,6 @@ var movement = {
   mousey: 0,
   angle: 0
 };
-
-var bullet = false;
-var bomb = false;
 
 socket.on('message', function (data) {
   console.log(data);
@@ -122,12 +118,6 @@ document.addEventListener('keydown', function (event) {
     case 83: // S
       movement.down = true;
       break;
-    case 32: // Space
-      bullet = true;
-      break;
-    case 16: // Shift
-      bomb = true;
-      break;
   }
 });
 
@@ -145,12 +135,6 @@ document.addEventListener('keyup', function (event) {
     case 83: // S
       movement.down = false;
       break;
-    case 32: // Space
-      bullet = false;
-      break;
-    case 16: // Shift
-      bomb = false;
-      break;
   }
 });
 
@@ -165,30 +149,13 @@ socket.on('connection', function (socket) {
 socket.emit('new player');
 initState();
 
-// update player movement to server
-
-
 socket.on('state', function (state) {
   processGameUpdate(state);
 });
 
-socket.on('bombs-update', function (bomb_locs) {
-  drawGame.bombs = bomb_locs;
-});
 
-
-var current_state = {};
 setInterval(function () {
-  current_state = getCurrentState();
-  drawGame.players = current_state.players;
-  drawGame.asteroids = current_state.asteroids;
-  drawGame.planets = current_state.planets;
-  // if(current_state.bombs.is_alive){
-  //   drawGame.bombs = current_state.bombs.bomb_locations;
-  // }
-  // else drawGame.bombs = [];
+  drawGame.update_state(getCurrentState());
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
-  socket.emit('shoot-bullet', movement.angle);
-  //if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)

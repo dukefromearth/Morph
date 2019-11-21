@@ -1,96 +1,39 @@
 /*jshint esversion: 6 */
-import Ability from './ability.mjs';
-import Gun from './gun.mjs';
-import Seeker from './seeker.mjs';
-import Points from './points.mjs';
-import Projectile from './projectile.mjs'
+import Projectile from './projectile.mjs';
+import Range from './range.mjs';
 
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height) {
-        super(
-            Math.floor(Math.random() * (game_width - 75)), 
-            Math.floor(Math.random() * (game_height - 75)),
-            1,
-            3);
-        this.image = 'img_ship';
-        this.health = new Ability("health", 100, 1);
-        this.speed = new Ability("speed", 4, 1);
-        this.shield = new Ability("shield", 0, 0);
-        this.gun = new Gun("blaster", 10, 1);
-        this.seeker = new Seeker("seeker", 1, 1);
-        this.bomb = {};
-        this.size = 70;
+        let x = Math.floor(Math.random() * (game_width - 75));
+        let y = Math.floor(Math.random() * (game_height - 75));
+        let angle = Math.random() * Math.PI;
+        let speed = 8;
+        let mass = 10;
+        let w = 75;
+        let h = 75;
+        super(x,y,angle,speed,mass,w,h);
         this.id = socketID;
-        this.mousex = 0;
-        this.mousey = 0;
-        this.time_at_last_shot = 0;
-        this.bullets_per_sec = 1000 / 3;
-        this.time_at_last_bomb = 0;
-        this.bomb_speed = 1000;
-        this.score = new Points(1);
-        this.serialized = {};
-        this.mass = 40;
+        this.__b = undefined;
     }
     update_pos(data, game_width, game_height) {
         if (data.left) {
-            if (this.x > this.size / 2)
-                this.x -= this.speed.accumulator;
+            if (this.range.x > this.size / 2)
+                this.range.x -= this.getSpeed();
         }
         if (data.up) {
-            if (this.y > this.size / 2)
-                this.y -= this.speed.accumulator;
+            if (this.range.y > this.size / 2)
+                this.range.y -= this.getSpeed();
         }
         if (data.right) {
-            if (this.x < game_width - this.size / 2)
-                this.x += this.speed.accumulator;
+            if (this.range.x < game_width - this.size / 2)
+                this.range.x += this.getSpeed();
         }
         if (data.down) {
-            if (this.y < game_height - this.size / 2)
-                this.y += this.speed.accumulator;
+            if (this.range.y < game_height - this.size / 2)
+                this.range.y += this.getSpeed();
         }
         this.mousex = data.mousex;
         this.mousey = data.mousey;
         this.angle = data.angle;
-    }
-    serialized_weapon(ammo_type,speed){
-        var ammo = [];
-        for(var id in ammo_type){
-            if (ammo_type[id].is_alive){
-                ammo.push({
-                    x: ammo_type[id].x,
-                    y: ammo_type[id].y,
-                    speed: speed,
-                    id: ammo_type[id].id,
-                    angle: ammo_type[id].angle,
-                })
-            }
-        }
-        return ammo;
-        
-    }
-    serialize() {
-        this.serialized =  {
-            id: this.id,
-            speed: this.speed.accumulator,
-            x: this.x,
-            y: this.y,
-            angle: this.angle,
-            size: this.size,
-            health_accumulator: this.health.accumulator,
-            health_threshhold: this.health.threshhold,
-            shield_accumulator: this.shield.accumulator,
-            shield_level: this.shield.level,
-            score_level: this.score.level,
-            score_points: this.score.points,
-            gun_level: this.gun.level,
-            gun_damage: this.gun.damage,
-            gun_bullets: this.serialized_weapon(this.gun.bullets,this.gun.accumulator),
-            seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
-            seeker_damage: this.seeker.damage
-        }
-    }
-    get_serialized(){
-        this.serialize();
-        return this.serialized
     }
 }
