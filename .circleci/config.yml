@@ -14,14 +14,7 @@ jobs:
           name: ssh
           command: ssh $SSH_USER@$SSH_HOST bash -c '
             pkill screen;
-<<<<<<< HEAD
-            rm -rf Morph;
-            git clone git@github.com:dukefromearth/Morph.git Morph;
-            cd Morph/server;
-            npm i;
-            npm start'
-=======
-            pkill node;
+           pkill node;
             pkill nodemon;
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
