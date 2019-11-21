@@ -1,9 +1,8 @@
 import Gun from './gun.mjs';
 
 export default class Seeker extends Gun {
-    constructor(name, max, level, enemy_id) {
+    constructor(name, max, level) {
         super(name, max, level);
-        this.enemy_id = enemy_id;
         this.damage = level*5;
         this.accumulator = 8;
         this.reload_speed = 0.02;
@@ -52,6 +51,5 @@ export default class Seeker extends Gun {
     shoot_seeker(x, y, enemy, angle) {
         if (enemy === undefined) return;
         this.shoot(x, y, enemy,angle);
-        //this.enemies.push(enemy);
     }
 }

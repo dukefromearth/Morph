@@ -4,7 +4,7 @@ export default class Parasite {
         this.is_alive=false;
     }
     new_angle(distance_from_origin){
-        this.angle += Math.cos(distance_from_origin*2);
+        this.angle += .5 + Math.cos(distance_from_origin);
         return this.angle;
     }
     init(angle){

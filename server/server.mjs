@@ -48,11 +48,12 @@ io.on('connection', function (socket) {
 
   socket.on('movement', function (data) {
     game.update_player_pos(socket.id, data);
-  });
-
-  socket.on('shoot-bullet', function () {
     game.new_bullet(socket.id);
   });
+
+  // socket.on('shoot-bullet', function () {
+  //   game.new_bullet(socket.id);
+  // });
 
   socket.on('shoot-bomb', function () {
     game.new_bomb(socket.id);
@@ -66,7 +67,8 @@ function currentState(){
     asteroids: game.asteroid_belt,
     bombs: game.bomb,
     planets: game.planets,
-    home_planet: game.home_planet
+    home_planet: game.home_planet,
+    collisions: game.collisions.collisions
   }
   return state;
 }
@@ -78,9 +80,9 @@ setInterval(function () {
   //       console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
   //       }
   if (num_users) {
-    // console.time('update');
+    console.time('update');
     game.update();
-    // console.timeEnd('update');
+    console.timeEnd('update');
     io.sockets.emit('state', currentState());
   }
 }, refresh_rate);

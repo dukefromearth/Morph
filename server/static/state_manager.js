@@ -20,11 +20,11 @@ export function modifyGamestart(avg_ping){
 }
 
 export function processGameUpdate(update) {
-    console.log("Average ping: ", average_time_between_server_updates);
-    console.log("Worst Ping: ", max_time_between_server_updates);
+    // console.log("Average ping: ", average_time_between_server_updates);
+    // console.log("Worst Ping: ", max_time_between_server_updates);
     if (!firstServerTimestamp) {
         firstServerTimestamp = update.time;
-        console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
+        // console.log("TCL: processGameUpdate -> firstServerTimestamp", firstServerTimestamp)
         gameStart = Date.now();
         gameStartOrigin = update.time;
         time_at_last_receipt = Date.now();
@@ -106,7 +106,8 @@ export function getCurrentState() {
             asteroids: interpolateObjects(baseUpdate.update.asteroids, next.update.asteroids,r),
             bombs: baseUpdate.update.bombs,
             planets: baseUpdate.update.planets,
-            home_planet: baseUpdate.update.home_planet
+            home_planet: baseUpdate.update.home_planet,
+            collisions: baseUpdate.update.collisions
         };
     }
 }

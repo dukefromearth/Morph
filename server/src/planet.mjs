@@ -17,7 +17,7 @@ export default class Planet extends Gravity {
         var distance2 = 10000;
         for (var id in players) {
             player2 = players[id];
-            distance2 = Math.sqrt(Math.pow(this.y - this.y, 2), Math.pow(this.x - player2.x, 2));
+            distance2 = Math.sqrt(Math.pow(this.y - player2.y, 2), Math.pow(this.x - player2.x, 2));
             if (distance2 < distance1) {
                 closest_player = player2;
                 distance1 = distance2;

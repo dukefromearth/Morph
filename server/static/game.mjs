@@ -185,12 +185,13 @@ setInterval(function () {
   drawGame.asteroids = current_state.asteroids;
   drawGame.planets = current_state.planets;
   drawGame.home_planet = current_state.home_planet;
+  drawGame.new_collisions = current_state.collisions;
   // if(current_state.bombs.is_alive){
   //   drawGame.bombs = current_state.bombs.bomb_locations;
   // }
   // else drawGame.bombs = [];
   drawGame.all(socket.id, movement);
   socket.emit('movement', movement);
-  socket.emit('shoot-bullet', movement.angle);
+  // socket.emit('shoot-bullet', movement.angle);
   //if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)
