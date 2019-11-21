@@ -105,7 +105,8 @@ export function getCurrentState() {
             players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
             asteroids: interpolateObjects(baseUpdate.update.asteroids, next.update.asteroids,r),
             bombs: baseUpdate.update.bombs,
-            planets: baseUpdate.update.planets
+            planets: baseUpdate.update.planets,
+            home_planet: baseUpdate.update.home_planet
         };
     }
 }

@@ -14,10 +14,9 @@ export default class Player extends Projectile {
             3);
         this.image = 'img_ship';
         this.health = new Ability("health", 100, 1);
-        this.speed = new Ability("speed", 4, 1);
+        this.speed = new Ability("speed", 10, 1);
         this.shield = new Ability("shield", 0, 0);
         this.gun = new Gun("blaster", 10, 1);
-        this.seeker = new Seeker("seeker", 1, 1);
         this.bomb = {};
         this.size = 70;
         this.id = socketID;
@@ -88,8 +87,6 @@ export default class Player extends Projectile {
             gun_level: this.gun.level,
             gun_damage: this.gun.damage,
             gun_bullets: this.serialized_weapon(this.gun.bullets,this.gun.accumulator),
-            seeker_bullets: this.serialized_weapon(this.seeker.bullets,this.seeker.accumulator),
-            seeker_damage: this.seeker.damage,
             collected_asteroids: this.collected_asteroids
         }
     }

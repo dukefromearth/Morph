@@ -10,7 +10,7 @@ export default class Planet extends Gravity {
         this.is_alive = true;
     }
     new_seeker(players) {
-        if (this.seeker.bullet_available()) return;
+        if (!this.seeker.bullet_available()) return;
         var player2;
         var closest_player = {};
         var distance1 = 10000;
@@ -24,7 +24,8 @@ export default class Planet extends Gravity {
             }
         }
         if (closest_player != undefined) {
-            this.seeker.shoot_seeker(this.x, this.y, closest_player.id, player.angle);
+            this.seeker.shoot_seeker(this.x, this.y, closest_player.id, this.angle);
         }
     }
+
 }

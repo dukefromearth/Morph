@@ -5,7 +5,7 @@ import Bomb from './bombs.mjs';
 import Gravity from './gravity.mjs';
 import Planet from './planet.mjs';
 import Player from './player.mjs';
-
+import Projectile from './projectile.mjs'
 'use strict';
 
 export default class Game {
@@ -33,6 +33,21 @@ export default class Game {
         ];
         this.players_locations = {};
         this.players_serialized = {};
+        // this.home_planet = new Gravity(
+        //     Math.random() * this.game_width,
+        //     Math.random() * this.game_height,
+        //     Math.random() * Math.PI,
+        //     1,
+        //     1000
+        // );
+        this.home_planet = new Gravity(
+            this.game_width/2,
+            this.game_height/2,
+            Math.random() * Math.PI,
+            0,
+            1000
+        );
+
     }
     get_bullet_id(){
         return this.counter.bullet++;
@@ -68,28 +83,40 @@ export default class Game {
         if (player === undefined) return; //happens if server restarts
         player.gun.shoot_gun(player.x, player.y, player.angle, this.counter.bullet++);
     }
-    new_seeker(socketID) {
+    teleport_player(socketID){
         var player = this.players[socketID];
-        if (player === undefined || player.seeker.level < 1) return; //happens if server restarts
-        if (!player.seeker.bullet_available()) return;
-        var player2;
-        var closest_player = {};
-        var distance1 = 10000;
-        var distance2 = 10000;
-        for (var id in this.players) {
-            player2 = this.players[id];
-            if (player != player2) {
-                distance2 = Math.sqrt(Math.pow(player.y - player2.y, 2), Math.pow(player.x - player2.x, 2));
-                if (distance2 < distance1) {
-                    closest_player = player2;
-                    distance1 = distance2;
-                }
-            }
-        }
-        if (closest_player != undefined) {
-            player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.angle);
-        }
+        player.health.level = 1;
+        player.health.accumulator = 100;
+        player.shield.level = 0;
+        player.gun.level = 1;
+        player.gun.accumulator = 10;
+        player.x = Math.random() * this.game_width;
+        player.y = Math.random() * this.game_height;
+        player.score.add(50*player.collected_asteroids);
+        player.collected_asteroids = 0;
     }
+    // new_seeker(socketID) {
+    //     var player = this.players[socketID];
+    //     if (player === undefined || player.seeker.level < 1) return; //happens if server restarts
+    //     if (!player.seeker.bullet_available()) return;
+    //     var player2;
+    //     var closest_player = {};
+    //     var distance1 = 10000;
+    //     var distance2 = 10000;
+    //     for (var id in this.players) {
+    //         player2 = this.players[id];
+    //         if (player != player2) {
+    //             distance2 = Math.sqrt(Math.pow(player.y - player2.y, 2), Math.pow(player.x - player2.x, 2));
+    //             if (distance2 < distance1) {
+    //                 closest_player = player2;
+    //                 distance1 = distance2;
+    //             }
+    //         }
+    //     }
+    //     if (closest_player != undefined) {
+    //         player.seeker.shoot_seeker(player.x, player.y, closest_player.id, player.angle);
+    //     }
+    // }
     new_bomb(socketID) {
         var player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
@@ -192,6 +219,13 @@ export default class Game {
         }
         player2.parasite();
     }
+    new_home_planet(){
+        var angle = 1;
+        if(Math.random() < 0.5) angle = -1;
+        this.home_planet.x = Math.random() * this.game_width;
+        this.home_planet.y = Math.random() * this.game_height;
+        this.home_planet.angle = angle * Math.random() * Math.PI;
+    }
     update() {
         // var used = process.memoryUsage();
         // console.log("\nUpdate Beginning");
@@ -212,11 +246,30 @@ export default class Game {
             this.create_random_planet();
         }
         this.update_players_serialized();
+
+        if(this.out_of_bounds(this.home_planet)) this.new_home_planet();
+        this.home_planet.updatePos();
         
         //Cycle through every player
         for (var pID in this.players) {
             var player = this.players[pID];
-            //this.planet.gravity(player);
+            this.home_planet.reverse_gravity(player);
+            if(this.home_planet.distance(player) < player.size){
+                this.teleport_player(player.id);
+            }
+            for(var plID in this.planets){
+                planet = this.planets[plID];
+                if(planet.is_alive){
+                    for(var pbID in planet.seeker.bullets){
+                        var seeker = planet.seeker.bullets[pbID];
+                        if(this.detect_collision(player,seeker)){
+                            planet.seeker.kill_seeker(seeker,pbID);
+                            player.health.sub(planet.seeker.damage);
+                            if(player.health.accumulator <= 0) this.revive_player(player.id);
+                        }
+                    }
+                }
+            }
             //Check every player against eachother, searching for collisions
             for (var pID_2 in this.players) {
                 var player2 = this.players[pID_2];
@@ -225,7 +278,7 @@ export default class Game {
                 for (var bID in player.gun.bullets) {
                     var bullet = player.gun.bullets[bID];
                     bullet.update();
-
+                    this.home_planet.reverse_gravity(bullet);
                     //Check bullets against planets
                     var closest_planet;
                     var min_distance = this.game_height*this.game_width
@@ -265,32 +318,9 @@ export default class Game {
                     }
 
                 }
-                for (var bID in player.seeker.bullets) {
-                    var bullet = player.seeker.bullets[bID];
-                    bullet.update();
-                    //Bullet is not always removed every update, ensure that it is allive before detecting collision
-                    //If players are equal, don't check (Can't collide with own bullets)
-                    if (bullet.is_alive && !p_same_player) {
-                        if (this.detect_collision(player2, bullet)) {
-                            player.score.add(player2.seeker.damage);
-                            if (player2.shield.accumulator > 0) player2.shield.sub(player.seeker.damage / player2.shield.level);
-                            else player2.health.sub(player.seeker.damage);
-                            player.seeker.kill_seeker(bullet, bID);
-                            if (player2.health.accumulator <= 0) {
-                                this.drop_asteroids(player2);
-                                this.revive_player(player2.id);
-                            }
-                        }
-                    }
-                    else if (bullet.is_alive) {
-                        if (bullet.distance_from_origin > bullet.decay || this.out_of_bounds(bullet)) {
-                            player.seeker.kill_seeker(bullet, bID);
-                        }
-                    }
-                }
+
             }
 
-            player.seeker.update_trajectories(this.players_locations);
             this.players_serialized[player.id] = player.get_serialized();
 
             var asteroid;
@@ -299,9 +329,7 @@ export default class Game {
                 asteroid.updatePos();
                 if (asteroid.is_alive) {
                     if (this.detect_collision(player, asteroid)) {
-                        console.log(asteroid);
                         if (asteroid.parasite) {
-                            console.log(asteroid);
                             this.drop_asteroids(player);
                         }
                         if (asteroid.type == 'health') {
@@ -337,27 +365,12 @@ export default class Game {
         for(var plID in this.planets){
             var planet = this.planets[plID];
             planet.updatePos();
+            planet.seeker.update_trajectories(this.players_locations);
             if(this.out_of_bounds(planet)) this.kill_planet(planet, plID);
             else {
                 planet.new_seeker(this.players);
-                // console.log(planet.seeker);
             }
         }
-            //  this.update_bombs();
-            //  if (this.bomb.is_alive) {
-            //      for (var bombID in this.bomb.bomb_locations) {
-            //          var bomb = this.bomb.bomb_locations[bombID];
-            //          for (var playerID in this.players) {
-            //              var _player = this.players[playerID];
-            //              if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-            //                  if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-            //                  else {
-            //                      _player.health.sub(0.1);
-            //                  }
-            //              }
-            //          }
-            //      }
-            //  }
 
     }
 

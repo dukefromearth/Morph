@@ -30,12 +30,22 @@ export default class Gravity extends Projectile{
     }
     gravity(object){
         var r = this.distance(object);
-        if(r > 300) return;
+        if(r > this.mass*2) return;
         var F = this.force(object,r);
         if(F > 1) F = 1;
         var new_angle = this.angle_between(object);
         object.angle = this.rotate_object(object.angle,new_angle,F);
         // object.x += Math.cos(new_angle) * (object.mass-this.mass)*F;
         // object.y += Math.sin(new_angle) * (object.mass-this.mass)*F; 
+    }
+    reverse_gravity(object){
+        var r = this.distance(object);
+        if(r > this.mass) return;
+        var F = this.force(object,r);
+        if(F > 1) F = 1;
+        var new_angle = -this.angle_between(object);
+        object.angle = this.rotate_object(object.angle,new_angle,F);
+        object.x -= Math.cos(new_angle) * Math.min(4,Math.abs((object.mass-this.mass))*F);
+        object.y -= Math.sin(new_angle) * Math.min(4,Math.abs((object.mass-this.mass))*F); 
     }
 }

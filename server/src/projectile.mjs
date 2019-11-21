@@ -9,7 +9,7 @@ export default class Projectile {
         this.angle = angle;
         this.epoch = Date.now();
         this.speed = speed;
-        this.size = 3;
+        this.size = mass;
         this.mass = mass
         this.is_alive = true;
     }

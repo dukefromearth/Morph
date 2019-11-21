@@ -52,7 +52,6 @@ io.on('connection', function (socket) {
 
   socket.on('shoot-bullet', function () {
     game.new_bullet(socket.id);
-    game.new_seeker(socket.id);
   });
 
   socket.on('shoot-bomb', function () {
@@ -66,7 +65,8 @@ function currentState(){
     time: Date.now(),
     asteroids: game.asteroid_belt,
     bombs: game.bomb,
-    planets: game.planets
+    planets: game.planets,
+    home_planet: game.home_planet
   }
   return state;
 }

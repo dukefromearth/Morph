@@ -15,6 +15,7 @@ export default class DrawGame {
         this.bullets = [];
         this.bullets_2 = [];
         this.planets = [];
+        this.home_planet = {};
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -124,11 +125,19 @@ export default class DrawGame {
         this.context.fillText("Shield Acc: " + myPlayer.shield_accumulator, canvas.width - 150, 95);
         
     }
+    draw_home_planet(myPlayer, planet){
+        const canvasX = canvas.width / 2 + planet.x - myPlayer.x;
+        const canvasY = canvas.height / 2 + planet.y - myPlayer.y;
+        this.context.save();
+        this.context.translate(canvasX, canvasY);
+        var home_planet_img = document.getElementById("home_planet");
+        this.context.drawImage(home_planet_img, -planet.mass/2, -planet.mass/2, planet.mass, planet.mass);
+        this.context.restore();
+    }
     projectile_weapons(myPlayer, player){
         var bullet,img;
         for(var bID in player.gun_bullets){
             bullet = player.gun_bullets[bID];
-            console.log(bullet);
             if(bullet.parasite.is_alive) img = "t-cell";
             else img = "img_blast";
             this.bullet(bullet, myPlayer, img,player.gun_damage*3,player.gun_damage*3);
@@ -142,6 +151,16 @@ export default class DrawGame {
         for(var sID in player.seeker_bullets){
             seeker = player.seeker_bullets[sID];
             this.bullet(seeker, myPlayer, missile_frame,6*player.seeker_damage,4*player.seeker_damage);
+        }
+    }
+    planet_seeker(myPlayer, player){
+        if (++this.missiles.counter[0] > this.missiles.missiles.length-1)  this.missiles.counter[0] = 0;
+        var index = this.missiles.counter[0];
+        var missile_frame = this.missiles.missiles[index];
+        var seeker;
+        for(var sID in player.seeker.bullets){
+            seeker = player.seeker.bullets[sID];
+            this.bullet(seeker, myPlayer, missile_frame,6*player.seeker.damage,4*player.seeker.damage);
         }
     }
     planet(myPlayer, planet){
@@ -184,6 +203,8 @@ export default class DrawGame {
 
             this.movement(myPlayer,movement);
 
+            this.draw_home_planet(myPlayer, this.home_planet);
+            
             //draw my player
             this.player(myPlayer, myPlayer, "img_ship");
 
@@ -193,6 +214,8 @@ export default class DrawGame {
             //draw my shield
             this.shield(myPlayer, myPlayer);
 
+            
+
             //draw other players
             for (var id in this.players) {
                 var player = this.players[id];
@@ -201,7 +224,6 @@ export default class DrawGame {
                     this.shield(myPlayer, player);
                 }
                 if(player.gun_bullets.length > 0) this.projectile_weapons(myPlayer,player);
-                if(player.seeker_bullets.length > 0) this.seeker(myPlayer,player);
             }
 
             //draw all asteroids
@@ -216,6 +238,7 @@ export default class DrawGame {
             for(var planetID in this.planets){
                 var planet = this.planets[planetID];
                 this.planet(myPlayer,planet);
+                this.planet_seeker(myPlayer,planet);
             }
 
             //  //draw bombs
@@ -223,7 +246,7 @@ export default class DrawGame {
             //      var bomb = this.bombs[bombID];
             //      this.bomb(bomb, myPlayer);
             //  }
-            //  //clears the bombs array
+            //  //clears the bowdmbs array
             // this.bombs = [];
 
         }
