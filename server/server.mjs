@@ -17,7 +17,7 @@ const io = socketIO(server);
 const refresh_rate = 1000 / 30;
 const port_num = 5000;
 
-const stress_test = false;
+const stress_test = true;
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
@@ -52,7 +52,7 @@ io.on('connection', function (socket) {
 //Creates large number of players on screen
 if(stress_test){
   for(let i = 0; i < 30; i++){
-    game.new_player(i.toString() + "abc");
+    game.new_player(Math.random());
   }
 }
 
