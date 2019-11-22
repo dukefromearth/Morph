@@ -38,13 +38,13 @@ export default class DrawGame {
         this.context.lineWidth = 10;
         this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
-    draw_object(center, object, image, rotate) {
+    draw_object(center, object, rotate) {
         const canvasX = canvas.width / 2 + object.x - center.x;
         const canvasY = canvas.height / 2 + object.y - center.y;
-        const img = document.getElementById(image);
+        const img = document.getElementById(object.img);
         this.context.save();
         this.context.translate(canvasX, canvasY);
-        this.context.rotate(object.angle);
+        if(rotate) this.context.rotate(object.angle);
         this.context.drawImage(img, 0 - (object.width / 2), 0 - (object.height / 2), object.width, object.height);
         this.context.restore();
     }
@@ -77,15 +77,15 @@ export default class DrawGame {
             //draw movement
             this.movement(myPlayer,movement);
             //draw my player
-            this.draw_object(myPlayer, myPlayer, "img_ship");
+            this.draw_object(myPlayer, myPlayer, true);
             //draw other players
             for(let id in this.players){
                 let player = this.players[id];
-                this.draw_object(myPlayer, player, "img_ship");
+                this.draw_object(myPlayer, player, true);
             }
             for(let id in this.objects){
                 let object = this.objects[id];
-                this.draw_object(myPlayer, object, "img_ship");
+                this.draw_object(myPlayer, object, true);
             }
         }
     }

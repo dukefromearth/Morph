@@ -11,7 +11,7 @@ export default class Player extends Projectile {
         let mass = 10;
         let w = 75;
         let h = 75;
-        super(socketID,x,y,angle,speed,mass,w,h);
+        super(socketID,x,y,angle,speed,mass,w,h,"img_ship");
         //private
         var _time_at_last_shot = 0;
         var _bullets_per_second = 3;
@@ -58,8 +58,6 @@ export default class Player extends Projectile {
             if (this.y < game_height - this.height / 2)
                 this.y += speed;
         }
-        this.mousex = data.mousex;
-        this.mousey = data.mousey;
         this.angle = data.angle;
     }
 }

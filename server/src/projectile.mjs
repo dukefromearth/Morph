@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 export default class Projectile {
-    constructor(id,x,y,angle, speed, mass, w, h){
+    constructor(id,x,y,angle, speed, mass, w, h,img){
         //public
         this.id = id;
         this.x = x;
@@ -10,7 +10,7 @@ export default class Projectile {
         this.angle = angle;
         this.mass = mass;
         this.is_alive = true;
-
+        this.img = img;
         //private
         var _epoch = Date.now();
         var _speed = speed;
