@@ -157,7 +157,8 @@ socket.on('state', function (state) {
 
 
 setInterval(function () {
+  socket.emit('movement', movement);
+  console.log(getCurrentState());
   drawGame.update_state(getCurrentState());
   drawGame.all(socket.id, movement);
-  socket.emit('movement', movement);
 }, refresh_rate)

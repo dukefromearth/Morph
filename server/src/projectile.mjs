@@ -1,20 +1,34 @@
 /*jshint esversion: 6 */
 export default class Projectile {
-    constructor(x,y,angle, speed, mass, w, h){
+    constructor(id,x,y,angle, speed, mass, w, h){
+        //public
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
         this.angle = angle;
+        this.mass = mass;
+        this.is_alive = true;
+
+        //private
         var _epoch = Date.now();
         var _speed = speed;
+        var _lifetime = 300;
+        this.getLifetime = function() {return _lifetime};
+        this.addLifetime = function(num) {_lifetime += num};
         this.setSpeed = function(speed) {_speed = speed};
         this.getSpeed = function() {return _speed};
         this.getEpoch = function() {return _epoch};
-        this.range = {x: x, y: y, width: w, height: h};
-        this.is_alive = true;
-        this.mass = mass;
-        this.size = w;
+
     }
     updatePos(){
-        console.log("speed", this.getSpeed);
-        this.range.x += Math.cos(this.angle) * this._speed;
-        this.range.y += Math.sin(this.angle) * this._speed; 
+        this.addLifetime(-1);
+        if(this.getLifetime() <= 0){
+            this.is_alive = false;
+            return;
+        }
+        this.x += Math.cos(this.angle) * this.getSpeed();
+        this.y += Math.sin(this.angle) * this.getSpeed();     
     }
 }

@@ -5,9 +5,11 @@ export default class DrawGame {
         this.setCanvasDimensions();
         this.MAP_SIZE = map_size;
         this.players = {};
+        this.objects = {};
     }
     update_state(state){
         this.players = state.players;
+        this.objects = state.objects;
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -36,19 +38,19 @@ export default class DrawGame {
         this.context.lineWidth = 10;
         this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
-    player(myPlayer, player, img_ship) {
-        const canvasX = canvas.width / 2 + player.range.x - myPlayer.range.x;
-        const canvasY = canvas.height / 2 + player.range.y - myPlayer.range.y;
-        const player_img = document.getElementById(img_ship);
+    draw_object(center, object, image, rotate) {
+        const canvasX = canvas.width / 2 + object.x - center.x;
+        const canvasY = canvas.height / 2 + object.y - center.y;
+        const img = document.getElementById(image);
         this.context.save();
         this.context.translate(canvasX, canvasY);
-        this.context.rotate(player.angle);
-        this.context.drawImage(player_img, 0 - (player.size / 2), 0 - (player.size / 2), player.size, player.size);
+        this.context.rotate(object.angle);
+        this.context.drawImage(img, 0 - (object.width / 2), 0 - (object.height / 2), object.width, object.height);
         this.context.restore();
     }
     movement(myPlayer,movement){
-        const canvasX = canvas.width / 2 + myPlayer.range.x - myPlayer.range.x;
-        const canvasY = canvas.height / 2 + myPlayer.range.y - myPlayer.range.y;
+        const canvasX = canvas.width / 2 + myPlayer.x - myPlayer.x;
+        const canvasY = canvas.height / 2 + myPlayer.y - myPlayer.y;
         this.context.save();
         this.context.translate(canvasX-50,canvasY-50);
         if(movement.left){
@@ -67,16 +69,24 @@ export default class DrawGame {
     }
 
     all(socket_id, movement) {
-        console.log(this.players);
         if(!this.players) return;
         let myPlayer = this.players[socket_id];
         if (myPlayer != undefined) {
             //draw background
-            this.background(myPlayer.range.x, myPlayer.range.y);
+            this.background(myPlayer.x, myPlayer.y);
             //draw movement
             this.movement(myPlayer,movement);
             //draw my player
-            this.player(myPlayer, myPlayer, "img_ship");
+            this.draw_object(myPlayer, myPlayer, "img_ship");
+            //draw other players
+            for(let id in this.players){
+                let player = this.players[id];
+                this.draw_object(myPlayer, player, "img_ship");
+            }
+            for(let id in this.objects){
+                let object = this.objects[id];
+                this.draw_object(myPlayer, object, "img_ship");
+            }
         }
     }
 }

@@ -15,8 +15,8 @@
     "eslint": "^6.5.1",
     "express": "^4.17.1",
     "jshint": "^2.10.3",
-    "socket.io": "^2.3.0",
-    "spatial-hash": "0.0.4"
+    "kontra": "^6.9.0",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {},
   "description": ""

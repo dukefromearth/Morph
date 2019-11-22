@@ -5,6 +5,7 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
+import Player from './src/player.mjs';
 
 
 const __dirname = path.resolve(path.dirname(''));
@@ -48,20 +49,27 @@ io.on('connection', function (socket) {
 
 });
 
+  for(let i = 0; i < 40; i++){
+    game.new_player(i);
+  }
+
 function currentState(){
   const state = {
     players:game.players,
+    objects:game.objects,
     time: Date.now()
   }
   return state;
 }
 
+setInterval(function(){
+  if (num_users) {
+    game.update();
+  }
+}, 1000/120);
+
 setInterval(function () {
   if (num_users) {
-    console.time("update");
-    game.update();
-    console.timeEnd("update");
     io.sockets.emit('state', currentState());
   }
 }, refresh_rate);
-
