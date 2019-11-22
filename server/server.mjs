@@ -58,7 +58,9 @@ function currentState(){
 
 setInterval(function () {
   if (num_users) {
+    console.time("update");
     game.update();
+    console.timeEnd("update");
     io.sockets.emit('state', currentState());
   }
 }, refresh_rate);

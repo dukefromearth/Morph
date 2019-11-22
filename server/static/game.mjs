@@ -4,6 +4,8 @@
 import DrawGame from './draw_game.mjs';
 import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 
+var starscreen = false;
+
 var socket = io();
 var refresh_rate = 1000 / 60;
 var canvas = document.getElementById('canvas');

@@ -8,7 +8,7 @@ export default class Game {
         this.game_height = GAME_HEIGHT;
         this.players = {};
         this.range = {x:0,y:0,width: GAME_WIDTH,height: GAME_HEIGHT};
-        this.spatial_hash = new SpatialHash(this.range,400)
+        this.spatial_hash = new SpatialHash(this.range,800)
         this.players = {};
     }
     new_player(socketID) {
@@ -19,8 +19,8 @@ export default class Game {
         delete this.players[socketID];
     }
     revive_player(socketID) {
-        this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
         this.spatial_hash.insert(this.players[socketID]);
+        this.players[socketID] = new Player(socketID, this.game_width, this.game_height);
     }
     update_player_pos(socketID, data) {
         let player = this.players[socketID];
@@ -40,10 +40,10 @@ export default class Game {
     update() {
         for(let id in this.players){
             let player = this.players[id];
-            //console.log(player);
-            this.spatial_hash.update(player);
+            if(!player.__b) this.spatial_hash.insert(player);
+            else this.spatial_hash.update(player,player.__b.id);
+            console.log(this.spatial_hash.query(player.range));
         }
-        console.log(this.spatial_hash);
     }
 
 }

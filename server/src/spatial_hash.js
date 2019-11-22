@@ -32,7 +32,7 @@ class SpatialHash{
         var hEnd = Math.min(~~((bounds.right-this.range.x) / this.cellSize), this._horizontalCells-1);
         var vStart = Math.max(~~((bounds.top-this.range.y) / this.cellSize), 0);
         var vEnd = Math.min(~~((bounds.bottom-this.range.y) / this.cellSize), this._verticalCells-1);
-   
+        
         item.__b = {
             hStart: hStart,
             hEnd: hEnd,
@@ -53,14 +53,14 @@ class SpatialHash{
             this._id = -9e15;
     }
 
-    remove(item) {
+    remove(item,decrement) {
         if (!item.__b) return;
-        var hStart = item.__b.hStart;
-        var hEnd = item.__b.hEnd;
-        var vStart = item.__b.vStart;
-        var vEnd = item.__b.vEnd;
+        let hStart = item.__b.hStart;
+        let hEnd = item.__b.hEnd;
+        let vStart = item.__b.vStart;
+        let vEnd = item.__b.vEnd;
 
-        var i, j, k;
+        let i, j, k;
         for (i = vStart; i <= vEnd; i++) {
             for (j = hStart; j <= hEnd; j++) {
                 k = this.hash[i][j].indexOf(item);
@@ -68,7 +68,7 @@ class SpatialHash{
             }
         }
         if (!(delete item.__b)) item.__b = undefined;
-        this.itemCount--;
+        if (decrement) this.itemCount--;
     }
 
     removeAll(){
@@ -83,9 +83,30 @@ class SpatialHash{
         this.itemCount = 0;
     }
 
-    update(item) {
-        this.remove(item);
-        this.insert(item);
+    update(item,id) {
+        this.remove(item,false);
+        if (!item.range)
+            throw "Exception: item has no range object";
+        var bounds = getBounds(item.range);
+        var hStart = Math.max(~~((bounds.left-this.range.x) / this.cellSize), 0);
+        var hEnd = Math.min(~~((bounds.right-this.range.x) / this.cellSize), this._horizontalCells-1);
+        var vStart = Math.max(~~((bounds.top-this.range.y) / this.cellSize), 0);
+        var vEnd = Math.min(~~((bounds.bottom-this.range.y) / this.cellSize), this._verticalCells-1);
+        
+        item.__b = {
+            hStart: hStart,
+            hEnd: hEnd,
+            vStart: vStart,
+            vEnd: vEnd,
+            id: id
+        };
+
+        var i, j;
+        for (i = vStart; i <= vEnd; i++) {
+            for (j = hStart; j <= hEnd; j++)
+                this.hash[i][j].push(item);
+        }
+
     }
 
     __srch(range, selector, callback, returnOnFirst) {
