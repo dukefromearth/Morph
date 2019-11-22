@@ -75,8 +75,14 @@ function currentState(){
 
 setInterval(function () {
   if (num_users) {
-    io.sockets.emit('state', currentState()); 
     game.update();
+  }
+}, 1000/120);
+
+
+setInterval(function () {
+  if (num_users) {
+    io.sockets.emit('state', currentState()); 
   }
 }, refresh_rate);
 
