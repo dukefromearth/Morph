@@ -92,12 +92,9 @@ export default class Game {
         //Update all bullet positions, delete those that are out of bounds
         this.update_object_positions();
         //Add to rbush
-        for(let id in this.players){
-            this.rbush.insert(this.players[id]);
-        }
-        for(let id in this.objects){
-            this.rbush.insert(this.objects[id]);
-        }
+        const object_array = Object.keys(this.objects).map(i=>this.objects[i])
+        this.rbush.load(object_array);
+
         //console.log("\nAll: ", this.rbush.all(), "\n");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         this.detect_all_collisions();
