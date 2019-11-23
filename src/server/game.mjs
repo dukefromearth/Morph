@@ -1,8 +1,13 @@
 'use strict';
 import Player from './player.mjs';
-import Bullet from './bullet.mjs';
 import Rbush from 'rbush';
 
+/**
+ * Class making something fun and easy.
+ * @param {string} arg1 An argument that makes this more interesting.
+ * @param {Array.<number>} arg2 List of numbers to be processed.
+ * @constructor
+ */
 export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
         this.x = 0;
@@ -12,20 +17,11 @@ export default class Game {
         this.current_id = 0;
         this.players = {};
         this.objects = {};
-        this.rbush = new Rbush();
+        this.tree = new Rbush();
         this.player_count = 0;
     }
     unique_id() {
         return this.current_id++;
-    }
-    new_bullets(player) {
-        if (!player.bullet_available()) return;
-        let angle = player.angle;
-        let unique_id = this.unique_id();
-        let x = player.x + Math.cos(angle) * player.width;
-        let y = player.y + Math.sin(angle) * player.height;
-        let speed = 10;
-        this.objects[unique_id] = new Bullet(unique_id, player.id, x, y, angle, speed, 4, 30, 30, "img_blast");
     }
     new_player(socketID) {
         this.player_count++;
@@ -53,17 +49,23 @@ export default class Game {
         if (projectile.x < 0 || projectile.x > this.width || projectile.y < 0 || projectile.y > this.height) return true;
         else return false;
     }
+    new_bullet(player) {
+        let id = this.unique_id();
+        if(player.gun.bullet_available()){
+            this.objects[id] = player.gun.get_bullet(id,player.id,player.x,player.y,player.angle,player.width,player.height);
+        }
+    }
     add_bullets_to_all_players(){
         for (let id in this.players) {
             let player = this.players[id];
-            this.new_bullets(player);
+            this.new_bullet(player);
         }
     }
     //Updates object positions and removes objects that are out of bounds
     update_object_positions(){
         for (let id in this.objects) {
             let object = this.objects[id];
-            object.updatePos();
+            object.update();
             if (!object.is_alive || this.out_of_bounds(object)) {
                 delete this.objects[id];
             }
@@ -72,11 +74,13 @@ export default class Game {
     detect_all_collisions(){
         for(let id in this.players){
             let player = this.players[id];
-            let close_objects = this.rbush.search(player);
+            let close_objects = this.tree.search(player);
             for(let objID in close_objects){
                 let object = close_objects[objID];
                 if(this.detect_collision(player,object)){
-                    this.rbush.remove(this.objects[objID]);
+                    player.take_damage(object.mass);
+                    if(!player.is_alive) this.revive_player(player.id);
+                    this.tree.remove(this.objects[objID]);
                     delete close_objects[objID];
                     delete this.objects[object.id];
                 }
@@ -84,18 +88,16 @@ export default class Game {
         }
     }
     update() {
-        this.rbush.clear();
+        this.tree.clear();
         //Create random players
-        if(this.player_count < 100) this.new_player('abcdef'+this.player_count);
+        if(this.player_count < 3) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all bullet positions, delete those that are out of bounds
         this.update_object_positions();
-        //Add to rbush
+        //Add to tree
         const object_array = Object.keys(this.objects).map(i=>this.objects[i])
-        this.rbush.load(object_array);
-
-        //console.log("\nAll: ", this.rbush.all(), "\n");
+        this.tree.load(object_array);
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         this.detect_all_collisions();
     }

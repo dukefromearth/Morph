@@ -4,13 +4,12 @@
 import DrawGame from './draw_game.mjs';
 import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 
-
-var socket = io();
-var refresh_rate = 1000 / 60;
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
-var MAP_SIZE = 2000;
-var drawGame = new DrawGame(canvas, context, MAP_SIZE);
+const socket = io();
+const refresh_rate = 1000 / 60;
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
+const MAP_SIZE = 2000;
+const drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
 var movement = {
   up: false,
@@ -159,4 +158,4 @@ setInterval(function () {
   socket.emit('movement', movement);
   drawGame.update_state(getCurrentState());
   drawGame.all(socket.id, movement);
-}, refresh_rate)
+}, refresh_rate);

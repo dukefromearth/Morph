@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 import Projectile from './projectile.mjs';
+import Gun from './abilities/gun.mjs'
+import Health from './abilities/health.mjs';
 
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height) {
@@ -7,40 +9,24 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 4;
+        let speed = 10;
         let mass = 10;
         let w = 75;
         let h = 75;
-        super(socketID,x,y,angle,speed,mass,w,h,"img_ship","player");
-        //private
-        var _time_at_last_shot = 0;
-        var _bullets_per_second = 10;
-        var _reload_speed = 1000/_bullets_per_second;
-        this.getTimeAtLastShot = function() {return _time_at_last_shot};
-        this.setTimeAtLastShot = function() {_time_at_last_shot = Date.now()};
-        this.getReloadSpeed = function() {return _reload_speed};
-        this.addReloadSpeed = function(num) {_bullets_per_second+=num};
-
-    }
-    //Boolean - checks if enough time has lapsed between shots
-    bullet_available(){
-        let time = Date.now();
-        if (time - this.getTimeAtLastShot() > this.getReloadSpeed()) {
-            this.setTimeAtLastShot();
-            return true;
-        }
-        else return false;
+        super(socketID, x, y, angle, speed, mass, w, h, "img_ship", "player");
+        this.gun = new Gun();
+        this.health = new Health(1,10);
     }
     //Void - Updates the players position
     update_pos(data, game_width, game_height) {
         //Check for diagonal movements
         var speed = this.getSpeed();
         let count = 0;
-        if(data.left) count++;
-        if(data.right) count++;
-        if(data.up) count++;
-        if(data.down) count++;
-        if (count > 1) speed = speed*0.7;
+        if (data.left) count++;
+        if (data.right) count++;
+        if (data.up) count++;
+        if (data.down) count++;
+        if (count > 1) speed = speed * 0.7;
         //Update player movement
         if (data.left) {
             if (this.x > this.width / 2)
@@ -60,5 +46,9 @@ export default class Player extends Projectile {
         }
         this.angle = data.angle;
         this.update_min_max();
+    }
+    take_damage(x){
+        this.health.hit(x);
+        if(this.health.accumulator < 0) this.is_alive = false;
     }
 }

@@ -4,7 +4,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import Game from './src/game.mjs';
+import Game from './server/game.mjs';
 
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
@@ -16,8 +16,6 @@ const server = http.Server(app);
 const io = socketIO(server);
 const refresh_rate = 1000 / 30;
 const port_num = 5000;
-
-const stress_test = false;
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
@@ -48,13 +46,6 @@ io.on('connection', function (socket) {
   });
 
 });
-
-//Creates large number of players on screen
-if(stress_test){
-  for(let i = 0; i < 300; i++){
-    game.new_player(Math.random());
-  }
-}
 
 function currentState(){
   const state = {
