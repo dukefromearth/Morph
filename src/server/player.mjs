@@ -16,6 +16,7 @@ export default class Player extends Projectile {
         super(socketID, x, y, angle, speed, mass, w, h, "img_ship", "player");
         this.gun = new Gun();
         this.health = new Health(1,10);
+        this.hp = 100;
     }
     //Void - Updates the players position
     update_pos(data, game_width, game_height) {

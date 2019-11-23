@@ -12,7 +12,8 @@ export default class Bullet extends Projectile {
         this.getDistanceFromOrigin = function() {return _distance_from_origin};
     }
     update(){
-        this.addDistanceFromOrigin(this.speed);
+        this.addDistanceFromOrigin(this.getSpeed());
+        if(this.getDistanceFromOrigin() > 500) this.is_alive = false;
         this.updatePos();
     }
 }

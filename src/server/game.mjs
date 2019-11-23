@@ -17,7 +17,7 @@ export default class Game {
         this.current_id = 0;
         this.players = {};
         this.objects = {};
-        this.tree = new Rbush();
+        this.tree = new Rbush(30);
         this.player_count = 0;
     }
     unique_id() {
@@ -78,8 +78,8 @@ export default class Game {
             for(let objID in close_objects){
                 let object = close_objects[objID];
                 if(this.detect_collision(player,object)){
-                    player.take_damage(object.mass);
-                    if(!player.is_alive) this.revive_player(player.id);
+                    player.hp -= object.mass;
+                    if(player.hp <= 0) this.revive_player(player.id);
                     // this.tree.remove(this.objects[objID]);
                     // delete close_objects[objID];
                     delete this.objects[object.id];
@@ -90,7 +90,7 @@ export default class Game {
     update() {
         this.tree.clear();
         //Create random players
-        if(this.player_count < 30) this.new_player('abcdef'+this.player_count);
+        if(this.player_count < 100) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all bullet positions, delete those that are out of bounds
