@@ -2,7 +2,6 @@
 import Ability from './ability.mjs';
 import Asteroid from './asteroid.mjs';
 import Bomb from './bombs.mjs';
-import Gravity from './gravity.mjs';
 import Planet from './planet.mjs';
 import Player from './player.mjs';
 
@@ -337,21 +336,21 @@ export default class Game {
             planet.updatePos();
             if(this.out_of_bounds(planet)) this.kill_planet(planet, plID);
         }
-            //  this.update_bombs();
-            //  if (this.bomb.is_alive) {
-            //      for (var bombID in this.bomb.bomb_locations) {
-            //          var bomb = this.bomb.bomb_locations[bombID];
-            //          for (var playerID in this.players) {
-            //              var _player = this.players[playerID];
-            //              if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-            //                  if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-            //                  else {
-            //                      _player.health.sub(0.1);
-            //                  }
-            //              }
-            //          }
-            //      }
-            //  }
+              this.update_bombs();
+              if (this.bomb.is_alive) {
+                  for (var bombID in this.bomb.bomb_locations) {
+                      var bomb = this.bomb.bomb_locations[bombID];
+                      for (var playerID in this.players) {
+                          var _player = this.players[playerID];
+                          if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
+                              if (_player.health.accumulator <= 0) this.revive_player(_player.id);
+                              else {
+                                  _player.health.sub(0.1);
+                              }
+                          }
+                      }
+                  }
+              }
 
     }
 

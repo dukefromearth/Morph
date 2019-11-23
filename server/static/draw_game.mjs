@@ -214,13 +214,13 @@ export default class DrawGame {
                 this.planet(myPlayer,planet);
             }
 
-            //  //draw bombs
-            //  for (var bombID in this.bombs) {
-            //      var bomb = this.bombs[bombID];
-            //      this.bomb(bomb, myPlayer);
-            //  }
-            //  //clears the bombs array
-            // this.bombs = [];
+              //draw bombs
+              for (var bombID in this.bombs) {
+                  var bomb = this.bombs[bombID];
+                  this.bomb(bomb, myPlayer);
+              }
+              //clears the bombs array
+             this.bombs = [];
 
         }
     }
