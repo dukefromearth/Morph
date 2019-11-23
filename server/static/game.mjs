@@ -9,7 +9,7 @@ var socket = io();
 var refresh_rate = 1000 / 60;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var MAP_SIZE = 1000;
+var MAP_SIZE = 2000;
 var drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
 var movement = {

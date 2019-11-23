@@ -9,7 +9,7 @@ import Game from './src/game.mjs';
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
-const game = new Game(1000, 1000);
+const game = new Game(2000, 2000);
 var num_users = 0;
 const app = express();
 const server = http.Server(app);
@@ -17,7 +17,7 @@ const io = socketIO(server);
 const refresh_rate = 1000 / 30;
 const port_num = 5000;
 
-const stress_test = true;
+const stress_test = false;
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
@@ -51,7 +51,7 @@ io.on('connection', function (socket) {
 
 //Creates large number of players on screen
 if(stress_test){
-  for(let i = 0; i < 30; i++){
+  for(let i = 0; i < 300; i++){
     game.new_player(Math.random());
   }
 }
@@ -69,12 +69,12 @@ function currentState(){
 
 //Update the game 120 times a second
 setInterval(function(){
-  console.time("update");
+  // console.time("update");
   if (num_users) {
     game.update();
   }
-  console.timeEnd("update");
-}, 1000/120);
+  // console.timeEnd("update");
+}, 1000/60);
 
 //Send socket emits 30 times a second
 setInterval(function () {

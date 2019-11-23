@@ -11,10 +11,10 @@ export default class Player extends Projectile {
         let mass = 10;
         let w = 75;
         let h = 75;
-        super(socketID,x,y,angle,speed,mass,w,h,"img_ship");
+        super(socketID,x,y,angle,speed,mass,w,h,"img_ship","player");
         //private
         var _time_at_last_shot = 0;
-        var _bullets_per_second = 3;
+        var _bullets_per_second = 10;
         var _reload_speed = 1000/_bullets_per_second;
         this.getTimeAtLastShot = function() {return _time_at_last_shot};
         this.setTimeAtLastShot = function() {_time_at_last_shot = Date.now()};
@@ -59,5 +59,6 @@ export default class Player extends Projectile {
                 this.y += speed;
         }
         this.angle = data.angle;
+        this.update_min_max();
     }
 }
