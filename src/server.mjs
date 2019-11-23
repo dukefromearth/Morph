@@ -9,7 +9,7 @@ import Game from './server/game.mjs';
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
-const game = new Game(2000, 2000);
+const game = new Game(4000, 4000);
 var num_users = 0;
 const app = express();
 const server = http.Server(app);

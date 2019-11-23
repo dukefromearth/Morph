@@ -8,7 +8,7 @@ const socket = io();
 const refresh_rate = 1000 / 60;
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-const MAP_SIZE = 2000;
+const MAP_SIZE = 4000;
 const drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
 var movement = {
