@@ -1,9 +1,8 @@
 /*jshint esversion: 6 */
 import Ability from './ability.mjs';
 import Gun from './gun.mjs';
-import Seeker from './seeker.mjs';
 import Points from './points.mjs';
-import Projectile from './projectile.mjs'
+import Projectile from './projectile.mjs';
 
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height) {

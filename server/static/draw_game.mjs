@@ -1,7 +1,7 @@
+import Animate from './animations.mjs';
+import Collision from './collision.mjs';
 import Missiles from './missiles.mjs';
 import Shields from './shields.mjs';
-import Collision from './collision.mjs';
-import Animate from './animations.mjs'
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -13,7 +13,7 @@ export default class DrawGame {
         this.missiles = new Missiles();
         this.asteroids = [];
         this.bombs = [];
-        this.players = {};
+        this.players = [];
         this.bullets = [];
         this.bullets_2 = [];
         this.planets = [];
@@ -80,6 +80,7 @@ export default class DrawGame {
         this.context.save();
         this.context.translate(canvasX, canvasY);
         this.context.fillStyle = 'white';
+        this.context.fillText(player.id, -80.5, player.size - 110);
         this.context.fillText(player.collected_asteroids, -7.5, player.size);
         this.context.rotate(player.angle);
         this.context.drawImage(player_img, 0 - (player.size / 2), 0 - (player.size / 2), player.size, player.size);
@@ -150,7 +151,6 @@ export default class DrawGame {
         this.context.fillText("Gun Level: " + myPlayer.gun_level, canvas.width - 150, 65);
         this.context.fillText("Shield Lvl: " + myPlayer.shield_level, canvas.width - 150, 80);
         this.context.fillText("Shield Acc: " + myPlayer.shield_accumulator, canvas.width - 150, 95);
-
     }
     draw_home_planet(myPlayer, planet) {
         const canvasX = canvas.width / 2 + planet.x - myPlayer.x;
@@ -219,6 +219,24 @@ export default class DrawGame {
         }
         this.context.restore();
     }
+    scoreboard(){
+        //sort players by score, display top 10
+        this.context.fillStyle = 'white';
+        this.context.font = "15px Courier";
+        this.context.fillText("SCOREBOARD", 5, 20);
+        var height = 40;
+
+        //while x>=10? then look through players for top 10?
+        for (var id in this.players) {
+            var player = this.players[id];
+            if (player.id != undefined) {
+                this.context.fillText(player.id +": " + player.score_points, 5, height);
+                height += 15;
+            }
+        }
+
+
+    }
 
     all(socket_id, movement) {
         if (!this.players) return;
@@ -274,6 +292,8 @@ export default class DrawGame {
             //  }
             //  //clears the bowdmbs array
             // this.bombs = [];
+
+            this.scoreboard();
 
         }
     }
