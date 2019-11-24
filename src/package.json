@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child-process-es6-promise": "^1.2.1",
     "eslint": "^6.5.1",
     "express": "^4.17.1",
     "jshint": "^2.10.3",

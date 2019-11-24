@@ -153,7 +153,6 @@ socket.on('state', function (state) {
   processGameUpdate(state);
 });
 
-
 setInterval(function () {
   socket.emit('movement', movement);
   drawGame.update_state(getCurrentState());

@@ -16,4 +16,6 @@ export default class Bullet extends Projectile {
         if(this.getDistanceFromOrigin() > 500) this.is_alive = false;
         this.updatePos();
     }
+    
 }
+

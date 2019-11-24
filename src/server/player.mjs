@@ -52,4 +52,9 @@ export default class Player extends Projectile {
         this.health.hit(x);
         if(this.health.accumulator < 0) this.is_alive = false;
     }
+    return(){
+        return {
+            
+        }
+    }
 }

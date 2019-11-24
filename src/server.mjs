@@ -49,8 +49,8 @@ io.on('connection', function (socket) {
 
 function currentState(){
   const state = {
-    players:game.players,
-    objects:game.objects,
+    players: Object.keys(game.players).map(i=>game.players[i].serialize()),
+    objects: Object.keys(game.objects).map(i=>game.objects[i].serialize()),
     time: Date.now()
   }
   return state;
@@ -60,16 +60,18 @@ function currentState(){
 
 //Update the game 120 times a second
 setInterval(function(){
-  // console.time("update");
+  console.time("update");
   if (num_users) {
-    game.update();
+    game.update()
   }
-  // console.timeEnd("update");
+  console.timeEnd("update");
 }, 1000/60);
 
 //Send socket emits 30 times a second
 setInterval(function () {
+  console.time("Send Socket");
   if (num_users) {
     io.sockets.emit('state', currentState());
   }
+  console.timeEnd("Send Socket");
 }, refresh_rate);

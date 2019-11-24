@@ -67,10 +67,16 @@ export default class DrawGame {
         }
         this.context.restore();
     }
-
+    get_my_player(socket_id){
+        for(let id in this.players){
+            let player = this.players[id];
+            if (player.id === socket_id) return player;
+        }
+    }
     all(socket_id, movement) {
         if(!this.players) return;
-        let myPlayer = this.players[socket_id];
+        console.log(this.players);
+        let myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
         if (myPlayer != undefined) {
             //draw background
             this.background(myPlayer.x, myPlayer.y);

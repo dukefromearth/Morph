@@ -43,4 +43,17 @@ export default class Projectile {
         this.y += Math.sin(this.angle) * this.getSpeed();   
         this.update_min_max();  
     }
+    serialize(){
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+            angle: this.angle,
+            mass: this.mass,
+            img: this.img,
+            type: this.type,
+            width: this.width,
+            height: this.height
+        }
+    }
 }
