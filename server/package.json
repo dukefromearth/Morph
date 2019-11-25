@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "eslint": "^6.5.1",
     "express": "^4.17.1",
     "jshint": "^2.10.3",

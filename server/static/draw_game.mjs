@@ -1,6 +1,6 @@
 import Animate from './animations.mjs';
 import Collision from './collisions.mjs';
-import RBush from 'rbush/index.js';
+import RBush from '../node_modules/rbush/index.js';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -12,7 +12,7 @@ export default class DrawGame {
         this.objects = [];
         this.animations = new Animate();
         this.new_collisions = [];
-        this.collisions = new Collision(300);
+        this.collisions = new Collision(1000);
         this.tree = new RBush();
     }
     update_state(state){
@@ -113,7 +113,6 @@ export default class DrawGame {
             minY: myPlayer.y - this.canvas.width/2 - buffer,
             maxY: myPlayer.y + this.canvas.width/2 + buffer,
         });
-        console.log(this.objects);
         if (myPlayer != undefined) {
             //draw background
             this.background(myPlayer.x, myPlayer.y);

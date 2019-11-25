@@ -40,8 +40,9 @@ export default class Projectile {
             this.is_alive = false;
             return;
         }
-        this.x += Math.cos(this.angle) * this.getSpeed();
-        this.y += Math.sin(this.angle) * this.getSpeed();   
+        let spd = this.getSpeed();
+        this.x += Math.cos(this.angle) * spd;
+        this.y += Math.sin(this.angle) * spd;   
         this.update_min_max();  
     }
     serialize(){
