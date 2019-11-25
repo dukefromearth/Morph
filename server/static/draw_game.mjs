@@ -1,6 +1,6 @@
 import Animate from './animations.mjs';
 import Collision from './collisions.mjs';
-import RBush from '../node_modules/rbush/index.js';
+import RBush from 'rbush/index.js';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
