@@ -14,11 +14,12 @@ var num_users = 0;
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-const refresh_rate = 1000 / 30;
+const refresh_rate = 1000 / 60;
 const port_num = 5000;
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
+app.use('/node_modules', express.static('./node_modules'))
 
 // Routing
 app.get('/', function (request, response) {
@@ -50,7 +51,8 @@ io.on('connection', function (socket) {
 function currentState(){
   const state = {
     players: Object.keys(game.players).map(i=>game.players[i].serialize()),
-    objects: Object.keys(game.objects).map(i=>game.objects[i].serialize()),
+    objects: game.object_array,
+    collisions: game.collisions,
     time: Date.now()
   }
   return state;
@@ -60,18 +62,18 @@ function currentState(){
 
 //Update the game 120 times a second
 setInterval(function(){
-  console.time("update");
+  // console.time("update");
   if (num_users) {
     game.update()
   }
-  console.timeEnd("update");
-}, 1000/60);
+  // console.timeEnd("update");
+}, 1000/120);
 
 //Send socket emits 30 times a second
 setInterval(function () {
-  console.time("Send Socket");
+  // console.time("Send Socket");
   if (num_users) {
     io.sockets.emit('state', currentState());
   }
-  console.timeEnd("Send Socket");
+  // console.timeEnd("Send Socket");
 }, refresh_rate);

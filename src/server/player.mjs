@@ -9,10 +9,10 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 10;
+        let speed = 6;
         let mass = 10;
-        let w = 75;
-        let h = 75;
+        let w = 50;
+        let h = 50;
         super(socketID, x, y, angle, speed, mass, w, h, "img_ship", "player");
         this.gun = new Gun();
         this.health = new Health(1,10);
@@ -51,10 +51,5 @@ export default class Player extends Projectile {
     take_damage(x){
         this.health.hit(x);
         if(this.health.accumulator < 0) this.is_alive = false;
-    }
-    return(){
-        return {
-            
-        }
     }
 }

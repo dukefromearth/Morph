@@ -27,8 +27,8 @@ export default class Gun {
         x = x + Math.cos(angle) * w;
         y = y + Math.sin(angle) * h;
         let damage = this.bullet_damage.level + 8;
-        let speed = this.bullet_speed.level + 8;
-        let bullet = new Bullet(id, playerID, x, y, angle, speed, damage, 30, 30, "img_blast");
+        let speed = this.bullet_speed.level + 6;
+        let bullet = new Bullet(id, playerID, x, y, angle, speed, damage, 20, 20, "img_blast");
         this.setTimeAtLastShot();
         return bullet;
     }

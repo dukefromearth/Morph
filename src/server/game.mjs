@@ -20,6 +20,8 @@ export default class Game {
         this.tree = new Rbush();
         this.player_count = 0;
         this.collisions = [];
+        this.object_array = [];
+        this.counter = 0;
     }
     unique_id() {
         return this.current_id++;
@@ -79,6 +81,7 @@ export default class Game {
             for(let objID in close_objects){
                 let object = close_objects[objID];
                 if(this.detect_collision(player,object)){
+                    this.collisions.push({x: object.x, y: object.y, counter: 0, type: object.type});
                     player.hp -= object.mass;
                     if(player.hp <= 0) this.revive_player(player.id);
                     delete this.objects[object.id];
@@ -87,16 +90,21 @@ export default class Game {
         }
     }
     update() {
+        //Reset tree and collisions
         this.tree.clear();
+        //Don't reset collisions every update. Since we emit 1/2 of how much we update
+        if(this.counter++ % 2 === 0) this.collisions.length=0;
+        this.object_array.length=0;
         //Create random players
-        if(this.player_count < 200) this.new_player('abcdef'+this.player_count);
+        if(this.player_count < 50) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all bullet positions, delete those that are out of bounds
         this.update_object_positions();
         //Add to tree
-        const object_array = Object.keys(this.objects).map(i=>this.objects[i])
-        this.tree.load(object_array);
+        this.object_array = Object.keys(this.objects).map(i=>this.objects[i].serialize());
+        //console.log(object_array);
+        this.tree.load(this.object_array);
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         this.detect_all_collisions();
     }
