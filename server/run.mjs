@@ -15,8 +15,7 @@ export default function run(TARGET) {
         logOutput('stdout')(data);
       }
     );
-
-
+    
     const err = []
     process.stderr.on(
       'data',

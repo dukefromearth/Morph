@@ -10,7 +10,7 @@ POPULATION_SIZE = 150
 # 1 = triangle
 # 2 = player
 # 3 = me
-GENES = "0123"
+GENES = "0123456789."
 
 # Target string to be generated
 TARGET = sys.argv[1]

@@ -62,7 +62,7 @@ function currentState(){
 
 //Run the genetic algorithm
 setInterval(function() {
-  runGA(123123123123123123);
+  if(game.object_array[0])  runGA(game.object_array[0].x);
 }, 1000)
 
 //This is where the game is updated
