@@ -53,11 +53,15 @@ function currentState(){
   const state = {
     players: Object.keys(game.players).map(i=>game.players[i].serialize()),
     objects: game.object_array,
-    collisions: game.collisions,
     time: Date.now()
   }
   return state;
 }
+
+// //Run the genetic algorithm
+// setInterval(function() {
+//   runGA("123123123");
+// }, 1000)
 
 //This is where the game is updated
 
@@ -68,14 +72,13 @@ setInterval(function(){
     game.update()
   }
   // console.timeEnd("update");
-}, 1000/120);
+}, 1000/60);
 
 //Send socket emits 30 times a second
 setInterval(function () {
   // console.time("Send Socket");
   if (num_users) {
     io.sockets.emit('state', currentState());
-    game.collisions.length = 0;
   }
   // console.timeEnd("Send Socket");
 }, refresh_rate);

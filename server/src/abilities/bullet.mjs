@@ -3,7 +3,7 @@ import Projectile from '../projectile.mjs';
 export default class Bullet extends Projectile {
     constructor(id,owner,x,y,angle,speed,mass,w,h,img){
         //public
-        super(id,x,y,angle,speed,mass, w, h, img, "bullet");
+        super(id,x,y,angle,speed,mass, w, h, "bullet");
         //private
         var _distance_from_origin = 0;
         var _owner = owner;

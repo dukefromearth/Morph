@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 export default class Projectile {
-    constructor(id,x,y,angle, speed, mass, w, h,img,type){
+    constructor(id,x,y,angle, speed, mass, w, h, type){
         //public
         this.id = id;
         this.x = x;
@@ -15,7 +15,6 @@ export default class Projectile {
         this.angle = angle;
         this.mass = mass;
         this.is_alive = true;
-        this.img = img;
         this.type = type;
         //private
         var _epoch = Date.now();
@@ -56,10 +55,8 @@ export default class Projectile {
             maxY: this.maxY,
             angle: this.angle,
             mass: this.mass,
-            img: this.img,
             type: this.type,
-            width: this.width,
-            height: this.height
+            alive: this.is_alive
         }
     }
 }

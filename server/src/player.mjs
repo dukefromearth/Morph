@@ -13,7 +13,7 @@ export default class Player extends Projectile {
         let mass = 10;
         let w = 50;
         let h = 50;
-        super(socketID, x, y, angle, speed, mass, w, h, "img_ship", "player");
+        super(socketID, x, y, angle, speed, mass, w, h, "img_ship");
         this.gun = new Gun();
         this.health = new Health(1,10);
         this.hp = 100;

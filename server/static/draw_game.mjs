@@ -11,14 +11,12 @@ export default class DrawGame {
         this.players = [];
         this.objects = [];
         this.animations = new Animate();
-        this.new_collisions = [];
-        this.collisions = new Collision(1000);
+        this.collisions = new Collision(100);
         this.tree = new RBush();
     }
     update_state(state){
         this.players = state.players;
         this.objects = state.objects;
-        this.new_collisions = state.collisions;
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -48,29 +46,36 @@ export default class DrawGame {
         this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
     draw_object(center, object, rotate) {
-        const canvasX = canvas.width / 2 + object.x - center.x;
-        const canvasY = canvas.height / 2 + object.y - center.y;
-        const img = document.getElementById(object.img);
+        console.log(object);
+        const img = document.getElementById(object.type);
+        const width = object.maxX - object.minX;
+        const height = object.maxY - object.minY;
+        const x = (object.maxX - width/2);
+        const y = (object.maxY - height/2);
+        const canvasX = canvas.width / 2 + x - center.x;
+        const canvasY = canvas.height / 2 + y - center.y;
+        if(!object.alive){
+            this.collisions.new_collision({x: x, y: y, counter: 0, type: object.type});
+            return;
+        }
         this.context.save();
         this.context.translate(canvasX, canvasY);
         if(rotate) this.context.rotate(object.angle);
-        this.context.drawImage(img, 0 - (object.width / 2), 0 - (object.height / 2), object.width, object.height);
+        this.context.drawImage(img, 0 - (width / 2), 0 - (height / 2), width, height);
         this.context.restore();
     }
-    draw_collisions(myPlayer, new_collisions) {
-        for (var id in new_collisions) {
-            let collision = new_collisions[id];
-            this.collisions.new_collision(collision);
-        }
-        for (var id2 in this.collisions.collisions) {
+    draw_collisions(myPlayer) {
+        for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
-            let animation = this.animations.explosion2;
+            let animation;
+            if (collision.type === "health") animation = this.animations.explosion1;
+            else animation = this.animations.explosion2;
             if (collision.counter < animation.length - 1) {
-                let canvasX = canvas.width / 2 + collision.x - myPlayer.x;
-                let canvasY = canvas.height / 2 + collision.y - myPlayer.y;
+                const canvasX = canvas.width / 2 + collision.x - myPlayer.x;
+                const canvasY = canvas.height / 2 + collision.y - myPlayer.y;
                 this.context.save();
                 this.context.translate(canvasX, canvasY);
-                this.context.drawImage(animation[collision.counter++], 0 - 75, 0 - 75, 150, 150);
+                this.context.drawImage(animation[collision.counter++], 0 - 100, 0 - 100, 200, 200);
                 this.context.restore();
             }
         }
@@ -96,17 +101,21 @@ export default class DrawGame {
     }
     get_my_player(socket_id){
         for(let id in this.players){
-            let player = this.players[id];
-            if (player.id === socket_id) return player;
+            const player = this.players[id];
+            if (player.id === socket_id) {
+                player.x = player.maxX - (player.maxX-player.minX)/2
+                player.y = player.maxY - (player.maxY-player.minY)/2
+                return player;
+            }
         }
     }
     all(socket_id, movement) {
         if(!this.players) return;
         this.tree.clear();
         this.tree.load(this.objects);
-        let myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
+        const myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
         //only draw objects near our player
-        let buffer = 50;
+        const buffer = 25;
         this.objects = this.tree.search({
             minX: myPlayer.x - this.canvas.width/2 - buffer,
             maxX: myPlayer.x + this.canvas.width/2 + buffer,
@@ -131,7 +140,7 @@ export default class DrawGame {
                 this.draw_object(myPlayer, object, true);
             }
             //draw all collisions
-            this.draw_collisions(myPlayer, this.new_collisions);
+            this.draw_collisions(myPlayer);
         }
     }
 }

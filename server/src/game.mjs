@@ -1,6 +1,8 @@
 'use strict';
 import Player from './player.mjs';
 import Rbush from 'rbush';
+import Projectile from './projectile.mjs'
+import Seeker from './seeker.mjs';
 
 /**
  * Class making something fun and easy.
@@ -17,9 +19,9 @@ export default class Game {
         this.current_id = 0;
         this.players = {};
         this.objects = {};
-        this.tree = new Rbush();
+        this.seekers = {};
+        this.object_tree = new Rbush();
         this.player_count = 0;
-        this.collisions = [];
         this.object_array = [];
         this.counter = 0;
     }
@@ -37,16 +39,15 @@ export default class Game {
         this.players[socketID] = new Player(socketID, this.width, this.height);
     }
     update_player_pos(socketID, data) {
-        let player = this.players[socketID];
+        const player = this.players[socketID];
         if (player === undefined) return; //happens if server restarts
         player.update_pos(data, this.width, this.height);
     }
-    detect_collision(projectile1, projectile2) {
-        if(projectile1.id === projectile2.id) return false;
-        if (Math.abs(projectile1.x - projectile2.x) < projectile1.width / 2 + projectile2.width / 2 && Math.abs(projectile1.y - projectile2.y) < projectile1.height + projectile2.height) {
-            return true;
-        }
-        else return false;
+    detect_collision(a, b) {
+        return b.minX <= a.maxX &&
+           b.minY <= a.maxY &&
+           b.maxX >= a.minX &&
+           b.maxY >= a.minY;
     }
     out_of_bounds(projectile) {
         if (projectile.x < 0 || projectile.x > this.width || projectile.y < 0 || projectile.y > this.height) return true;
@@ -68,42 +69,69 @@ export default class Game {
     update_object_positions(){
         for (let id in this.objects) {
             let object = this.objects[id];
-            object.update();
+            if(object.type === "bullet") object.update();
+            else object.updatePos();
             if (!object.is_alive || this.out_of_bounds(object)) {
                 delete this.objects[id];
             }
         }
     }
+    update_seeker_positions(){
+        for (let id in this.seekers) {
+            let seeker = this.seekers[id];
+            let enemy = this.players[seeker.enemyID];
+            seeker.updatePos(enemy.x,enemy.y);
+            if (!seeker.is_alive || this.out_of_bounds(seeker)) {
+                delete this.objects[id];
+            }
+        }
+    }
+    add_cell(){
+        let id = this.unique_id();
+        let x = Math.random() * this.width;
+        let y = Math.random() * this.height;
+        let angle = Math.random() * Math.PI;
+        this.objects[id] = new Projectile(id,x,y,angle,1,15,30,30,"health")
+        //(id,x,y,angle, speed, mass, w, h,img,type)
+    }
     detect_all_collisions(){
         for(let id in this.players){
             let player = this.players[id];
-            let close_objects = this.tree.search(player);
+            let close_objects = this.object_tree.search(player);
             for(let objID in close_objects){
                 let object = close_objects[objID];
                 if(this.detect_collision(player,object)){
-                    this.collisions.push({x: object.x, y: object.y, counter: 0, type: object.type});
-                    player.hp -= object.mass;
-                    if(player.hp <= 0) this.revive_player(player.id);
+                    object.alive = false;
+                    if(object.type === "bullet"){
+                        player.hp -= object.mass;
+                        if(player.hp <= 0) this.revive_player(player.id);
+                    }
                     delete this.objects[object.id];
                 }
             }
         }
     }
     update() {
-        //Reset tree 
-        this.tree.clear();
+        if(Date.now() % 10 === 0) this.add_cell();
+        //Reset object_tree 
+        this.object_tree.clear();
         this.object_array.length=0;
         //Create random players
-        if(this.player_count < 10) this.new_player('abcdef'+this.player_count);
+        if(this.player_count < 20) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
-        //Update all bullet positions, delete those that are out of bounds
+        //Update all object positions, delete those that are out of bounds
         this.update_object_positions();
-        //Add to tree
+        //Add to object_tree
+        // console.time("Map to array");
         this.object_array = Object.keys(this.objects).map(i=>this.objects[i].serialize());
-        //console.log(object_array);
-        this.tree.load(this.object_array);
+        // console.timeEnd("Map to array");
+        // console.time("Load Tree");
+        this.object_tree.load(this.object_array);
+        // console.timeEnd("Load Tree");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
+        // console.time("Detect Collisions");
         this.detect_all_collisions();
+        // console.timeEnd("Detect Collisions");
     }
 }
