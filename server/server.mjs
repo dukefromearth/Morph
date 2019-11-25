@@ -5,7 +5,7 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
-import { spawn } from 'child_process';
+import { spawn} from 'child_process';
 
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
@@ -75,6 +75,7 @@ setInterval(function () {
   // console.time("Send Socket");
   if (num_users) {
     io.sockets.emit('state', currentState());
+    game.collisions.length = 0;
   }
   // console.timeEnd("Send Socket");
 }, refresh_rate);

@@ -90,13 +90,11 @@ export default class Game {
         }
     }
     update() {
-        //Reset tree and collisions
+        //Reset tree 
         this.tree.clear();
-        //Don't reset collisions every update. Since we emit 1/2 of how much we update
-        if(this.counter++ % 2 === 0) this.collisions.length=0;
         this.object_array.length=0;
         //Create random players
-        if(this.player_count < 100) this.new_player('abcdef'+this.player_count);
+        if(this.player_count < 10) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all bullet positions, delete those that are out of bounds
