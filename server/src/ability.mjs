@@ -1,4 +1,5 @@
 import Points from './points.mjs';
+//
 
 export default class Ability extends Points {
     constructor(name,max,level){
