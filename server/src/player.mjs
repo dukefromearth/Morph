@@ -10,22 +10,46 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 15;
+        let speed = 5;
         let mass = 10;
         let w = 70;
         let h = 70;
         super(socketID, x, y, angle, speed, mass, w, h, type);
         this.gun = new Gun("bullet");
-        this.health = new Health(1,10);
-        this.points = new Points(1,10);
+        this.health = new Health(1, 10);
+        this.points = new Points(1, 10);
+        this.cell_count = 0;
         this.hp = 100;
-        this.collected_cells = {cell0: 0, cell1: 0, cell2: 0, cell3: 0};
+        this.collected_cells = { cell0: 0, cell1: 0, cell2: 0, cell3: 0 };
     }
-    collect_cell(type){
-        if(type === "cell0") this.collected_cells.cell0++;
-        else if (type === "cell1") this.collected_cells.cell1++;
-        else if (type === "cell2") this.collected_cells.cell2++;
-        else if (type === "cell3") this.collected_cells.cell3++;
+    collect_cell(type) {
+        if (type === "cell0") {
+            this.collected_cells.cell0++;
+            this.cell_count++;
+        }
+        else if (type === "cell1") {
+            this.collected_cells.cell1++;
+            this.cell_count++;
+        }
+        else if (type === "cell2") {
+            this.collected_cells.cell2++;
+            this.cell_count++;
+        }
+        else if (type === "cell3") {
+            this.collected_cells.cell3++;
+            this.cell_count++;
+        }
+        if (
+            this.collected_cells.cell0 > 0 &&
+            this.collected_cells.cell1 > 0 &&
+            this.collected_cells.cell2 > 0 &&
+            this.collected_cells.cell3 > 0 &&
+            !this.gun.parasite
+            ) {
+                this.setSpeed(this.getSpeed() / 2);
+                this.gun.parasite = true;
+                this.type = "cell4";
+        }
     }
     //Void - Updates the players position
     update_pos(data, game_width, game_height) {
@@ -57,11 +81,11 @@ export default class Player extends Projectile {
         this.angle = data.angle;
         this.update_min_max();
     }
-    take_damage(x){
+    take_damage(x) {
         this.health.hit(x);
-        if(this.health.accumulator < 0) this.is_alive = false;
+        if (this.health.accumulator < 0) this.is_alive = false;
     }
-    serialize(){
+    serialize() {
         return {
             id: this.id,
             x: this.x,

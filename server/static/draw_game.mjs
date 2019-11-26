@@ -102,7 +102,7 @@ export default class DrawGame {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
             let animation;
-            if (collision.type != "bullet") animation = this.animations.explosion1;
+            if (collision.type[0] === 'c') animation = this.animations.explosion1;
             else animation = this.animations.explosion2;
             if (collision.counter < animation.length - 1) {
                 const canvasX = canvas.width / 2 + collision.x - myPlayer.x;
