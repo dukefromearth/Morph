@@ -16,6 +16,7 @@ export default class Projectile {
         this.mass = mass;
         this.is_alive = true;
         this.type = type;
+        this.rotation = 0;
         //private
         var _epoch = Date.now();
         var _speed = speed;
@@ -25,7 +26,6 @@ export default class Projectile {
         this.setSpeed = function(speed) {_speed = speed};
         this.getSpeed = function() {return _speed};
         this.getEpoch = function() {return _epoch};
-
     }
     update_min_max(){
         this.minX = this.x-this.width/2;
@@ -56,7 +56,8 @@ export default class Projectile {
             angle: this.angle,
             mass: this.mass,
             type: this.type,
-            alive: this.is_alive
+            alive: this.is_alive,
+            rotation: this.rotation += .03
         }
     }
 }

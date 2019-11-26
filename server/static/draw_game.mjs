@@ -64,6 +64,40 @@ export default class DrawGame {
         this.context.drawImage(img, 0 - (width / 2), 0 - (height / 2), width, height);
         this.context.restore();
     }
+    draw_player(center, object, rotate){
+        this.draw_object(center, object, rotate);
+        const width = object.maxX - object.minX;
+        const height = object.maxY - object.minY;
+        const x = (object.maxX - width/2);
+        const y = (object.maxY - height/2);
+        const canvasX = canvas.width / 2 + x - center.x;
+        const canvasY = canvas.height / 2 + y - center.y;
+        this.context.save();
+        this.context.translate(canvasX, canvasY);
+        if(object.collected_cells.cell0 > 0) {
+            let img = document.getElementById("cell0");
+            this.context.drawImage(img, -50, width/2+5, 20, 20);
+        }
+        if(object.collected_cells.cell1 > 0) {
+            let img = document.getElementById("cell1");
+            this.context.drawImage(img, -25, width/2+5, 20, 20);
+        }
+        if(object.collected_cells.cell2 > 0) {
+            let img = document.getElementById("cell2");
+            this.context.drawImage(img, 0, width/2+5, 20, 20);
+        }
+        if(object.collected_cells.cell3 > 0) {
+            let img = document.getElementById("cell3");
+            this.context.drawImage(img, 25, width/2+5, 20, 20);
+        }
+        console.log(object.points);
+        this.context.fillStyle = "red";
+        this.context.font = "14px Comic Sans MS";
+        this.context.textAlign = "center";
+        this.context.fillText(object.points,0,-width/2-10);
+        this.context.restore();
+        
+    }
     draw_collisions(myPlayer) {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
@@ -132,7 +166,7 @@ export default class DrawGame {
             //draw other players
             for(let id in this.players){
                 let player = this.players[id];
-                this.draw_object(myPlayer, player, false);
+                this.draw_player(myPlayer, player, false);
             }
             //draw all objects 
             for(let id in this.objects){

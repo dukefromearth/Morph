@@ -2,6 +2,7 @@
 import Projectile from './projectile.mjs';
 import Gun from './abilities/gun.mjs'
 import Health from './abilities/health.mjs';
+import Points from './abilities/points.mjs';
 
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height, type) {
@@ -9,13 +10,14 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 6;
+        let speed = 15;
         let mass = 10;
         let w = 70;
         let h = 70;
         super(socketID, x, y, angle, speed, mass, w, h, type);
         this.gun = new Gun("bullet");
         this.health = new Health(1,10);
+        this.points = new Points(1,10);
         this.hp = 100;
         this.collected_cells = {cell0: 0, cell1: 0, cell2: 0, cell3: 0};
     }
@@ -58,5 +60,24 @@ export default class Player extends Projectile {
     take_damage(x){
         this.health.hit(x);
         if(this.health.accumulator < 0) this.is_alive = false;
+    }
+    serialize(){
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+            minX: this.minX,
+            maxX: this.maxX,
+            minY: this.minY,
+            maxY: this.maxY,
+            angle: this.angle,
+            mass: this.mass,
+            type: this.type,
+            alive: this.is_alive,
+            rotation: this.rotation += .03,
+            health: this.health.accumulator,
+            collected_cells: this.collected_cells,
+            points: this.points.points
+        }
     }
 }

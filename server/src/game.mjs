@@ -16,7 +16,7 @@ export default class Game {
         this.y = 0;
         this.width = GAME_WIDTH;
         this.height = GAME_HEIGHT;
-        this.current_id = 0;
+        this.current_id = 1;
         this.players = {};
         this.objects = {};
         this.seekers = {};
@@ -26,6 +26,15 @@ export default class Game {
         this.individual_client_objects = {};
         this.counter = 0;
         this.player_image_counter = 0;
+        this.big_cell = {};
+        this.new_big_cell();
+    }
+    new_big_cell(){
+        let x = Math.random() * this.width;
+        let y = Math.random() * this.height;
+        let angle = Math.random() * Math.PI;
+        this.big_cell = new Projectile(0,this.width/2,this.height/2,angle, 1, 100, 300, 250, "big_cell");
+        this.objects[0] = this.big_cell;
     }
     player_image(){
         this.player_image_counter = ++this.player_image_counter % 4;
@@ -43,11 +52,55 @@ export default class Game {
     delete_player(socketID) {
         delete this.players[socketID];
     }
-    revive_player(socketID) {
-        let type = this.player_image();
+    drop_cells(socketID){
         let player = this.players[socketID];
+        if(player.collected_cells.cell0 > 0) {
+            this.add_cell(player.x,player.y,"cell0");
+        }
+        if(player.collected_cells.cell1 > 0) {
+            this.add_cell(player.x,player.y,"cell1");
+        }
+        if(player.collected_cells.cell2 > 0) {
+            this.add_cell(player.x,player.y,"cell2");
+        }
+        if(player.collected_cells.cell3 > 0) {
+            this.add_cell(player.x,player.y,"cell3");
+        }
         this.add_cell(player.x,player.y,player.type);
+    }
+    revive_player(socketID) {
+        this.drop_cells(socketID);
+        let type = this.player_image();
         this.players[socketID] = new Player(socketID, this.width, this.height, type);
+    }
+    tally_points(socketID){
+        let multiplier = 0;
+        let points = 0;
+        let player = this.players[socketID];
+        if(player.collected_cells.cell0 > 0) {
+            multiplier+=1;
+            points+=10;
+        }
+        if(player.collected_cells.cell1 > 0) {
+            multiplier+=1;
+            points+=10;
+        }
+        if(player.collected_cells.cell2 > 0) {
+            multiplier+=1;
+            points+=10;
+        }
+        if(player.collected_cells.cell3 > 0) {
+            multiplier+=1;
+            points+=10;
+        }
+        if (multiplier > 3) points = points*multiplier;
+        return points;
+    }
+    player_scored(socketID){
+        let type = this.player_image();
+        let points = this.players[socketID].points.points + this.tally_points(socketID);
+        this.players[socketID] = new Player(socketID, this.width, this.height, type);
+        this.players[socketID].points.add(points);
     }
     update_player_pos(socketID, data) {
         const player = this.players[socketID];
@@ -121,15 +174,19 @@ export default class Game {
             let close_objects = this.object_tree.search(player);
             for(let objID in close_objects){
                 let object = close_objects[objID];
-                if(this.detect_collision(
-                    player,object)){
-                    object.alive = false;
-                    if(object.type === "bullet"){
-                        player.hp -= object.mass;
-                        if(player.hp <= 0) this.revive_player(player.id);
+                if(this.detect_collision(player,object)){
+                    if(object.type === "big_cell") {
+                        this.player_scored(player.id);
                     }
-                    else player.collect_cell(object.type);
-                    delete this.objects[object.id];
+                    else {
+                        object.alive = false;
+                        if(object.type === "bullet"){
+                            player.hp -= object.mass;
+                            if(player.hp <= 0) this.revive_player(player.id);
+                        }
+                        else player.collect_cell(object.type);
+                        delete this.objects[object.id];
+                    }
                 }
             }
         }
@@ -139,6 +196,7 @@ export default class Game {
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length=0;
+        if(!this.objects[0]) this.new_big_cell();
         //Create random players
         if(this.player_count < 20) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
