@@ -23,20 +23,31 @@ export default class Game {
         this.object_tree = new Rbush();
         this.player_count = 0;
         this.object_array = [];
+        this.individual_client_objects = {};
         this.counter = 0;
+        this.player_image_counter = 0;
+    }
+    player_image(){
+        this.player_image_counter = ++this.player_image_counter % 4;
+        let img =  "cell" + this.player_image_counter;
+        return img;
     }
     unique_id() {
         return this.current_id++;
     }
     new_player(socketID) {
         this.player_count++;
-        this.players[socketID] = new Player(socketID, this.width, this.height);
+        let img = this.player_image();
+        this.players[socketID] = new Player(socketID, this.width, this.height, img);
     }
     delete_player(socketID) {
         delete this.players[socketID];
     }
     revive_player(socketID) {
-        this.players[socketID] = new Player(socketID, this.width, this.height);
+        let type = this.player_image();
+        let player = this.players[socketID];
+        this.add_cell(player.x,player.y,player.type);
+        this.players[socketID] = new Player(socketID, this.width, this.height, type);
     }
     update_player_pos(socketID, data) {
         const player = this.players[socketID];
@@ -86,33 +97,45 @@ export default class Game {
             }
         }
     }
-    add_cell(){
+    add_cell(x,y,type){
         let id = this.unique_id();
+        let angle = Math.random() * Math.PI;
+        this.objects[id] = new Projectile(id,x,y,angle,1,15,30,30,type)
+    }
+    add_random_cell(){
         let x = Math.random() * this.width;
         let y = Math.random() * this.height;
-        let angle = Math.random() * Math.PI;
-        this.objects[id] = new Projectile(id,x,y,angle,1,15,30,30,"health")
-        //(id,x,y,angle, speed, mass, w, h,img,type)
+        let type = "cell" + Math.floor(Math.random() * 4);
+        this.add_cell(x,y,type);
     }
     detect_all_collisions(){
         for(let id in this.players){
             let player = this.players[id];
+            let max_distance_from_player = 800;
+            this.individual_client_objects[player.id] = this.object_tree.search({
+                minX: player.minX - max_distance_from_player,
+                maxX: player.maxX + max_distance_from_player,
+                minY: player.minY - max_distance_from_player,
+                maxY: player.maxY + max_distance_from_player
+            })
             let close_objects = this.object_tree.search(player);
             for(let objID in close_objects){
                 let object = close_objects[objID];
-                if(this.detect_collision(player,object)){
+                if(this.detect_collision(
+                    player,object)){
                     object.alive = false;
                     if(object.type === "bullet"){
                         player.hp -= object.mass;
                         if(player.hp <= 0) this.revive_player(player.id);
                     }
+                    else player.collect_cell(object.type);
                     delete this.objects[object.id];
                 }
             }
         }
     }
     update() {
-        if(Date.now() % 10 === 0) this.add_cell();
+        if(Date.now() % 10 === 0) this.add_random_cell();
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length=0;

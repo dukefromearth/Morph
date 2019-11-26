@@ -46,7 +46,6 @@ export default class DrawGame {
         this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
     draw_object(center, object, rotate) {
-        console.log(object);
         const img = document.getElementById(object.type);
         const width = object.maxX - object.minX;
         const height = object.maxY - object.minY;
@@ -60,7 +59,8 @@ export default class DrawGame {
         }
         this.context.save();
         this.context.translate(canvasX, canvasY);
-        if(rotate) this.context.rotate(object.angle);
+        if(rotate) this.context.rotate(object.angle + object.rotation);
+        else this.context.rotate(object.angle);
         this.context.drawImage(img, 0 - (width / 2), 0 - (height / 2), width, height);
         this.context.restore();
     }
@@ -68,7 +68,7 @@ export default class DrawGame {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
             let animation;
-            if (collision.type === "health") animation = this.animations.explosion1;
+            if (collision.type != "bullet") animation = this.animations.explosion1;
             else animation = this.animations.explosion2;
             if (collision.counter < animation.length - 1) {
                 const canvasX = canvas.width / 2 + collision.x - myPlayer.x;
@@ -132,7 +132,7 @@ export default class DrawGame {
             //draw other players
             for(let id in this.players){
                 let player = this.players[id];
-                this.draw_object(myPlayer, player, true);
+                this.draw_object(myPlayer, player, false);
             }
             //draw all objects 
             for(let id in this.objects){

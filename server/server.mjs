@@ -5,7 +5,7 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
-import { spawn} from 'child_process';
+import { spawn } from 'child_process';
 
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
@@ -17,6 +17,7 @@ const server = http.Server(app);
 const io = socketIO(server);
 const refresh_rate = 1000 / 60;
 const port_num = 5000;
+
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
@@ -49,14 +50,15 @@ io.on('connection', function (socket) {
 
 });
 
-function currentState(){
+function currentState(socket_id) {
   const state = {
-    players: Object.keys(game.players).map(i=>game.players[i].serialize()),
-    objects: game.object_array,
+    players: Object.keys(game.players).map(i => game.players[i].serialize()),
+    objects: game.individual_client_objects[socket_id],
     time: Date.now()
   }
   return state;
 }
+
 
 // //Run the genetic algorithm
 // setInterval(function() {
@@ -64,21 +66,24 @@ function currentState(){
 // }, 1000)
 
 //This is where the game is updated
-
 //Update the game 120 times a second
-setInterval(function(){
+setInterval(function () {
   // console.time("update");
   if (num_users) {
     game.update()
   }
   // console.timeEnd("update");
-}, 1000/60);
+}, 1000 / 60);
 
 //Send socket emits 30 times a second
 setInterval(function () {
   // console.time("Send Socket");
   if (num_users) {
-    io.sockets.emit('state', currentState());
+    let sockets = io.sockets.sockets;
+    for (let id in sockets) {
+      let socket = sockets[id];
+      io.to(socket.id).emit('state', currentState(socket.id));
+    }
   }
   // console.timeEnd("Send Socket");
 }, refresh_rate);
