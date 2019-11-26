@@ -5,7 +5,7 @@ export default class Seeker extends Projectile {
         super(id,x,y,angle, speed, mass, w, h,img,type,3000);
         this.enemyID = enemyID;
     }
-    updatePos(enemyX, enemyY){
+    update(enemyX, enemyY){
         let spd = this.getSpeed();
         this.angle = Math.atan2(enemyY - this.y, enemyX - this.x);
         this.x += Math.cos(this.angle) * spd;

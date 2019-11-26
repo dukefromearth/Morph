@@ -122,7 +122,8 @@ export default class Game {
             if(object.type === "bullet") object.update();
             else if(object.type === "seeker") {
                 let enemy = this.players[object.enemyID];
-                object.updatePos(enemy.x, enemy.y);
+                if(!enemy) object.update();
+                else object.updatePos(enemy.x, enemy.y);
             }
             else object.updatePos();
             if (!object.is_alive || this.out_of_bounds(object)) {
