@@ -173,7 +173,6 @@ export default class Game {
         this.add_cell(x, y, type);
     }
     detect_all_collisions() {
-        console.time("object/seeker");
         //search each object against all seekers
         for (let id in this.seekers) {
             let seeker = this.seekers[id];
@@ -192,14 +191,10 @@ export default class Game {
                 }
             }
         }
-        console.timeEnd("object/seeker");
         //Search all objects and seekers agaisnt players
         
-        console.time("All Players");
         for (let id in this.players) {
-            console.time("player/object");
             let player = this.players[id];
-            console.time(player.id);
             if (player.id.substr(0, 5) === "abcde") player.angle += .02;
             //Search each player against all objects
             let objects_near_player = this.object_tree.search(player);
@@ -228,26 +223,21 @@ export default class Game {
                     }
                 }
             }
-            console.timeEnd("player/object");
             //Search each player against all seekers
-            console.time("player/seeker");
-            // let seekers_near_player = this.seeker_tree.search(player);
-            // for (let id in seekers_near_player) {
-            //     let seeker = seekers_near_player[id];
-            //     console.log(seeker);
-            //     //maker sure the seeker can't kill you if it just spawned
-            //     if (seeker.alive) {
-            //         if (this.detect_collision(player, seeker)) {
-            //             seeker.alive = false;
-            //             player.take_damage(seeker.mass);
-            //             if (player.health.accumulator <= 0) this.revive_player(player.id);
-            //             delete this.seekers[seeker.id];
-            //         }
-            //     }
-            // }
-            console.timeEnd("player/seeker");
+            let seekers_near_player = this.seeker_tree.search(player);
+            for (let id in seekers_near_player) {
+                let seeker = seekers_near_player[id];
+                //maker sure the seeker can't kill you if it just spawned
+                if (seeker.alive) {
+                    if (this.detect_collision(player, seeker)) {
+                        seeker.alive = false;
+                        player.take_damage(seeker.mass);
+                        if (player.health.accumulator <= 0) this.revive_player(player.id);
+                        delete this.seekers[seeker.id];
+                    }
+                }
+            }
             //add seekers to object tree and update objects surrounding each client
-            console.time("Tree update");
             let max_distance_from_player = 700;
             this.object_tree.load(this.seeker_array);
             this.individual_client_objects[player.id] = this.object_tree.search({
@@ -256,10 +246,7 @@ export default class Game {
                 minY: player.minY - max_distance_from_player,
                 maxY: player.maxY + max_distance_from_player
             })
-            console.timeEnd("Tree update");
-            console.timeEnd(player.id);
         }
-        console.timeEnd("All Players");
     }
     update() {
         if (Date.now() % 20 === 0) this.add_random_cell();
@@ -280,19 +267,15 @@ export default class Game {
         //Update all object positions, delete those that are out of bounds
         this.update_object_positions();
         //Add to object_tree
-        console.time("Map to array");
         this.object_array = Object.keys(this.objects).map(i => this.objects[i].serialize());
         this.player_array = Object.keys(this.players).map(i => this.players[i].serialize());
         this.seeker_array = Object.keys(this.seekers).map(i => this.seekers[i].serialize());
-        console.timeEnd("Map to array");
-        console.time("Load Tree");
+
         this.object_tree.load(this.object_array);
         this.player_tree.load(this.player_array);
         this.seeker_tree.load(this.seeker_array);
-        console.timeEnd("Load Tree");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
-        console.time("Detect Collisions");
+        
         this.detect_all_collisions();
-        console.timeEnd("Detect Collisions");
     }
 }
