@@ -18,7 +18,7 @@ jobs:
             pkill nodemon;
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
-            cd Morph/src;
+            cd Morph;
             git checkout Fixing-memory-leaks;
             git pull origin Fixing-memory-leaks;
             npm i;
