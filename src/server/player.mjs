@@ -19,7 +19,7 @@ export default class Player extends Projectile {
         this.health = new Health(1, 10);
         this.points = new Points(1, 10);
         this.cell_count = 0;
-        this.shield_lvl = 0;
+        this.hp = 100;
         this.collected_cells = { cell0: 0, cell1: 0, cell2: 0, cell3: 0 };
     }
     collect_cell(type) {
@@ -82,7 +82,7 @@ export default class Player extends Projectile {
         this.update_min_max();
     }
     take_damage(x) {
-        this.health.hit(x/(this.shield_lvl+1));
+        this.health.hit(x);
         if (this.health.accumulator < 0) this.alive = false;
     }
     serialize() {
@@ -101,8 +101,7 @@ export default class Player extends Projectile {
             rotation: this.rotation += .03,
             health: this.health.accumulator,
             collected_cells: this.collected_cells,
-            points: this.points.points,
-            shield_lvl: this.shield_lvl
+            points: this.points.points
         }
     }
 }

@@ -19,18 +19,12 @@ export default class Game {
         this.current_id = 1;
         this.players = {};
         this.objects = {};
-        this.seekers = {};
-        this.player_count = 0;
-
         this.object_tree = new Rbush();
         this.player_tree = new Rbush();
-        this.seeker_tree = new Rbush();
-
+        this.player_count = 0;
         this.object_array = [];
         this.player_array = [];
-        this.seeker_array = [];
-
-        this.individual_client_objects = {}; //Stores proximal data for each player to emit through socket
+        this.individual_client_objects = {};
         this.counter = 0;
         this.player_image_counter = 0;
         this.big_cell = {};
@@ -125,18 +119,14 @@ export default class Game {
         for (let id in this.objects) {
             let object = this.objects[id];
             if (object.type === "bullet") object.update();
+            else if (object.type === "seeker") {
+                let enemy = this.players[object.enemyID];
+                if (!enemy) object.updatePos();
+                else object.update(enemy.x, enemy.y);
+            }
             else object.updatePos();
             if (!object.alive || this.out_of_bounds(object)) {
                 delete this.objects[id];
-            }
-        }
-        for (let id in this.seekers) {
-            let seeker = this.seekers[id];
-            let enemy = this.players[seeker.enemyID];
-            if (!enemy) seeker.updatePos();
-            else seeker.update(enemy.x, enemy.y);
-            if (!seeker.alive || this.out_of_bounds(seeker)) {
-                delete this.seekers[id];
             }
         }
     }
@@ -155,7 +145,7 @@ export default class Game {
         if (closest_objects.length === 0) return;
         let closest_object = closest_objects[0];
         seeker.enemyID = closest_object.id;
-        this.seekers[seeker.id] = seeker;
+        this.objects[seeker.id] = seeker;
     }
     add_cell(x, y, type) {
         let id = this.unique_id();
@@ -163,104 +153,68 @@ export default class Game {
         this.objects[id] = new Projectile(id, x, y, angle, 1, 15, 30, 30, type)
     }
     add_random_cell() {
-        let type = "cell";
         let x = Math.random() * this.width;
         let y = Math.random() * this.height;
-        let rand = Math.random();
-        if (rand < 0.1) type = "l1_shield";
-        else if (rand < 0.2) type = "l2_shield";
-        else type = type + Math.floor(Math.random() * 4);
+        let type = "cell" + Math.floor(Math.random() * 4);
         this.add_cell(x, y, type);
     }
     detect_all_collisions() {
-        //search each object against all seekers
-        for (let id in this.seekers) {
-            let seeker = this.seekers[id];
-            if (seeker.alive) {
-                let objects_near_seeker = this.object_tree.search(seeker);
-                for (let id2 in objects_near_seeker) {
-                    let object = objects_near_seeker[id2];
-                    if (object.alive && object.type === 'bullet') {
-                        if (this.detect_collision(seeker, object)) {
-                            seeker.alive = false;
-                            object.alive = false;
-                            this.players[this.objects[object.id].getOwner()].points.add(seeker.mass);
-                            delete this.objects[object.id];
-                            delete this.seekers[id];
-                        }
-                    }
-                }
-            }
-        }
-        //Search all objects and seekers agaisnt players
         for (let id in this.players) {
             let player = this.players[id];
-            if (player.id.substr(0, 5) === "abcde") player.angle += .02;
-            //Search each player against all objects
-            let objects_near_player = this.object_tree.search(player);
-            for (let objID in objects_near_player) {
-                let object = objects_near_player[objID];
-                if (object.alive) {
-                    if (this.detect_collision(player, object)) {
-                        if (object.type === "big_cell") {
-                            this.player_scored(player.id);
-                        }
-                        else {
-                            object.alive = false;
-                            if (object.type[0] === 'c') {
-                                player.collect_cell(object.type)
-                            }
-                            else if (object.type === "l1_shield") {
-                                player.shield_lvl = 1;
-                            }
-                            else if (object.type === 'l2_shield') {
-                                player.shield_lvl = 2;
-                            }
-                            else {
-                                player.take_damage(object.mass);
-                                if (player.health.accumulator <= 0) this.revive_player(player.id);
-                            }
-                            delete this.objects[object.id];
-                        }
-                    }
-                }
-            }
-            //Search each player against all seekers
-            let seekers_near_player = this.seeker_tree.search(player);
-            for (let id in seekers_near_player) {
-                let seeker = seekers_near_player[id];
-                //maker sure the seeker can't kill you if it just spawned
-                if (seeker.alive) {
-                    if (this.detect_collision(player, seeker)) {
-                        seeker.alive = false;
-                        player.take_damage(seeker.mass);
-                        if (player.health.accumulator <= 0) this.revive_player(player.id);
-                        delete this.seekers[seeker.id];
-                    }
-                }
-            }
-            //add seekers to object tree and update objects surrounding each client
+            if (player.id.substr(0,5) === "abcde") player.angle += .02;
             let max_distance_from_player = 700;
-            this.object_tree.load(this.seeker_array);
             this.individual_client_objects[player.id] = this.object_tree.search({
                 minX: player.minX - max_distance_from_player,
                 maxX: player.maxX + max_distance_from_player,
                 minY: player.minY - max_distance_from_player,
                 maxY: player.maxY + max_distance_from_player
             })
+            let objects_near_player = this.object_tree.search(player);
+            for (let objID in objects_near_player) {
+                let object = objects_near_player[objID];
+                if (this.detect_collision(player, object)) {
+                    if (object.type === "big_cell") {
+                        this.player_scored(player.id);
+                    }
+                    else {
+                        object.alive = false;
+                        if (object.type[0] != 'c') {
+                            player.hp -= object.mass;
+                            if (player.hp <= 0) this.revive_player(player.id);
+                        }
+                        else player.collect_cell(object.type);
+                        delete this.objects[object.id];
+                    }
+                }
+            }
+        }
+        for (let id in this.objects) {
+            let object = this.objects[id];
+            if (object.type === "seeker") {
+                let objects_near_this_object = this.object_tree.search(object)
+                for (let id2 in objects_near_this_object) {
+                    let object2 = objects_near_this_object[id2];
+                    if (object2.type === "bullet") {
+                        if (this.detect_collision(object, object2) && object.alive && object2.alive) {
+                            this.players[this.objects[object2.id].getOwner()].points.add(object.mass);
+                            object.alive = false;
+                            object2.alive = false;
+                            delete this.objects[object.id];
+                            delete this.objects[object2.id];
+                        }
+                    }
+                }
+            }
         }
     }
     update() {
-        if (Date.now() % 20 === 0) this.add_random_cell();
+        if(Date.now() % 20 === 0) this.add_random_cell();
         if (Date.now() % 20 === 0) this.add_seeker();
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length = 0;
         this.player_tree.clear();
         this.player_array.length = 0;
-        this.seeker_tree.clear();
-        this.seeker_array.length = 0;
-
         if (!this.objects[0]) this.new_big_cell();
         //Create random players
         if(this.player_count < 20) this.new_player('abcdef'+this.player_count);
@@ -272,17 +226,14 @@ export default class Game {
         // console.time("Map to array");
         this.object_array = Object.keys(this.objects).map(i => this.objects[i].serialize());
         this.player_array = Object.keys(this.players).map(i => this.players[i].serialize());
-        this.seeker_array = Object.keys(this.seekers).map(i => this.seekers[i].serialize());
         // console.timeEnd("Map to array");
         // console.time("Load Tree");
         this.object_tree.load(this.object_array);
         this.player_tree.load(this.player_array);
-        this.seeker_tree.load(this.seeker_array);
         // console.timeEnd("Load Tree");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         // console.time("Detect Collisions");
         this.detect_all_collisions();
         // console.timeEnd("Detect Collisions");
-        this.object_array = this.object_array.concat(this.seeker_array);
     }
 }
