@@ -21,7 +21,6 @@ jobs:
             cd Morph;
             git checkout Fixing-memory-leaks;
             git pull origin Fixing-memory-leaks;
-            cd src;
             npm i;
             screen -d -m npm start'
           
