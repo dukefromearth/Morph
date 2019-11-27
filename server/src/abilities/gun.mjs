@@ -6,7 +6,6 @@ export default class Gun {
         this.bullet_damage = new Points(1,10);
         this.bullet_speed = new Points (1,10);
         this.type = type;
-        this.parasite = false;
         //private
         var _time_at_last_shot = 0;
         var _bullets_per_second = 5;
@@ -30,7 +29,7 @@ export default class Gun {
         y = y + Math.sin(angle) * h;
         let damage = this.bullet_damage.level + 8;
         let speed = this.bullet_speed.level + 5;
-        let bullet = new Bullet(id, playerID, x, y, angle, speed, damage, 20, 20, this.type,this.parasite);
+        let bullet = new Bullet(id, playerID, x, y, angle, speed, damage, 20, 20, this.type);
         this.setTimeAtLastShot();
         return bullet;
     }

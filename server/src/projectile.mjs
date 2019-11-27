@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 export default class Projectile {
-    constructor(id,x,y,angle, speed, mass, w, h, type, lifetime){
+    constructor(id,x,y,angle, speed, mass, w, h, type){
         //public
         this.id = id;
         this.x = x;
@@ -20,7 +20,7 @@ export default class Projectile {
         //private
         var _epoch = Date.now();
         var _speed = speed;
-        var _lifetime = (lifetime ? lifetime : 1000);
+        var _lifetime = 1000;
         this.getLifetime = function() {return _lifetime};
         this.addLifetime = function(num) {_lifetime += num};
         this.setSpeed = function(speed) {_speed = speed};

@@ -5,7 +5,7 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
-import Run from './run.mjs';
+import { spawn } from 'child_process';
 
 const __dirname = path.resolve(path.dirname(''));
 const HOST = process.env.HOST || '0.0.0.0';
@@ -60,10 +60,10 @@ function currentState(socket_id) {
 }
 
 
-//Run the genetic algorithm
-setInterval(function() {
-  Run("123123123");
-}, 1000)
+// //Run the genetic algorithm
+// setInterval(function() {
+//   runGA("123123123");
+// }, 1000)
 
 //This is where the game is updated
 //Update the game 120 times a second

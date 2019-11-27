@@ -2,7 +2,7 @@ import Projectile from './projectile.mjs'
 
 export default class Seeker extends Projectile {
     constructor(id,x,y,angle, speed, mass, w, h,img,type,enemyID){
-        super(id,x,y,angle, speed, mass, w, h,img,type,3000);
+        super(id,x,y,angle, speed, mass, w, h,img,type);
         this.enemyID = enemyID;
     }
     updatePos(enemyX, enemyY){
