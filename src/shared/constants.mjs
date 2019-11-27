@@ -1,0 +1,1 @@
+export var MAP_SIZE = 4000;

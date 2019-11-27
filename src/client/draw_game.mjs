@@ -171,7 +171,7 @@ export default class DrawGame {
             //draw all objects 
             for(let id in this.objects){
                 let object = this.objects[id];
-                this.draw_object(myPlayer, object, true);
+                this.draw_object(myPlayer, object, false);
             }
             //draw all collisions
             this.draw_collisions(myPlayer);

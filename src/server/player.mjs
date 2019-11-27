@@ -83,7 +83,7 @@ export default class Player extends Projectile {
     }
     take_damage(x) {
         this.health.hit(x);
-        if (this.health.accumulator < 0) this.is_alive = false;
+        if (this.health.accumulator < 0) this.alive = false;
     }
     serialize() {
         return {
@@ -97,7 +97,7 @@ export default class Player extends Projectile {
             angle: this.angle,
             mass: this.mass,
             type: this.type,
-            alive: this.is_alive,
+            alive: this.alive,
             rotation: this.rotation += .03,
             health: this.health.accumulator,
             collected_cells: this.collected_cells,

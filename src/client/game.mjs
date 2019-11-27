@@ -3,13 +3,14 @@
 
 import DrawGame from './draw_game.mjs';
 import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
+import { MAP_SIZE } from '../shared/constants.mjs'
 
+const map_size = MAP_SIZE;
 const socket = io();
 const refresh_rate = 1000 / 60;
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-const MAP_SIZE = 4000;
-const drawGame = new DrawGame(canvas, context, MAP_SIZE);
+const drawGame = new DrawGame(canvas, context, map_size);
 
 var movement = {
   up: false,

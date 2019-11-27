@@ -14,7 +14,7 @@ export default class Projectile {
         this.maxY = y+this.height/2;
         this.angle = angle;
         this.mass = mass;
-        this.is_alive = true;
+        this.alive = true;
         this.type = type;
         this.rotation = 0;
         //private
@@ -36,7 +36,7 @@ export default class Projectile {
     updatePos(){
         this.addLifetime(-1);
         if(this.getLifetime() <= 0){
-            this.is_alive = false;
+            this.alive = false;
             return;
         }
         let spd = this.getSpeed();
@@ -56,7 +56,7 @@ export default class Projectile {
             angle: this.angle,
             mass: this.mass,
             type: this.type,
-            alive: this.is_alive,
+            alive: this.alive,
             rotation: this.rotation += .03
         }
     }

@@ -4,13 +4,15 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import Game from './src/game.mjs';
+import Game from './server/game.mjs';
 import Run from './run.mjs';
+import { MAP_SIZE } from './shared/constants.mjs'
 
 const __dirname = path.resolve(path.dirname(''));
+const map_size = MAP_SIZE;
 const HOST = process.env.HOST || '0.0.0.0';
 const environment = process.env.ENV || "prod";
-const game = new Game(4000, 4000);
+const game = new Game(map_size, map_size);
 var num_users = 0;
 const app = express();
 const server = http.Server(app);
@@ -18,10 +20,9 @@ const io = socketIO(server);
 const refresh_rate = 1000 / 60;
 const port_num = 5000;
 
-
 app.set('port', port_num);
-app.use('/static', express.static('./static'));
-app.use('/node_modules', express.static('./node_modules'))
+app.use('/client', express.static('./client'));
+app.use('/shared', express.static('./shared'))
 
 // Routing
 app.get('/', function (request, response) {
