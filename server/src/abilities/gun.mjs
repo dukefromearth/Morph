@@ -9,7 +9,7 @@ export default class Gun {
         this.parasite = false;
         //private
         var _time_at_last_shot = 0;
-        var _bullets_per_second = 1;
+        var _bullets_per_second = 5;
         var _reload_speed = 1000/_bullets_per_second;
         this.getTimeAtLastShot = function() {return _time_at_last_shot};
         this.setTimeAtLastShot = function() {_time_at_last_shot = Date.now()};

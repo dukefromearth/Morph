@@ -1,0 +1,125 @@
+<!-- THANKS TO 
+https://opengameart.org/users/sujit1717
+
+-->
+<html>
+  <head>
+    <title>Morph!</title>
+    <style>
+      img {
+			  display: none;
+		  }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <img id="img_ship" src="/static/assets/RD2N.png" class = "image">
+    <img id="bullet" src="/static/assets/flame.png" class = "image">
+    <img id="img_enemy" src="/static/assets/ship2.png" class = "image">
+    <img id="img_flame" src="/static/assets/flame.png" class = "image">
+    <img id="img_electric" src="/static/assets/electric.png" class = "image">
+    <img id="img_asteroid1" src="/static/assets/asteroids/asteroid1.png" class = "image">
+    <img id="health" src="/static/assets/health.png" class = "image">
+    <img id="l1_shield" src="/static/assets/shields/level_1/00.png" class = "image">
+    <img id="l2_shield" src="/static/assets/shields/level_2/00.png" class = "image">
+    <img id="l3_shield" src="/static/assets/shields/level_3/00.png" class = "image">
+
+    <img id="beam_left" src="/static/assets/movement/beam_left.png" class = "image">
+    <img id="beam_right" src="/static/assets/movement/beam_right.png" class = "image">
+    <img id="beam_up" src="/static/assets/movement/beam_up.png" class = "image">
+    <img id="beam_down" src="/static/assets/movement/beam_down.png" class = "image">
+
+    <img id="missile_f0" src="/static/assets/missiles/00.png" class = "image">
+    <img id="missile_f1" src="/static/assets/missiles/01.png" class = "image">
+    <img id="missile_f2" src="/static/assets/missiles/02.png" class = "image">
+    <img id="missile_f3" src="/static/assets/missiles/03.png" class = "image">
+    
+    <img id="planet_01" src="/static/assets/planets/00.png" class = "image">
+  
+    <img id="upgrade_blast_speed" src="/static/assets/upgrade_blast_speed.png" class = "image">
+    <img id="upgrade_blast_level" src="/static/assets/upgrade_blast_level.png" class = "image">
+    <img id="upgrade_bullets_per_sec" src="/static/assets/upgrade_bullets_per_sec.png" class = "image">
+  
+    <img id="cell0" src="/static/assets/cells/blue-round.png" class = "image">
+    <img id="cell1" src="/static/assets/cells/green-round.png" class = "image">
+    <img id="cell2" src="/static/assets/cells/yellow-round.png" class = "image">
+    <img id="cell3" src="/static/assets/cells/red-round.png" class = "image">
+    <img id="cell4" src="/static/assets/cells/virus2.png" class = "image">
+    <img id="big_cell" src="/static/assets/cells/capsid_ray.png" class = "image">
+    <img id="seeker" src="/static/assets/cells/tcell.png" class = "image">
+
+    <img id="l1_shield_f0" src="/static/assets/shields/level_1/00.png" class = "image">
+    <img id="l1_shield_f1" src="/static/assets/shields/level_1/01.png" class = "image">
+    <img id="l1_shield_f2" src="/static/assets/shields/level_1/02.png" class = "image">
+    <img id="l1_shield_f3" src="/static/assets/shields/level_1/03.png" class = "image">
+    <img id="l1_shield_f4" src="/static/assets/shields/level_1/04.png" class = "image">
+    <img id="l1_shield_f5" src="/static/assets/shields/level_1/05.png" class = "image">
+    <img id="l1_shield_f6" src="/static/assets/shields/level_1/06.png" class = "image">
+    <img id="l1_shield_f7" src="/static/assets/shields/level_1/07.png" class = "image">
+    <img id="l1_shield_f8" src="/static/assets/shields/level_1/08.png" class = "image">
+    <img id="l1_shield_f9" src="/static/assets/shields/level_1/09.png" class = "image">
+    <img id="l1_shield_f10" src="/static/assets/shields/level_1/10.png" class = "image">
+    <img id="l1_shield_f11" src="/static/assets/shields/level_1/11.png" class = "image">
+    <img id="l1_shield_f12" src="/static/assets/shields/level_1/12.png" class = "image">
+    <img id="l1_shield_f13" src="/static/assets/shields/level_1/13.png" class = "image">
+    <img id="l1_shield_f14" src="/static/assets/shields/level_1/14.png" class = "image">
+    <img id="l1_shield_f15" src="/static/assets/shields/level_1/15.png" class = "image">
+    <img id="l1_shield_f16" src="/static/assets/shields/level_1/16.png" class = "image">
+    <img id="l1_shield_f17" src="/static/assets/shields/level_1/17.png" class = "image">
+    <img id="l1_shield_f18" src="/static/assets/shields/level_1/18.png" class = "image">
+    <img id="l1_shield_f19" src="/static/assets/shields/level_1/19.png" class = "image">
+
+    <img id="l1_shield_f0" src="/static/assets/shields/level_2/00.png" class = "image">
+    <img id="l2_shield_f1" src="/static/assets/shields/level_2/01.png" class = "image">
+    <img id="l2_shield_f2" src="/static/assets/shields/level_2/02.png" class = "image">
+    <img id="l2_shield_f3" src="/static/assets/shields/level_2/03.png" class = "image">
+    <img id="l2_shield_f4" src="/static/assets/shields/level_2/04.png" class = "image">
+    <img id="l2_shield_f5" src="/static/assets/shields/level_2/05.png" class = "image">
+    <img id="l2_shield_f6" src="/static/assets/shields/level_2/06.png" class = "image">
+    <img id="l2_shield_f7" src="/static/assets/shields/level_2/07.png" class = "image">
+    <img id="l2_shield_f8" src="/static/assets/shields/level_2/08.png" class = "image">
+    <img id="l2_shield_f9" src="/static/assets/shields/level_2/09.png" class = "image">
+
+    <img id="l3_shield_f0" src="/static/assets/shields/level_3/00.png" class = "image">
+    <img id="l3_shield_f1" src="/static/assets/shields/level_3/01.png" class = "image">
+    <img id="l3_shield_f2" src="/static/assets/shields/level_3/02.png" class = "image">
+    <img id="l3_shield_f3" src="/static/assets/shields/level_3/03.png" class = "image">
+    <img id="l3_shield_f4" src="/static/assets/shields/level_3/04.png" class = "image">
+    <img id="l3_shield_f5" src="/static/assets/shields/level_3/05.png" class = "image">
+    <img id="l3_shield_f6" src="/static/assets/shields/level_3/06.png" class = "image">
+    <img id="l3_shield_f7" src="/static/assets/shields/level_3/07.png" class = "image">
+    <img id="l3_shield_f8" src="/static/assets/shields/level_3/08.png" class = "image">
+    <img id="l3_shield_f9" src="/static/assets/shields/level_3/09.png" class = "image">
+    <img id="l3_shield_f10" src="/static/assets/shields/level_3/10.png" class = "image">
+
+    <img id="e_0001" src="/static/assets/explosions/explosion2/e_0001.png" class ="image">
+    <img id="e_0002" src="/static/assets/explosions/explosion2/e_0002.png" class ="image">
+    <img id="e_0003" src="/static/assets/explosions/explosion2/e_0003.png" class ="image">
+    <img id="e_0004" src="/static/assets/explosions/explosion2/e_0004.png" class ="image">
+    <img id="e_0005" src="/static/assets/explosions/explosion2/e_0005.png" class ="image">
+    <img id="e_0006" src="/static/assets/explosions/explosion2/e_0006.png" class ="image">
+    <img id="e_0007" src="/static/assets/explosions/explosion2/e_0007.png" class ="image">
+    <img id="e_0008" src="/static/assets/explosions/explosion2/e_0008.png" class ="image">
+    <img id="e_0009" src="/static/assets/explosions/explosion2/e_0009.png" class ="image">
+    <img id="e_0010" src="/static/assets/explosions/explosion2/e_0010.png" class ="image">
+    <img id="e_0011" src="/static/assets/explosions/explosion2/e_0011.png" class ="image">
+    <img id="e_0012" src="/static/assets/explosions/explosion2/e_0012.png" class ="image">
+    <img id="e_0013" src="/static/assets/explosions/explosion2/e_0013.png" class ="image">
+    <img id="e_0014" src="/static/assets/explosions/explosion2/e_0014.png" class ="image">
+    <img id="e_0015" src="/static/assets/explosions/explosion2/e_0015.png" class ="image">
+
+    <img id="e1_0000" src="static/assets/explosions/explosion/0000.png" class ="image">
+    <img id="e1_0001" src="static/assets/explosions/explosion/0001.png" class ="image">
+    <img id="e1_0002" src="static/assets/explosions/explosion/0002.png" class ="image">
+    <img id="e1_0003" src="static/assets/explosions/explosion/0003.png" class ="image">
+    <img id="e1_0004" src="static/assets/explosions/explosion/0004.png" class ="image">
+    <img id="e1_0005" src="static/assets/explosions/explosion/0005.png" class ="image">
+    <img id="e1_0006" src="static/assets/explosions/explosion/0006.png" class ="image">
+    <img id="e1_0007" src="static/assets/explosions/explosion/0007.png" class ="image">
+
+  </body>
+  <script type = "module" src="/static/game.mjs"></script>
+
+  
+</html>
