@@ -1,6 +1,5 @@
 import Animate from './animations.mjs';
 import Collision from './collisions.mjs';
-import RBush from '../node_modules/rbush/index.js';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -12,7 +11,6 @@ export default class DrawGame {
         this.objects = [];
         this.animations = new Animate();
         this.collisions = new Collision(100);
-        this.tree = new RBush();
     }
     update_state(state){
         this.players = state.players;
@@ -145,17 +143,8 @@ export default class DrawGame {
     }
     all(socket_id, movement) {
         if(!this.players) return;
-        this.tree.clear();
-        this.tree.load(this.objects);
         const myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
         //only draw objects near our player
-        const buffer = 25;
-        this.objects = this.tree.search({
-            minX: myPlayer.x - this.canvas.width/2 - buffer,
-            maxX: myPlayer.x + this.canvas.width/2 + buffer,
-            minY: myPlayer.y - this.canvas.width/2 - buffer,
-            maxY: myPlayer.y + this.canvas.width/2 + buffer,
-        });
         if (myPlayer != undefined) {
             //draw background
             this.background(myPlayer.x, myPlayer.y);
