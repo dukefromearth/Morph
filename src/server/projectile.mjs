@@ -33,12 +33,15 @@ export default class Projectile {
         this.minY = this.y-this.height/2;
         this.maxY = this.y+this.height/2;
     }
-    updatePos(){
+    update_lifetime(){
         this.addLifetime(-1);
         if(this.getLifetime() <= 0){
             this.alive = false;
             return;
         }
+    }
+    updatePos(){
+        this.update_lifetime();
         let spd = this.getSpeed();
         this.x += Math.cos(this.angle) * spd;
         this.y += Math.sin(this.angle) * spd;   
