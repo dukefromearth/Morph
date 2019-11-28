@@ -143,7 +143,7 @@ export default class DrawGame {
     }
     all(socket_id, movement) {
         if(!this.players) return;
-        const myPlayer = this.get_my_player(socket_id)//this.players[socket_id];/
+        const myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
         //only draw objects near our player
         if (myPlayer != undefined) {
             //draw background
