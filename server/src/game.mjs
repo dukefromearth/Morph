@@ -198,7 +198,7 @@ export default class Game {
         this.object_array.length=0;
         if(!this.objects[0]) this.new_big_cell();
         //Create random players
-        if(this.player_count < 20) this.new_player('abcdef'+this.player_count);
+        //if(this.player_count < 20) this.new_player('abcdef'+this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
