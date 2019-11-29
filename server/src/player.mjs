@@ -18,7 +18,6 @@ export default class Player extends Projectile {
         this.gun = new Gun("bullet");
         this.health = new Health(1,10);
         this.points = new Points(1,10);
-        this.hp = 100;
         this.collected_cells = {cell0: 0, cell1: 0, cell2: 0, cell3: 0};
     }
     collect_cell(type){

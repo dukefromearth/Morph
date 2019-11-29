@@ -10,7 +10,7 @@ export default class DrawGame {
         this.players = [];
         this.objects = [];
         this.animations = new Animate();
-        this.collisions = new Collision(100);
+        this.collisions = new Collision(1000);
     }
     update_state(state){
         this.players = state.players;
