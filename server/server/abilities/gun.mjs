@@ -27,7 +27,7 @@ export default class Gun {
         if (!this.bullet_available()) throw "No bullets available";
         x = x + Math.cos(angle) * w;
         y = y + Math.sin(angle) * h;
-        let speed = this.bullet_speed.level + 3;
+        let speed = this.bullet_speed.level + 8;
         let bullet = new Bullet(id, playerID, x, y, angle, speed, this.type);
         bullet.mass = this.bullet_damage.level + 8;
         this.setTimeAtLastShot();

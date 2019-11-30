@@ -253,7 +253,7 @@ export default class Game {
     }
     set_array_lengths_to_zero() {
         this.little_cell_array.length = 0;
-        this.bullet_array.length = 0;
+        // this.bullet_array.length = 0;
         this.player_array.length = 0;
         this.seeker_array.length = 0;
         this.big_cell_array.length = 0;
@@ -281,24 +281,24 @@ export default class Game {
         //Update all object positions, delete those that are out of bounds
         this.update_object_positions();
         //Add to object_tree
-        console.time("Map to array");
+        // console.time("Map to array");
         this.bullet_array = Object.keys(this.bullets).map(i => this.bullets[i].serialize());
         this.little_cell_array = Object.keys(this.little_cells).map(i => this.little_cells[i].serialize());
         this.player_array = Object.keys(this.players).map(i => this.players[i].serialize());
-        console.timeEnd("Map to array");
-        console.time("Load Tree");
+        // console.timeEnd("Map to array");
+        // console.time("Load Tree");
         this.bullet_tree.load(this.bullet_array);
         this.little_cell_tree.load(this.little_cell_array);
         this.player_tree.load(this.player_array);
         this.all_but_players_tree.load(this.little_cell_array);
         this.all_but_players_tree.load(this.bullet_array);
-        console.timeEnd("Load Tree");
+        // console.timeEnd("Load Tree");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
-        console.time("Detect Collisions");
+        // console.time("Detect Collisions");
         this.detect_all_collisions();
-        console.timeEnd("Detect Collisions");
-        console.time("remove");
+        // console.timeEnd("Detect Collisions");
+        // console.time("remove");
         this.remove_min_max_from_individual_client_objects();
-        console.timeEnd("remove");
+        // console.timeEnd("remove");
     }
 }

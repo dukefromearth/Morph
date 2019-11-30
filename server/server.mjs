@@ -83,7 +83,7 @@ setInterval(function () {
     game.update()
   }
   console.timeEnd("update");
-}, 1000 / 120);
+}, 1000 / 60);
 
 //Send socket emits 30 times a second
 setInterval(function () {
@@ -97,6 +97,7 @@ setInterval(function () {
         socket.emit('state', players, objects , Date.now());
       }
     }
+    game.bullet_array.length = 0;
     // io.emit('state',JSON.stringify(currentState2()));
   }
   console.timeEnd("Send Socket");
