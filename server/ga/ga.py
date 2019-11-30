@@ -1,105 +1,137 @@
+import json
+import math
 import random
 import sys
-import json
+
+import numpy as np
 
 # Number of individuals in each generation
-POPULATION_SIZE = 150
 
-# Valid genes
-# 0 = empty space
-# 1 = triangle
-# 2 = player
-# 3 = me
-GENES = "0123456789."
+POPULATION_SIZE = 20
 
 # Target string to be generated
-TARGET = sys.argv[1]
+# Target is assumed each list has only 1 coordinate, x and y
+TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
+TARGET_GRID = np.zeros((100,100))
+MAX_TARGET = 0
 
+# TARGET_INPUT[i][0] is the x coordinate
+# TARGET_INPUT[i][1] is the y coordinate
+# might not need to use this 
+for i in range(len(TARGET_INPUT)):
+    TARGET_GRID[TARGET_INPUT[i][0]][TARGET_INPUT[i][1]] = 1
+    MAX_TARGET+=1
+
+
+
+# change the way the fitness funtion calculates the fitness
 
 class Individual(object):
+
     ''' 
     Class representing individual in population 
     '''
 
     def __init__(self, chromosome):
-        self.chromosome = chromosome
-        self.fitness = self.cal_fitness()
+        self.chromosome = chromosome #Game of Life board starting pos
+        self.next_state = chromosome 
+        self.last_state = chromosome #Game of life board ending pos
+        self.delta = 0 #amount of moves made in Game of Life
+        self.fitness = 50 # init as a very low fitness 
 
     @classmethod
     def mutated_genes(self):
         ''' 
         create random genes for mutation 
         '''
-        global GENES
-        gene = random.choice(GENES)
+
+        gene = random.randint(0,1)
         return gene
 
     @classmethod
     def create_gnome(self):
         ''' 
-        create chromosome or string of genes 
+        create a new chromosome (new game of life starting positions)
+        At the middle of the board
         '''
-        global TARGET
-        gnome_len = len(TARGET)
-        return [self.mutated_genes() for _ in range(gnome_len)]
+        chromosome = np.zeros((100,100))
+        for i in range(45,55):
+            for j in range(45,55):
+                chromosome[i][j] = random.randint(0,1)
+        return chromosome
+    
+    # update game of life
+    def evolve(self):
+        '''
+        Evolve using the starting chromosome
+        '''
+        for x in range(0,99):
+            for y in range(0,99):
+                neighbors = 0
+                if self.last_state[x-1][y-1] == 1:
+                    neighbors+=1
+                if self.last_state[x][y-1] == 1:
+                    neighbors+=1
+                if self.last_state[x+1][y-1] == 1:
+                    neighbors+=1
+                if self.last_state[x-1][y] == 1:
+                    neighbors+=1
+                if self.last_state[x+1][y] == 1:
+                    neighbors+=1
+                if self.last_state[x-1][y+1] == 1:
+                    neighbors+=1
+                if self.last_state[x][y+1] == 1:
+                    neighbors+=1
+                if self.last_state[x+1][y+1] == 1:
+                    neighbors+=1
+                if self.last_state[x][y] == 0:
+                    if neighbors == 3:
+                        self.next_state[x][y] = 1
+                    else:
+                        if neighbors < 2:
+                            self.next_state[x][y] = 0
+                        elif neighbors > 3:
+                            self.next_state[x][y] = 0
+                        else:
+                            self.next_state[x][y] = 1
+        self.last_state = self.next_state
+        self.delta+=1
 
     def mate(self, par2):
-        ''' 
-        Perform mating and produce new offspring 
-        '''
-
-        # chromosome for offspring
-        child_chromosome = []
-        for gp1, gp2 in zip(self.chromosome, par2.chromosome):
-
-            # random probability
-            prob = random.random()
-
-            # if prob is less than 0.45, insert gene
-            # from parent 1
-            if prob < 0.45:
-                child_chromosome.append(gp1)
-
-            # if prob is between 0.45 and 0.90, insert
-            # gene from parent 2
-            elif prob < 0.90:
-                child_chromosome.append(gp2)
-
-            # otherwise insert random gene(mutate),
-            # for maintaining diversity
-            else:
-                child_chromosome.append(self.mutated_genes())
-
-        # create new Individual(offspring) using
-        # generated chromosome for offspring
-        return Individual(child_chromosome)
+        """
+        Take two parents, return two children, interchanging half of the allels of each parent randomly
+        """
+        # select_mask = np.random.randint(0, 2, size=(20, 20), dtype='bool')
+        select_mask = np.random.binomial(1, 0.5, size=(100, 100)).astype('bool')
+        child1, child2 = np.copy(par2.chromosome), np.copy(self.chromosome)
+        child1[select_mask] = par2.chromosome[select_mask]
+        child2[select_mask] = self.chromosome[select_mask]
+        return child1, child2
 
     def cal_fitness(self):
         ''' 
-        Calculate fittness score, it is the number of 
-        characters in string which differ from target 
-        string. 
+        Calculate fitness score, it is how many targets left. Lower the score the more targets hit
         '''
-        global TARGET
-        fitness = 0
-        for gs, gt in zip(self.chromosome, TARGET):
-            if gs != gt:
-                fitness += 1
-        return fitness
+
+        self.fitness = 0
+        # Add fitness score for every point not included in target
+        for i in range(len(TARGET_INPUT)):
+            if self.last_state[TARGET_INPUT[i][0]][TARGET_INPUT[i][1]] == 0:
+                self.fitness+=1
 
 # Driver code
-
 
 def main():
     global POPULATION_SIZE
 
     # current generation
-    generation = 0
 
+    generation = 0
     found = False
     population = []
 
     # create initial population
+
     for _ in range(POPULATION_SIZE):
         gnome = Individual.create_gnome()
         population.append(Individual(gnome))
@@ -107,37 +139,58 @@ def main():
     while not found:
 
         # sort the population in increasing order of fitness score
+
         population = sorted(population, key=lambda x: x.fitness)
 
         # if the individual having lowest fitness score ie.
         # 0 then we know that we have reached to the target
         # and break the loop
-        if population[0].fitness <= 0:
+
+        # Going for 90% hit accuracy 
+
+        if population[0].fitness <= int(MAX_TARGET*0.90):
             found = True
+            #for x in range(POPULATION_SIZE):
+                #print(population[x].chromosome[1][2])
+                #print(population[x].fitness)
             break
 
         # Otherwise generate new offsprings for new generation
+
         new_generation = []
 
         # Perform Elitism, that mean 10% of fittest population
         # goes to the next generation
-        s = int((10*POPULATION_SIZE)/100)
+
+        s = int(10 * POPULATION_SIZE / 100)
         new_generation.extend(population[:s])
 
         # From 50% of fittest population, Individuals
         # will mate to produce offspring
-        s = int((90*POPULATION_SIZE)/100)
+
+        s = int(90 * POPULATION_SIZE / 100)
         for _ in range(s):
             parent1 = random.choice(population[:50])
             parent2 = random.choice(population[:50])
-            child = parent1.mate(parent2)
-            new_generation.append(child)
+            child1, child2 = parent1.mate(parent2)
+            new_generation.append(Individual(child2))
+            #new_generation.append(child2)
 
         population = new_generation
 
+        # Evolve the new generation by x moves of the game of life
+        for x in range(POPULATION_SIZE):
+            while population[x].delta < 5:
+                population[x].evolve()
+                print(population[x].delta)
+            population[x].cal_fitness()
+
         generation += 1
-
-
+        print("GENERATION:",generation)
+        print(population[0].chromosome)
+        #for x in range(POPULATION_SIZE):
+            #print(population[x].chromosome[45])
+            #print(population[x].fitness)
 
     send_message_back = {
         'message':"Generation: {} Best Fit: {}".format(generation,
