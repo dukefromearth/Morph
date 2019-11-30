@@ -3,7 +3,7 @@ export default class Constants {
         var MAP_SIZE = 5000;
         var player = {size: 75, width: 75, height: 75, mass: 10};
         var cell = {size: 30, width: 30, height: 30, mass: 6};
-        var bullet = {size: 20, width: 20, height: 20, mass: 4};
+        var bullet = {size: 30, width: 30, height: 30, mass: 4};
         var good_cell = {size: 300, width: 300, height: 300, mass: 100}
         this.get_size = function(type){
             if(type[0] === 'c') return cell.size;

@@ -197,7 +197,6 @@ export default class Game {
         for (let id in this.players) {
             let npc = false;
             let player = this.players[id];
-            console.log(player.id.substring(1, 4));
             if (player.id.substring(0, 4) === "abcd") {
                 player.angle += .03;
                 npc === true;
