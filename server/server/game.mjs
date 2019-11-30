@@ -197,7 +197,8 @@ export default class Game {
         for (let id in this.players) {
             let npc = false;
             let player = this.players[id];
-            if (player.id.substring(1, 4) === "abcd") {
+            console.log(player.id.substring(1, 4));
+            if (player.id.substring(0, 4) === "abcd") {
                 player.angle += .03;
                 npc === true;
             }
@@ -270,7 +271,7 @@ export default class Game {
         }
     }
     update() {
-        if (this.little_cell_array.length <= this.player_array.length * this.width/100) this.add_random_cell();
+        if (this.little_cell_array.length <= this.player_array.length * this.width/800) this.add_random_cell();
         //Reset trees 
         this.clear_all_trees();
         this.set_array_lengths_to_zero();
