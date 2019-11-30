@@ -48,8 +48,8 @@ export default class DrawGame {
     draw_object(center, object, rotate) {
         const img = document.getElementById(object.type);
         const size = this.constants.get_size(object.type);
-        const x = (object.x - size/2);
-        const y = (object.y - size/2);
+        const x = (object.x + size/8);
+        const y = (object.y + size/8);
         const canvasX = canvas.width / 2 + x - center.x;
         const canvasY = canvas.height / 2 + y - center.y;
         if(!object.alive){
@@ -59,14 +59,14 @@ export default class DrawGame {
         this.context.save();
         this.context.translate(canvasX, canvasY);
         this.context.rotate(object.angle);
-        this.context.drawImage(img, 0 - (size / 2), 0 - (size / 2), size, size);
+        this.context.drawImage(img, -(size / 2), -(size / 2), size, size);
         this.context.restore();
     }
     draw_player(center, object, rotate){
         this.draw_object(center, object, rotate);
         const size = this.constants.get_size(object.type);
-        const x = (object.x - size/2);
-        const y = (object.y - size/2);
+        const x = (object.x);
+        const y = (object.y);
         const canvasX = canvas.width / 2 + x - center.x;
         const canvasY = canvas.height / 2 + y - center.y;
         this.context.save();
@@ -111,21 +111,23 @@ export default class DrawGame {
         }
     }
     movement(myPlayer,movement){
-        const canvasX = canvas.width / 2 + myPlayer.x - myPlayer.x;
-        const canvasY = canvas.height / 2 + myPlayer.y - myPlayer.y;
+        const player_size = this.constants.get_size('player');
+        const canvasX = canvas.width / 2 - player_size/2;
+        const canvasY = canvas.height / 2- player_size/2;
+        
         this.context.save();
-        this.context.translate(canvasX-50,canvasY-50);
+        this.context.translate(canvasX,canvasY);
         if(movement.left){
-            this.context.drawImage(document.getElementById("beam_right"), -40, 0, 100, 100);
+            this.context.drawImage(document.getElementById("beam_right"), -70, 0, 100, 100);
         }
         if(movement.right){
-            this.context.drawImage(document.getElementById("beam_left"), 40, 0, 100, 100);
+            this.context.drawImage(document.getElementById("beam_left"), 70, 0, 100, 100);
         }
         if(movement.up){
-            this.context.drawImage(document.getElementById("beam_down"), 0, -40, 100, 100);
+            this.context.drawImage(document.getElementById("beam_down"), 0, -70, 100, 100);
         }
         if(movement.down){
-            this.context.drawImage(document.getElementById("beam_up"), 0, 40, 100, 100);
+            this.context.drawImage(document.getElementById("beam_up"), 0, 70, 100, 100);
         }
         this.context.restore();
     }
