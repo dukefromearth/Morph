@@ -83,7 +83,7 @@ setInterval(function () {
     game.update()
   }
   console.timeEnd("update");
-}, 1000 / 60);
+}, 1000 / 120);
 
 //Send socket emits 30 times a second
 setInterval(function () {
