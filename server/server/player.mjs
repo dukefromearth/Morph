@@ -11,7 +11,7 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 15;
+        let speed = 7;
         super(socketID, x, y, angle, speed, type);
         this.gun = new Gun("bullet");
         this.health = new Health(1,10);

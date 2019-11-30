@@ -4,7 +4,7 @@ import Bullet from "./bullet.mjs"
 export default class Gun {
     constructor(type) {
         this.bullet_damage = new Points(1,10);
-        this.bullet_speed = new Points (5,10);
+        this.bullet_speed = new Points (1,10);
         this.type = type;
         //private
         var _time_at_last_shot = 0;

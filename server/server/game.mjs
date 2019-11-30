@@ -270,7 +270,7 @@ export default class Game {
         }
     }
     update() {
-        if (this.little_cell_array.length <= this.player_array.length * 10) this.add_random_cell();
+        if (this.little_cell_array.length <= this.player_array.length * this.width/100) this.add_random_cell();
         //Reset trees 
         this.clear_all_trees();
         this.set_array_lengths_to_zero();
