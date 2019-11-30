@@ -1,6 +1,6 @@
 export default class Constants {
     constructor(){
-        var MAP_SIZE = 10000;
+        var MAP_SIZE = 5000;
         var player = {size: 75, width: 75, height: 75, mass: 10};
         var cell = {size: 30, width: 30, height: 30, mass: 6};
         var bullet = {size: 20, width: 20, height: 20, mass: 4};
