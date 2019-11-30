@@ -3,12 +3,14 @@
 
 import DrawGame from './draw_game.mjs';
 import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
+import Constants from '../shared/constants.mjs';
 
+const constants = new Constants();
 const socket = io();
 const refresh_rate = 1000 / 60;
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-const MAP_SIZE = 4000;
+const MAP_SIZE = constants.get_map_size();
 const drawGame = new DrawGame(canvas, context, MAP_SIZE);
 
 var movement = {
@@ -149,8 +151,10 @@ socket.on('connection', function (socket) {
 socket.emit('new player');
 initState();
 
-socket.on('state', function (state) {
-  processGameUpdate(state);
+socket.on('state', function (players, objects ,time) {
+  console.log(players);
+  let update = {players: players, objects: objects, time: time};
+  processGameUpdate(update);
 });
 
 setInterval(function () {

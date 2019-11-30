@@ -4,6 +4,7 @@ import Gun from './abilities/gun.mjs'
 import Health from './abilities/health.mjs';
 import Points from './abilities/points.mjs';
 
+
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height, type) {
         //public
@@ -11,22 +12,29 @@ export default class Player extends Projectile {
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
         let speed = 15;
-        let mass = 10;
-        let w = 70;
-        let h = 70;
-        super(socketID, x, y, angle, speed, mass, w, h, type);
+        super(socketID, x, y, angle, speed, type);
         this.gun = new Gun("bullet");
         this.health = new Health(1,10);
         this.points = new Points(1,10);
         this.collected_cells = {cell0: 0, cell1: 0, cell2: 0, cell3: 0};
     }
+    /**
+     * @desc Takes in a string and adds to collected cells based on cell type
+     * @param type {String} 
+     */
     collect_cell(type){
         if(type === "cell0") this.collected_cells.cell0++;
         else if (type === "cell1") this.collected_cells.cell1++;
         else if (type === "cell2") this.collected_cells.cell2++;
         else if (type === "cell3") this.collected_cells.cell3++;
+        else throw "Wrong cell type";
     }
-    //Void - Updates the players position
+    /**
+     * @desc Updates the position of each player
+     * @param data { Object } left, right, up, down, angle
+     * @param game_width { int }
+     * @param game_height { int }
+     */
     update_pos(data, game_width, game_height) {
         //Check for diagonal movements
         var speed = this.getSpeed();
@@ -56,9 +64,13 @@ export default class Player extends Projectile {
         this.angle = data.angle;
         this.update_min_max();
     }
+    /**
+     * 
+     * @param x { int }
+     */
     take_damage(x){
         this.health.hit(x);
-        if(this.health.accumulator < 0) this.is_alive = false;
+        if(this.health.accumulator < 0) this.alive = false;
     }
     serialize(){
         return {
@@ -72,7 +84,7 @@ export default class Player extends Projectile {
             angle: this.angle,
             mass: this.mass,
             type: this.type,
-            alive: this.is_alive,
+            alive: this.alive,
             rotation: this.rotation += .03,
             health: this.health.accumulator,
             collected_cells: this.collected_cells,

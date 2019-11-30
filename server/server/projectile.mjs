@@ -1,20 +1,24 @@
+import Constants from "../shared/constants.mjs";
+
 /*jshint esversion: 6 */
+const constants = new Constants();
 
 export default class Projectile {
-    constructor(id,x,y,angle, speed, mass, w, h, type){
+    constructor(id,x,y,angle,speed,type){
+        let info = constants.get_object(type);
         //public
         this.id = id;
         this.x = x;
         this.y = y;
-        this.width = w;
-        this.height = h;
+        this.width = info.width;
+        this.height = info.height;
         this.minX = x-this.width/2;
         this.maxX = x+this.width/2;
         this.minY = y-this.height/2;
         this.maxY = y+this.height/2;
         this.angle = angle;
-        this.mass = mass;
-        this.is_alive = true;
+        this.mass = info.mass;
+        this.alive = true;
         this.type = type;
         this.rotation = 0;
         //private
@@ -34,15 +38,26 @@ export default class Projectile {
         this.maxY = this.y+this.height/2;
     }
     updatePos(){
+        this.rotation += .03;
         this.addLifetime(-1);
         if(this.getLifetime() <= 0){
-            this.is_alive = false;
+            this.alive = false;
             return;
         }
         let spd = this.getSpeed();
         this.x += Math.cos(this.angle) * spd;
-        this.y += Math.sin(this.angle) * spd;   
+        this.y += Math.sin(this.angle) * spd;
         this.update_min_max();  
+    }
+    deep_serialize(){
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+            angle: this.angle,
+            type: this.type,
+            alive: this.alive,
+        }
     }
     serialize(){
         return {
@@ -53,11 +68,9 @@ export default class Projectile {
             maxX: this.maxX,
             minY: this.minY,
             maxY: this.maxY,
-            angle: this.angle,
-            mass: this.mass,
+            angle: this.rotation,
             type: this.type,
-            alive: this.is_alive,
-            rotation: this.rotation += .03
+            alive: this.alive,
         }
     }
 }
