@@ -15,7 +15,7 @@ export default class Bullet extends Projectile {
     }
     update(){
         this.addDistanceFromOrigin(this.getSpeed());
-        if(this.getDistanceFromOrigin() > 600) this.is_alive = false;
+        if(this.getDistanceFromOrigin() > 750) this.alive = false;
         if (this.parasite) {
             this.parasitic_angle = this.angle + Math.sin(this.getDistanceFromOrigin());
             this.x += Math.cos(this.parasitic_angle) * this.getSpeed();

@@ -22,8 +22,8 @@ export default class DrawGame {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
         // 800 in-game units of width.
         const scaleRatio = Math.max(1, 800 / window.innerWidth);
-        this.canvas.width = scaleRatio * (window.innerWidth - 15);
-        this.canvas.height = scaleRatio * (window.innerHeight - 30);
+        this.canvas.width = scaleRatio * Math.min(1500,(window.innerWidth - 15));
+        this.canvas.height = scaleRatio * Math.min(1500,(window.innerHeight - 30));
     }
     background(myPlayerX, myPlayerY) {
         const backgroundX = (this.MAP_SIZE / 2) - myPlayerX + (canvas.width / 2);
@@ -161,6 +161,7 @@ export default class DrawGame {
             }
         }
     }
+    
     all(socket_id, movement) {
         if (!this.players) return;
         // this.tree.clear();

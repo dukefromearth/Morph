@@ -10,6 +10,7 @@ import Seeker from './seeker.mjs';
  * @param {Array.<number>} arg2 List of numbers to be processed.
  * @constructor
  */
+
 export default class Game {
     constructor(GAME_WIDTH, GAME_HEIGHT) {
         this.x = 0;
@@ -192,10 +193,13 @@ export default class Game {
             }
         }
         //Search all objects and seekers agaisnt players
-        
         for (let id in this.players) {
+            let npc = false;
             let player = this.players[id];
-            if (player.id.substr(0, 5) === "abcde") player.angle += .02;
+            if (player.id.substr(0, 5) === "abcde") {
+                player.angle += .02;
+                npc = true;
+            }
             //Search each player against all objects
             let objects_near_player = this.object_tree.search(player);
             for (let objID in objects_near_player) {
@@ -237,20 +241,45 @@ export default class Game {
                     }
                 }
             }
-            //add seekers to object tree and update objects surrounding each client
-            let max_distance_from_player = 700;
-            this.object_tree.load(this.seeker_array);
-            this.individual_client_objects[player.id] = this.object_tree.search({
-                minX: player.minX - max_distance_from_player,
-                maxX: player.maxX + max_distance_from_player,
-                minY: player.minY - max_distance_from_player,
-                maxY: player.maxY + max_distance_from_player
-            })
+            if (!npc) {
+                let max_distance_from_player = 750;
+                let minX = player.minX - max_distance_from_player;
+                let maxX = player.maxX + max_distance_from_player;
+                let minY = player.minY - max_distance_from_player;
+                let maxY = player.maxY + max_distance_from_player;
+                this.individual_client_objects[player.id] = {
+                    players: this.player_tree.search({
+                        minX: minX,
+                        maxX: maxX,
+                        minY: minY,
+                        maxY: maxY
+                    }),
+                    objects: this.object_tree.search({
+                        minX: minX,
+                        maxX: maxX,
+                        minY: minY,
+                        maxY: maxY
+                    }),
+                }
+            }
         }
     }
+    remove_min_max_from_individual_client_objects() {
+        for (let id in this.individual_client_objects) {
+            for (let id2 in this.individual_client_objects[id]) {
+                delete this.individual_client_objects[id][id2].minX;
+                delete this.individual_client_objects[id][id2].maxX;
+                delete this.individual_client_objects[id][id2].minY;
+                delete this.individual_client_objects[id][id2].minX;
+            }
+        }
+    }
+    /**
+     * @desc It updates 
+     */
     update() {
-        if (Date.now() % 20 === 0) this.add_random_cell();
-        if (Date.now() % 20 === 0) this.add_seeker();
+        if (Date.now() % 200 === 0) this.add_random_cell();
+        if (Date.now() % 200 === 0) this.add_seeker();
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length = 0;
@@ -261,7 +290,7 @@ export default class Game {
 
         if (!this.objects[0]) this.new_big_cell();
         //Create random players
-        if (this.player_count < 20) this.new_player('abcdef' + this.player_count);
+        // if (this.player_count < 20) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
@@ -277,5 +306,7 @@ export default class Game {
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         
         this.detect_all_collisions();
+        this.remove_min_max_from_individual_client_objects();
     }
+
 }
