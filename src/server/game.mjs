@@ -185,7 +185,7 @@ export default class Game {
                         seeker.alive = false;
                         object.alive = false;
                         this.players[this.objects[object.id].getOwner()].points.add(seeker.mass);
-                        this.object_tree.remove(object);
+                        //this.object_tree.remove(object);
                         delete this.objects[object.id];
                         delete this.seekers[id];
                     }
@@ -243,23 +243,15 @@ export default class Game {
             }
             if (!npc) {
                 let max_distance_from_player = 750;
-                let minX = player.minX - max_distance_from_player;
-                let maxX = player.maxX + max_distance_from_player;
-                let minY = player.minY - max_distance_from_player;
-                let maxY = player.maxY + max_distance_from_player;
+                let search_space ={
+                    minX:player.minX - max_distance_from_player,
+                    maxX:player.maxX + max_distance_from_player,
+                    minY:player.minY - max_distance_from_player,
+                    maxY: player.maxY + max_distance_from_player
+                }
                 this.individual_client_objects[player.id] = {
-                    players: this.player_tree.search({
-                        minX: minX,
-                        maxX: maxX,
-                        minY: minY,
-                        maxY: maxY
-                    }),
-                    objects: this.object_tree.search({
-                        minX: minX,
-                        maxX: maxX,
-                        minY: minY,
-                        maxY: maxY
-                    }),
+                    players: this.player_tree.search(search_space),
+                    objects: this.object_tree.search(search_space).concat(this.seeker_tree.search(search_space))
                 }
             }
         }
@@ -279,7 +271,7 @@ export default class Game {
      */
     update() {
         if (Date.now() % 200 === 0) this.add_random_cell();
-        if (Date.now() % 200 === 0) this.add_seeker();
+        if (Date.now() % 20 === 0) this.add_seeker();
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length = 0;

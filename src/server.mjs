@@ -70,16 +70,16 @@ function currentState(socket_id) {
 //This is where the game is updated
 //Update the game 60 times a second
 setInterval(function () {
-  console.time("update");
+  // console.time("update");
   if (num_users) {
     game.update()
   }
-  console.timeEnd("update");
+  // console.timeEnd("update");
 }, 1000 / 60);
 
 //Send socket emits 30 times a second
 setInterval(function () {
-  console.time("Send Socket");
+  // console.time("Send Socket");
   if (num_users) {
     let sockets = io.sockets.sockets;
     for (let id in sockets) {
@@ -92,5 +92,5 @@ setInterval(function () {
       }
     }
   }
-  console.timeEnd("Send Socket");
+  // console.timeEnd("Send Socket");
 }, refresh_rate);
