@@ -93,12 +93,11 @@ setInterval(function () {
       let socket = sockets[id];
       if(game.individual_client_objects[socket.id]){
         let players = game.individual_client_objects[socket.id].players;
-        let objects = game.individual_client_objects[socket.id].objects;
-        socket.emit('state', players, objects , Date.now());
+        let bullets = game.individual_client_objects[socket.id].bullets;
+        socket.emit('state', players, bullets , Date.now());
       }
     }
     game.bullet_array.length = 0;
-    // io.emit('state',JSON.stringify(currentState2()));
   }
   console.timeEnd("Send Socket");
 }, refresh_rate);

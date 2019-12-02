@@ -32,14 +32,12 @@ export default class Game {
         this.player_tree = new Rbush();
         this.seeker_tree = new Rbush();
         this.big_cell_tree = new Rbush();
-        this.all_but_players_tree = new Rbush();
 
         this.little_cell_array = [];
         this.bullet_array = [];
         this.player_array = [];
         this.seeker_array = [];
         this.big_cell_array = [];
-        this.all_but_players_array = [];
         this.individual_client_objects = {};
         this.player_count = 0;
         this.counter = 0;
@@ -233,7 +231,7 @@ export default class Game {
                         minY: minY,
                         maxY: maxY
                     }),
-                    objects: this.all_but_players_tree.search({
+                    bullets: this.bullet_tree.search({
                         minX: minX,
                         maxX: maxX,
                         minY: minY,
@@ -249,7 +247,6 @@ export default class Game {
         this.player_tree.clear();
         this.seeker_tree.clear();
         this.big_cell_tree.clear();
-        this.all_but_players_tree.clear();
     }
     set_array_lengths_to_zero() {
         this.little_cell_array.length = 0;
@@ -257,7 +254,6 @@ export default class Game {
         this.player_array.length = 0;
         this.seeker_array.length = 0;
         this.big_cell_array.length = 0;
-        this.all_but_players_array.length = 0;
     }
     remove_min_max_from_individual_client_objects() {
         for (let id in this.individual_client_objects) {
@@ -275,7 +271,7 @@ export default class Game {
         this.clear_all_trees();
         this.set_array_lengths_to_zero();
         //Create random players
-        if (this.player_count < 5) this.new_player('abcdef' + this.player_count);
+        // if (this.player_count < 100) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
@@ -290,8 +286,6 @@ export default class Game {
         this.bullet_tree.load(this.bullet_array);
         this.little_cell_tree.load(this.little_cell_array);
         this.player_tree.load(this.player_array);
-        this.all_but_players_tree.load(this.little_cell_array);
-        this.all_but_players_tree.load(this.bullet_array);
         // console.timeEnd("Load Tree");
         //Cycle through every player and their surrounding objects, handle collisions appropriately
         // console.time("Detect Collisions");
