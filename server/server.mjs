@@ -55,49 +55,17 @@ io.on('connection', function (socket) {
 
 });
 
-function currentState(socket_id) {
-  let players,objects = {};
-  if(game.individual_client_objects[socket_id]){
-    players = game.individual_client_objects[socket_id].players;
-    objects = game.individual_client_objects[socket_id].objects;
-  }
-  const state = {
-    players: players,
-    objects: objects,
-    time: Date.now()
-  }
-  //print_size_of_arr(state.objects);
-  return state;
-}
 
-// //Run the genetic algorithm
-// setInterval(function() {
-//   runGA("123123123");
-// }, 1000)
-
-//This is where the game is updated
-//Update the game 120 times a second
+//Send socket emits
 setInterval(function () {
-  console.time("update");
-  if (num_users) {
-    game.update()
-  }
-  console.timeEnd("update");
-}, 1000 / 60);
-
-//Send socket emits 30 times a second
-setInterval(function () {
-  console.time("Send Socket");
+  game.update()
+  // console.time("Send Socket");
   if (num_users) {
     for (let id in sockets) {
       let socket = sockets[id];
-      if(game.individual_client_objects[socket.id]){
-        let players = game.individual_client_objects[socket.id].players;
-        let bullets = game.individual_client_objects[socket.id].bullets;
-        socket.emit('state', players, bullets , Date.now());
-      }
+      socket.emit('state', game.individual_client_objects[socket.id], Date.now());
     }
     game.bullet_array.length = 0;
   }
-  console.timeEnd("Send Socket");
+  // console.timeEnd("Send Socket");
 }, refresh_rate);

@@ -13,11 +13,19 @@ export default class Points {
             return true;
         } else return false;
     }
+    downgradeLevel(){
+        if(this.points < this.level-1 * this.level-1 * this.nextLevel) {
+            this.level--;
+            this.nextLevel = this.level * this.level * this.levelMultiplier;
+            return true;
+        } else return false;
+    }
     add(points){
         this.points += points;
         this.upgradeLevel();
     }
     sub(points){
-        this.points += points;
+        this.points -= points;
+        this.downgradeLevel();
     }
 }

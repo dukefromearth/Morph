@@ -151,9 +151,9 @@ socket.on('connection', function (socket) {
 socket.emit('new player');
 initState();
 
-socket.on('state', function (players, objects ,time) {
-  console.log(players);
-  let update = {players: players, objects: objects, time: time};
+socket.on('state', function (state,time) {
+  let objects = state.bullets.concat(state.little_cells);
+  let update = {players: state.players, objects: objects, time: time};
   processGameUpdate(update);
 });
 

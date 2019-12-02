@@ -3,6 +3,7 @@ import Projectile from './projectile.mjs';
 import Gun from './abilities/gun.mjs'
 import Health from './abilities/health.mjs';
 import Points from './abilities/points.mjs';
+import Shields from '../client/shields.mjs';
 
 
 export default class Player extends Projectile {
@@ -16,9 +17,11 @@ export default class Player extends Projectile {
         this.gun = new Gun("bullet");
         this.health = new Health(1,10);
         this.points = new Points(1,10);
+        this.shields = new Health(0,2);
+        this.shield_lvl = 0;
         this.collected_cells = {cell0: 0, cell1: 0, cell2: 0, cell3: 0};
     }
-    /**
+    /**wd
      * @desc Takes in a string and adds to collected cells based on cell type
      * @param type {String} 
      */
@@ -27,6 +30,8 @@ export default class Player extends Projectile {
         else if (type === "cell1") this.collected_cells.cell1++;
         else if (type === "cell2") this.collected_cells.cell2++;
         else if (type === "cell3") this.collected_cells.cell3++;
+        else if (type === "cell_l1_shield") this.shields = new Health(1,2);
+        else if (type === "cell_l2_shield") this.shields = new Health(2,2);
         else throw "Wrong cell type";
     }
     /**
@@ -84,6 +89,7 @@ export default class Player extends Projectile {
             angle: this.angle,
             mass: this.mass,
             type: this.type,
+            shield_lvl: this.shields.level,
             alive: this.alive,
             rotation: this.rotation += .03,
             health: this.health.accumulator,

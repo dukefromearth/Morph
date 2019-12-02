@@ -7,5 +7,6 @@ export default class Health extends Points {
     }
     hit(damage){
         this.accumulator -= damage;
+        if(this.accumulator <= 0) this.level = 0;
     }
 }

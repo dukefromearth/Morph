@@ -1,6 +1,7 @@
 import Animate from './animations.mjs';
 import Collision from './collisions.mjs';
 import Constants from '../shared/constants.mjs';
+import Shields from './shields.mjs';
 
 export default class DrawGame {
     constructor(canvas, context, map_size) {
@@ -13,6 +14,7 @@ export default class DrawGame {
         this.animations = new Animate();
         this.collisions = new Collision(1000);
         this.constants = new Constants();
+        this.shields = new Shields();
     }
     update_state(state){
         this.players = state.players;
@@ -45,11 +47,26 @@ export default class DrawGame {
         this.context.lineWidth = 10;
         this.context.strokeRect(canvas.width / 2 - myPlayerX, canvas.height / 2 - myPlayerY, this.MAP_SIZE, this.MAP_SIZE);
     }
+    draw_shield(center, player) {
+        if(player.shield_lvl < 1) return;
+        const size = this.constants.get_size(player.type);
+        const x = (player.x);
+        const y = (player.y);
+        const canvasX = canvas.width / 2 + x - center.x;
+        const canvasY = canvas.height / 2 + y - center.y;
+        var level = player.shield_lvl;
+        var shield = this.shields.shields[level - 1];
+        this.context.save();
+        this.context.translate(canvasX, canvasY);
+        this.context.drawImage(shield[++this.shields.counter[level - 1]], -size*0.75, -size*0.75, size*1.5, size*1.5);
+        if (this.shields.counter[level - 1] >= shield.length - 1) this.shields.counter[level - 1] = 0;
+        this.context.restore();
+    }
     draw_object(center, object, rotate) {
         const img = document.getElementById(object.type);
         const size = this.constants.get_size(object.type);
-        const x = (object.x + size/8);
-        const y = (object.y + size/8);
+        const x = (object.x);
+        const y = (object.y);
         const canvasX = canvas.width / 2 + x - center.x;
         const canvasY = canvas.height / 2 + y - center.y;
         if(!object.alive){
@@ -64,6 +81,7 @@ export default class DrawGame {
     }
     draw_player(center, object, rotate){
         this.draw_object(center, object, rotate);
+        this.draw_shield(center,object);
         const size = this.constants.get_size(object.type);
         const x = (object.x);
         const y = (object.y);

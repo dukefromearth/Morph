@@ -183,9 +183,13 @@ export default class Game {
         this.little_cells[id] = new Projectile(id, x, y, angle, 1, type)
     }
     add_random_cell() {
+        let type = "cell";
         let x = Math.random() * this.width;
         let y = Math.random() * this.height;
-        let type = "cell" + Math.floor(Math.random() * 4);
+        let rand = Math.random();
+        if (rand < 0.1) type = type + "_l1_shield";
+        else if (rand < 0.2) type = type + "_l2_shield";
+        else type = type + Math.floor(Math.random() * 4);
         this.add_cell(x, y, type);
     }
     /**
@@ -196,7 +200,7 @@ export default class Game {
             let npc = false;
             let player = this.players[id];
             if (player.id.substring(0, 4) === "abcd") {
-                player.angle += .03;
+                //player.angle += .03;
                 npc === true;
             }
             let close_bullets = this.bullet_tree.search(player);
@@ -205,7 +209,10 @@ export default class Game {
                 if (this.detect_collision(player, this.bullets[bullet.id])) {
                     bullet.alive = false;
                     delete this.bullets[bullet.id];
-                    player.health.hit(constants.get_bullet().mass);
+                    if(player.shields.accumulator > 0) player.shields.hit(constants.get_bullet().mass)
+                    else player.health.hit(constants.get_bullet().mass);
+                    console.log(player.shields.accumulator);
+                    console.log(player.shields.points)
                     if (player.health.accumulator <= 0) this.revive_player(player.id);
                 }
             }
@@ -220,23 +227,16 @@ export default class Game {
             }
             if (!npc) {
                 let max_distance_from_player = 800;
-                let minX = player.minX - max_distance_from_player;
-                let maxX = player.maxX + max_distance_from_player;
-                let minY = player.minY - max_distance_from_player;
-                let maxY = player.maxY + max_distance_from_player;
+                let search_space = {
+                    minX: player.minX - max_distance_from_player,
+                    maxX: player.maxX + max_distance_from_player,
+                    minY: player.minY - max_distance_from_player,
+                    maxY: player.maxY + max_distance_from_player
+                }
                 this.individual_client_objects[player.id] = {
-                    players: this.player_tree.search({
-                        minX: minX,
-                        maxX: maxX,
-                        minY: minY,
-                        maxY: maxY
-                    }),
-                    bullets: this.bullet_tree.search({
-                        minX: minX,
-                        maxX: maxX,
-                        minY: minY,
-                        maxY: maxY
-                    }),
+                    players: this.player_tree.search(search_space),
+                    bullets: this.bullet_tree.search(search_space),
+                    little_cells: this.little_cell_tree.search(search_space)
                 }
             }
         }
@@ -257,12 +257,17 @@ export default class Game {
     }
     remove_min_max_from_individual_client_objects() {
         for (let id in this.individual_client_objects) {
-            for (let id2 in this.individual_client_objects[id]) {
-                delete this.individual_client_objects[id][id2].minX;
-                delete this.individual_client_objects[id][id2].maxX;
-                delete this.individual_client_objects[id][id2].minY;
-                delete this.individual_client_objects[id][id2].minX;
+            let client = this.individual_client_objects[id];
+            for (let id2 in client) {
+                let objects = client[id2];
+                for (let id3 in objects){
+                    delete this.individual_client_objects[id][id2][id3].minX;
+                    delete this.individual_client_objects[id][id2][id3].maxX;
+                    delete this.individual_client_objects[id][id2][id3].minY;
+                    delete this.individual_client_objects[id][id2][id3].maxY;
+                }
             }
+            
         }
     }
     update() {
@@ -271,7 +276,7 @@ export default class Game {
         this.clear_all_trees();
         this.set_array_lengths_to_zero();
         //Create random players
-        // if (this.player_count < 100) this.new_player('abcdef' + this.player_count);
+        if (this.player_count < 2) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
