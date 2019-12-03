@@ -192,10 +192,22 @@ def main():
             #print(population[x].chromosome[45])
             #print(population[x].fitness)
 
+    
+    #out of loop when fit individual is found
+    #turn into a list of lists and return?
+    rows = population[0].chromosome.shape[0]
+    cols = population[0].chromosome.shape[1]
+    result = []
+
+    for x in range(0,rows):
+        for y in range(0,cols):
+            if population[0].chromosome[x][y] == 1:
+                result.append([x,y])
+
     send_message_back = {
         'message':"Generation: {} Best Fit: {}".format(generation,
                                                             "".join(
-                                                                population[0].chromosome),
+                                                                result),
                                                             population[0].fitness) }
 
 
