@@ -204,12 +204,7 @@ def main():
             if population[0].chromosome[x][y] == 1:
                 result.append([x,y])
 
-    send_message_back = {
-        'message':"Generation: {} Best Fit: {}".format(generation,
-                                                            "".join(
-                                                                result),
-                                                            population[0].fitness) }
-
+    send_message_back = {(result)}
 
     print(json.dumps(send_message_back))
 
