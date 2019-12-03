@@ -6,6 +6,10 @@ import path from 'path';
 import socketIO from 'socket.io';
 import Game from './src/game.mjs';
 
+import * as Sentry from '@sentry/node';
+
+
+
 var __dirname = path.resolve(path.dirname(''));
 
 const HOST = process.env.HOST || '0.0.0.0';
@@ -21,6 +25,17 @@ var io = socketIO(server);
 
 var refresh_rate = 1000 / 30;
 var port_num = 5000;
+
+if(environment === "prod")
+  Sentry.init({ dsn: 'https://c0345c3b5bad4241afe661e1e23d5197@sentry.io/1835657' });
+
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
+// The error handler must be before any other error middleware
+app.use(Sentry.Handlers.errorHandler());
+
+app.listen(3000);
+
 
 app.set('port', port_num);
 app.use('/static', express.static('./static'));
