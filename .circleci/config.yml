@@ -19,8 +19,8 @@ jobs:
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
             cd Morph/server;
-            git checkout parasitic_gameplay;
-            git pull origin parasitic_gameplay;
+            git checkout hover-phone;
+            git pull origin hover-phone;
             npm i;
             screen -d -m npm start'
           

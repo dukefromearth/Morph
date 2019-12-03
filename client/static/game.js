@@ -56,10 +56,15 @@ socket.on('message', function(data){
     console.log(data);
 });
 
-document.addEventListener("mousemove", function(event) {
+function mouseMovement(event){
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
-});
+}
+document.addEventListener("mousemove", mouseMovement);
+document.addEventListener("touchmove", mouseMovement);
+document.addEventListener("touchstart", mouseMovement);
+// document.addEventListener("", mouseMovement);
+
 
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
