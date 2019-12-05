@@ -4,8 +4,10 @@ import Rbush from 'rbush';
 import Projectile from './projectile.mjs'
 import Seeker from './seeker.mjs';
 import Constants from '../shared/constants.mjs';
+import GOL from './game_of_life.mjs';
 
 const constants = new Constants();
+const logOutput = (name) => (message) => console.log(`[${name}] ${message}`)
 
 /**
  * Class making something fun and easy.
@@ -20,6 +22,8 @@ export default class Game {
         this.width = GAME_WIDTH;
         this.height = GAME_HEIGHT;
         this.current_id = 0;
+
+        this.gol = new GOL(this.width / 2 - 50, this.height / 2 - 50)
 
         this.players = {};
         this.bullets = {};
@@ -42,6 +46,7 @@ export default class Game {
         this.player_count = 0;
         this.counter = 0;
         this.player_image_counter = 0;
+
     }
     new_big_cell() {
         let id = this.unique_id();
@@ -209,10 +214,8 @@ export default class Game {
                 if (this.detect_collision(player, this.bullets[bullet.id])) {
                     bullet.alive = false;
                     delete this.bullets[bullet.id];
-                    if(player.shields.accumulator > 0) player.shields.hit(constants.get_bullet().mass)
+                    if (player.shields.accumulator > 0) player.shields.hit(constants.get_bullet().mass)
                     else player.health.hit(constants.get_bullet().mass);
-                    console.log(player.shields.accumulator);
-                    console.log(player.shields.points)
                     if (player.health.accumulator <= 0) this.revive_player(player.id);
                 }
             }
@@ -260,23 +263,23 @@ export default class Game {
             let client = this.individual_client_objects[id];
             for (let id2 in client) {
                 let objects = client[id2];
-                for (let id3 in objects){
+                for (let id3 in objects) {
                     delete this.individual_client_objects[id][id2][id3].minX;
                     delete this.individual_client_objects[id][id2][id3].maxX;
                     delete this.individual_client_objects[id][id2][id3].minY;
                     delete this.individual_client_objects[id][id2][id3].maxY;
                 }
             }
-            
+
         }
     }
     update() {
-        if (this.little_cell_array.length <= this.player_array.length * this.width/800) this.add_random_cell();
+        if (this.little_cell_array.length <= this.player_array.length * this.width / 800) this.add_random_cell();
         //Reset trees 
         this.clear_all_trees();
         this.set_array_lengths_to_zero();
         //Create random players
-        if (this.player_count < 2) this.new_player('abcdef' + this.player_count);
+        // if (this.player_count < 2) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
@@ -301,3 +304,19 @@ export default class Game {
         // console.timeEnd("remove");
     }
 }
+
+// function resolveAfter2Seconds() {
+//     return new Promise(resolve => {
+//       setTimeout(() => {
+//         resolve('resolved');
+//       }, 2000);
+//     });
+//   }
+
+//   async function asyncCall(trigger) {
+//     if(!trigger) return false;
+//     var result = await resolveAfter2Seconds();
+//     console.log(result);
+//     return result;
+//     // expected output: 'resolved'
+//   }

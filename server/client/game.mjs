@@ -100,7 +100,7 @@ canvas.addEventListener('touchstart', function (event) {
 
 })
 
-document.addEventListener("mousemove", function (event) {
+canvas.addEventListener("mousemove", function (event) {
   movement.mousex = event.clientX;
   movement.mousey = event.clientY;
   movement.angle = updateDirection(movement.mousex, movement.mousey);

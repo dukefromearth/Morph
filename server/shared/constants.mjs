@@ -1,15 +1,17 @@
 export default class Constants {
     constructor(){
-        var MAP_SIZE = 1500;
+        var MAP_SIZE = 500;
         var player = {size: 75, width: 75, height: 75, mass: 10};
         var cell = {size: 30, width: 30, height: 30, mass: 6};
         var bullet = {size: 30, width: 30, height: 30, mass: 4};
-        var good_cell = {size: 300, width: 300, height: 300, mass: 100}
+        var good_cell = {size: 300, width: 300, height: 300, mass: 100};
+        var gol = {size: 30, widht: 30, height: 30, mass: 30};
         this.get_size = function(type){
             if(type[0] === 'c') return cell.size;
             if(type[0] === 'b') return bullet.size;
             if(type[0] === 'p') return player.size;
             if(type[0] === 'g') return good_cell.size;
+            if(type[0] === 'b') return gol.size;
         };
         this.get_map_size = function() { return MAP_SIZE };
         this.get_player = function() { return player };
@@ -21,6 +23,7 @@ export default class Constants {
             if(type[0] === 'b') return bullet;
             if(type[0] === 'p') return player;
             if(type[0] === 'g') return good_cell;
+            if(type[0] === 'b') return gol;
         }
     }
 }
