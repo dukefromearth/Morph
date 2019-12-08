@@ -93,6 +93,7 @@ export default class Game {
         let type = this.player_image();
         let new_points = this.tally_points(socketID)
         let points = this.players[socketID].points.points + new_points;
+        let name = this.players[socketID].name;
         this.players[socketID] = new Player(socketID, this.width, this.height, type);
         this.players[socketID].points.add(points);
         this.players[socketID].points.sub(this.players[socketID].points.useable_points);
@@ -109,6 +110,7 @@ export default class Game {
             this.players[socketID].gun.multi_shot.add(points);
         }
         let player = this.players[socketID];
+        player.name = name;
         player.setSpeed(player.getSpeed() + 1);
     }
     update_player_pos(socketID, data) {
