@@ -4,6 +4,7 @@ export default class Points {
         this.levelMultiplier = 100;
         this.nextLevel = this.level * this.level * this.levelMultiplier;
         this.points = 0;
+        this.useable_points = 0;
         this.max = max;
     }
     upgradeLevel(){
@@ -15,9 +16,10 @@ export default class Points {
     }
     add(points){
         this.points += points;
+        this.useable_points += points;
         this.upgradeLevel();
     }
     sub(points){
-        this.points += points;
+        this.useable_points -= points;
     }
 }

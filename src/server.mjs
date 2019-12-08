@@ -56,7 +56,8 @@ function currentState(socket_id) {
   const state = {
     players: game.individual_client_objects[socket_id].players,
     objects: game.individual_client_objects[socket_id].objects,
-    time: Date.now()
+    time: Date.now(),
+    top: game.top_scores
   }
   return state;
 }

@@ -5,6 +5,7 @@ export default class Gun {
     constructor(type) {
         this.bullet_damage = new Points(1,10);
         this.bullet_speed = new Points (1,10);
+        this.multi_shot = new Points(1,5);
         this.type = type;
         this.parasite = false;
         //private
@@ -20,18 +21,17 @@ export default class Gun {
     bullet_available(){
         let time = Date.now();
         if (time - this.getTimeAtLastShot() > this.getReloadSpeed()) {
+            this.setTimeAtLastShot();
             return true;
         }
         else return false;
     }
     get_bullet(id,playerID,x,y,angle,w,h){
-        if (!this.bullet_available()) throw "No bullets available";
         x = x + Math.cos(angle) * w;
         y = y + Math.sin(angle) * h;
         let damage = this.bullet_damage.level + 8;
         let speed = this.bullet_speed.level + 15;
         let bullet = new Bullet(id, playerID, x, y, angle, speed, damage, 20, 20, this.type,this.parasite);
-        this.setTimeAtLastShot();
         return bullet;
     }
 }

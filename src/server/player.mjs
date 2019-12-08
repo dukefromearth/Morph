@@ -21,6 +21,17 @@ export default class Player extends Projectile {
         this.cell_count = 0;
         this.shield_lvl = 0;
         this.collected_cells = { cell0: 0, cell1: 0, cell2: 0, cell3: 0 };
+        this.name = this.create_name();
+    }
+    create_name(){
+        let names = [
+            "onion breath", "dill pickle", "old lady", "old man", "farty mctootles", 
+            "weezer", "chill bro", "too much wine", "dizzy spinner", "punk duck", "olive toast", 
+            "shipwrecked", "toilet baby", "turtle clown", "algae tax", "big second toe", 
+            "tar morals", "bow legged shrimp", "huge bum", "calculate this", "cleavage horse", 
+            "left shoe", "sad 'n ugly", "fat 'n happy"];
+        let name = (names[Math.floor(Math.random() * names.length)]);
+        return name;
     }
     collect_cell(type) {
         if (type === "cell0") {
@@ -102,7 +113,8 @@ export default class Player extends Projectile {
             health: this.health.accumulator,
             collected_cells: this.collected_cells,
             points: this.points.points,
-            shield_lvl: this.shield_lvl
+            shield_lvl: this.shield_lvl,
+            name: this.name
         }
     }
 }

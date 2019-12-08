@@ -19,7 +19,7 @@ var movement = {
   right: false,
   mousex: 0,
   mousey: 0,
-  angle: 0
+  angle: 0,
 };
 
 socket.on('message', function (data) {

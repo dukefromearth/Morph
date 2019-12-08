@@ -22,6 +22,7 @@ export default class Game {
         this.objects = {};
         this.seekers = {};
         this.player_count = 0;
+        this.top_scores = [];
 
         this.object_tree = new Rbush();
         this.player_tree = new Rbush();
@@ -90,9 +91,25 @@ export default class Game {
     }
     player_scored(socketID) {
         let type = this.player_image();
-        let points = this.players[socketID].points.points + this.tally_points(socketID);
+        let new_points = this.tally_points(socketID)
+        let points = this.players[socketID].points.points + new_points;
         this.players[socketID] = new Player(socketID, this.width, this.height, type);
         this.players[socketID].points.add(points);
+        this.players[socketID].points.sub(this.players[socketID].points.useable_points);
+        if(Math.random() < 0.25) {
+            this.players[socketID].health.add(points);
+        }
+        else if(Math.random() < 0.5) {
+            this.players[socketID].gun.bullet_damage.add(points);
+        }
+        else if(Math.random() < 0.75) {
+            this.players[socketID].gun.bullet_speed.add(points);
+        }
+        else {
+            this.players[socketID].gun.multi_shot.add(points);
+        }
+        let player = this.players[socketID];
+        player.setSpeed(player.getSpeed() + 1);
     }
     update_player_pos(socketID, data) {
         const player = this.players[socketID];
@@ -110,9 +127,13 @@ export default class Game {
         else return false;
     }
     new_bullet(player) {
-        let id = this.unique_id();
         if (player.gun.bullet_available()) {
-            this.objects[id] = player.gun.get_bullet(id, player.id, player.x, player.y, player.angle, player.width, player.height);
+            let level = player.gun.multi_shot.level;
+            for(let i = 0; i < level; i++){
+                let id = this.unique_id();
+                let angle = (i % 2 === 2 && i != 0) ? i-1 * 0.2 : i * -0.2;
+                this.objects[id] = player.gun.get_bullet(id, player.id, player.x, player.y, player.angle+angle, player.width, player.height);
+            }
         }
     }
     add_bullets_to_all_players() {
@@ -173,6 +194,7 @@ export default class Game {
         else type = type + Math.floor(Math.random() * 4);
         this.add_cell(x, y, type);
     }
+
     detect_all_collisions() {
         //search each object against all seekers
         for (let id in this.seekers) {
@@ -184,7 +206,9 @@ export default class Game {
                     if (this.detect_collision(seeker, object)) {
                         seeker.alive = false;
                         object.alive = false;
-                        this.players[this.objects[object.id].getOwner()].points.add(seeker.mass);
+                        if(this.objects[object.id]){
+                            this.players[this.objects[object.id].getOwner()].points.add(seeker.mass);
+                        }
                         //this.object_tree.remove(object);
                         delete this.objects[object.id];
                         delete this.seekers[id];
@@ -220,7 +244,7 @@ export default class Game {
                             player.shield_lvl = 2;
                         }
                         else {
-                            player.take_damage(object.mass);
+                            player.take_damage(object.mass/player.shield_lvl + 1);
                             if (player.health.accumulator <= 0) this.revive_player(player.id);
                         }
                         delete this.objects[object.id];
@@ -243,10 +267,10 @@ export default class Game {
             }
             if (!npc) {
                 let max_distance_from_player = 750;
-                let search_space ={
-                    minX:player.minX - max_distance_from_player,
-                    maxX:player.maxX + max_distance_from_player,
-                    minY:player.minY - max_distance_from_player,
+                let search_space = {
+                    minX: player.minX - max_distance_from_player,
+                    maxX: player.maxX + max_distance_from_player,
+                    minY: player.minY - max_distance_from_player,
                     maxY: player.maxY + max_distance_from_player
                 }
                 this.individual_client_objects[player.id] = {
@@ -266,12 +290,24 @@ export default class Game {
             }
         }
     }
+    calculate_top_players(){
+        var sortable = [];
+        for (let p in this.players){
+            let player = this.players[p];
+            sortable.push([player.name,player.points.points]);
+        }
+        sortable.sort(function(a,b) {
+            return b[1] - a[1];
+        })
+        this.top_scores = sortable.splice(0,3);
+    }
     /**
      * @desc It updates 
      */
     update() {
-        if (Date.now() % 200 === 0) this.add_random_cell();
+        if (Date.now() % 20 === 0) this.add_random_cell();
         if (Date.now() % 20 === 0) this.add_seeker();
+        this.calculate_top_players();
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length = 0;
@@ -296,7 +332,7 @@ export default class Game {
         this.player_tree.load(this.player_array);
         this.seeker_tree.load(this.seeker_array);
         //Cycle through every player and their surrounding objects, handle collisions appropriately
-        
+
         this.detect_all_collisions();
         this.remove_min_max_from_individual_client_objects();
     }

@@ -13,10 +13,12 @@ export default class DrawGame {
         this.animations = new Animate();
         this.collisions = new Collision(100);
         this.shields = new Shields();
+        this.top = [];
     }
     update_state(state) {
         this.players = state.players;
         this.objects = state.objects;
+        this.top = state.top;
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -113,8 +115,24 @@ export default class DrawGame {
         this.context.font = "14px Comic Sans MS";
         this.context.textAlign = "center";
         this.context.fillText(object.points, 0, -width / 2 - 10);
+        this.context.fillText(object.name, 0, width / 2 + 40);
         this.context.restore();
 
+    }
+    draw_top_scores(){
+        
+        this.context.fillStyle = "white";
+        this.context.strokeStyle = 'white';
+        this.context.lineWidth = 3;
+        this.context.strokeRect(this.canvas.width - 350, 20, 287, 115)
+        this.context.font = "24px Comic Sans MS";
+        this.context.fillText("TOP SCORES!", this.canvas.width - 280, 50);
+        for (let i in this.top){
+            let p = this.top[i];
+            this.context.fillStyle = "white";
+            this.context.font = "24px Comic Sans MS";
+            this.context.fillText(p[0] + " " + p[1], this.canvas.width - 330, 75 + i * 25);
+        }
     }
     draw_collisions(myPlayer) {
         for (let id2 in this.collisions.collisions) {
@@ -195,6 +213,7 @@ export default class DrawGame {
             }
             //draw all collisions
             this.draw_collisions(myPlayer);
+            this.draw_top_scores();
         }
     }
 }
