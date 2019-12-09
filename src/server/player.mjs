@@ -10,7 +10,7 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 5;
+        let speed = 7;
         let mass = 10;
         let w = 70;
         let h = 70;
