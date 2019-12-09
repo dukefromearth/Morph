@@ -97,8 +97,8 @@ export function getCurrentState() {
         const next = gameUpdates[base + 1];
         const r = (serverTime - baseUpdate.update.time) / (next.update.time - baseUpdate.update.time);
         return {
-            players: baseUpdate.update.players,//interpolatePlayers(baseUpdate.update.players, next.update.players, r),
-            objects: baseUpdate.update.objects,//interpolateObjects(baseUpdate.update.objects, next.update.objects, r),
+            players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
+            objects: interpolateObjects(baseUpdate.update.objects, next.update.objects, r),
             top: baseUpdate.update.top
         };
     }
