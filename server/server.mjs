@@ -6,7 +6,6 @@ import path from 'path';
 import socketIO from 'socket.io';
 import Game from './server/game.mjs';
 import Constants from './shared/constants.mjs';
-import { spawn } from 'child_process';
 
 const constants = new Constants();
 const __dirname = path.resolve(path.dirname(''));
@@ -17,7 +16,7 @@ var num_users = 0;
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-const refresh_rate = 1000 / 60;
+const refresh_rate = 1000 / 120;
 const port_num = 5000;
 
 var sockets = {};

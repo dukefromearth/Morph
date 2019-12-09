@@ -7,7 +7,7 @@ import Constants from '../shared/constants.mjs';
 
 const constants = new Constants();
 const socket = io();
-const refresh_rate = 1000 / 60;
+const refresh_rate = 1000 / 100;
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const MAP_SIZE = constants.get_map_size();
