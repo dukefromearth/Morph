@@ -12,7 +12,7 @@ const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const MAP_SIZE = constants.get_map_size();
 const drawGame = new DrawGame(canvas, context, MAP_SIZE);
-//
+
 var movement = {
   up: false,
   down: false,
