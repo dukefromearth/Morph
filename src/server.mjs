@@ -16,7 +16,7 @@ var num_users = 0;
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-const refresh_rate = 1000 / 40;
+const refresh_rate = 1000 / 60;
 const port_num = 5000;
 
 app.set('port', port_num);
