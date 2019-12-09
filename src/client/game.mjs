@@ -2,7 +2,7 @@
 //Thanks to https://github.com/vzhou842
 
 import DrawGame from './draw_game.mjs';
-import { getCurrentState, initState, processGameUpdate } from './state_manager.js.js';
+import { getCurrentState, initState, processGameUpdate } from './state_manager.js';
 import Constants from '../shared/constants.mjs';
 
 const constants = new Constants();
