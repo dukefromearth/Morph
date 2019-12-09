@@ -5,7 +5,6 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 import Game from './server/game.mjs';
-import Run from './run.mjs';
 import { MAP_SIZE } from './shared/constants.mjs'
 
 const __dirname = path.resolve(path.dirname(''));
@@ -73,7 +72,7 @@ function currentState(socket_id) {
 setInterval(function () {
   // console.time("update");
   if (num_users) {
-    game.update()
+    game.update();
   }
   // console.timeEnd("update");
 }, 1000 / 60);
