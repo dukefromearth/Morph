@@ -6,9 +6,9 @@ app = Flask(__name__)
 
 # source ./flask_algo/bin/activate
 
-@app.route("/")
+@app.route("/", methods =['POST'])
 def home():
-    
+    content = request.get_json()
     return "Hello, World!"
     
 if __name__ == "__main__":

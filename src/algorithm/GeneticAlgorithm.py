@@ -7,21 +7,16 @@ import numpy as np
 
 # Number of individuals in each generation
 
-POPULATION_SIZE = 20
 
 # Target string to be generated
 # Target is assumed each list has only 1 coordinate, x and y
-TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
+#TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
 #TARGET_INPUT = sys.argv[1]
-# print(sys.argv[1])
-TARGET_GRID = np.zeros((100,100))
-MAX_TARGET = 0
-
-print(json.dumps(TARGET_INPUT))
-
+#print(json.dumps(TARGET_INPUT))
 # TARGET_INPUT[i][0] is the x coordinate
 # TARGET_INPUT[i][1] is the y coordinate
 
+TARGET_INPUT = []
 
 
 # change the way the fitness function calculates the fitness
@@ -123,7 +118,8 @@ class Individual(object):
 # Driver code
 
 def main():
-    global POPULATION_SIZE
+    POPULATION_SIZE = 20
+    TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
 
     # current generation
 
@@ -151,9 +147,6 @@ def main():
 
         if population[0].fitness <= int(MAX_TARGET*0.90):
             found = True
-            #for x in range(POPULATION_SIZE):
-                #print(population[x].chromosome[1][2])
-                #print(population[x].fitness)
             break
 
         # Otherwise generate new offsprings for new generation
