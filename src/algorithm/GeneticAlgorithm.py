@@ -117,9 +117,10 @@ class Individual(object):
 
 # Driver code
 
-def main():
+def main(sys.argv):
     POPULATION_SIZE = 20
     TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
+    MAX_TARGET = 10
 
     # current generation
 

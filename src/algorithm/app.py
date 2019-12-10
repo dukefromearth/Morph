@@ -9,8 +9,8 @@ app = Flask(__name__)
 @app.route("/", methods =['POST'])
 def home():
     content = request.get_json()
+    GA.main(content["payload"])
     return "Hello, World!"
     
 if __name__ == "__main__":
-    GA.main()
     app.run(debug=True,port=5001)
