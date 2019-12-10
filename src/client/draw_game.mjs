@@ -15,6 +15,29 @@ export default class DrawGame {
         this.collisions = new Collision(1000);
         this.constants = new Constants();
         this.shields = new Shields();
+        this.circles = [
+          {
+            x: 90,
+            y: 100,
+            radius: 150,
+            color: 'rgb(255,255,255)',
+            endAngle: 2 * Math.PI,
+            startAngle: 0,
+            id:1
+          },
+          {
+            x: 90,
+            y: canvas.height - 100,
+            radius: 150,
+            color: 'rgb(255,255,255)',
+            endAngle: 2 * Math.PI,
+            startAngle: 0,
+            id:2
+          }
+        ];
+    }
+    get_circles(){
+        return this.circles
     }
     update_state(state){
         this.players = state.players;
@@ -157,6 +180,26 @@ export default class DrawGame {
             }
         }
     }
+    draw_controller(){
+
+
+        // draw circles
+        this.circles.forEach(circle => {
+          this.context.beginPath();
+          this.context.arc(circle.x, circle.y, circle.radius, circle.startAngle, circle.endAngle, false);
+          this.context.strokeStyle = 'white';
+          this.context.stroke()
+          this.context.lineWidth = 10
+          this.context.fill();
+        });
+
+        
+
+
+    }
+    checkInCircle(){
+
+    }
     all(socket_id, movement) {
         if(!this.players) return;
         const myPlayer = this.get_my_player(socket_id)//this.players[socket_id];
@@ -180,6 +223,12 @@ export default class DrawGame {
             }
             //draw all collisions
             this.draw_collisions(myPlayer);
+
+            this.draw_controller()
+
+            this.checkInCircle()
+
+            
         }
     }
 }

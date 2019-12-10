@@ -139,6 +139,104 @@ document.addEventListener('keyup', function (event) {
       break;
   }
 });
+const circles = [
+{
+  x: 90,
+  y: 100,
+  radius: 150,
+  color: 'rgb(255,255,255)',
+  endAngle: 2 * Math.PI,
+  startAngle: 0,
+  id:1
+},
+{
+  x: 90,
+  y: canvas.height - 100,
+  radius: 150,
+  color: 'rgb(255,255,255)',
+  endAngle: 2 * Math.PI,
+  startAngle: 0,
+  id:2
+}
+];
+
+function isIntersect(point, circle) {
+  return Math.sqrt((point.x-circle.x) ** 2 + (point.y - circle.y) ** 2) < circle.radius;
+}
+
+// hover for detecting on quadrant
+canvas.addEventListener('mousemove', (e) => {
+    const dg = new DrawGame
+    // 
+    e.preventDefault()
+    const direction = updateDirection(e.clientX, e.clientY);
+    const pos = {
+      x: e.clientX,
+      y: e.clientY
+    };
+  circles.forEach(circle => {
+    if (isIntersect(pos, circle)) {
+      if (direction > -Math.PI / 8 && direction < 0 || direction > 0 && direction < Math.PI / 8) {
+    movement.right = true;
+    movement.down = false;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down right
+  else if (direction > Math.PI / 8 && direction < 3 * Math.PI / 8) {
+    movement.right = true;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down
+  else if (direction > 3 * Math.PI / 8 && direction < 5 * Math.PI / 8) {
+    movement.right = false;
+    movement.down = true;
+    movement.left = false;
+    movement.up = false;
+  }
+  //down left
+  else if (direction > 5 * Math.PI / 8 && direction < 7 * Math.PI / 8) {
+    movement.right = false;
+    movement.down = true;
+    movement.left = true;
+    movement.up = false;
+  }
+  //left
+  else if (direction < Math.PI && direction > 7 * Math.PI / 8 || direction > -Math.PI && direction < -7 * Math.PI / 8) {
+    movement.right = false;
+    movement.down = false;
+    movement.left = true;
+    movement.up = false;
+  }
+  //up left
+  else if (direction > -7 * Math.PI / 8 && direction < -5 * Math.PI / 8) {
+    movement.right = false;
+    movement.down = false;
+    movement.left = true;
+    movement.up = true;
+  }
+  //up
+  else if (direction > -5 * Math.PI / 8 && direction < -3 * Math.PI / 8) {
+    movement.right = false;
+    movement.down = false;
+    movement.left = false;
+    movement.up = true;
+  }
+  //up right
+  else if (direction > -3 * Math.PI / 8 && direction < -Math.PI / 8) {
+    movement.right = true;
+    movement.down = false;
+    movement.left = false;
+    movement.up = true;
+  }
+    }
+  });
+}, false);
+
+
+
 
 socket.on('connection', function (socket) {
   drawGame.players[socket.id] = socket;
