@@ -117,7 +117,7 @@ class Individual(object):
 
 # Driver code
 
-def main(sys.argv):
+def main(bigman):
     POPULATION_SIZE = 20
     TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
     MAX_TARGET = 10
@@ -198,7 +198,3 @@ def main(sys.argv):
         for y in range(0,cols):
             if population[0].chromosome[x][y] == 1:
                 result.append([x,y])
-
-    send_message_back = {(result)}
-
-    print(json.dumps(send_message_back))
