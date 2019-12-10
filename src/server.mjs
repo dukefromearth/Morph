@@ -4,8 +4,9 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
+import Run from './run.mjs';
 import Game from './server/game.mjs';
-import { MAP_SIZE } from './shared/constants.mjs'
+import { MAP_SIZE } from './shared/constants.mjs';
 
 const __dirname = path.resolve(path.dirname(''));
 const map_size = MAP_SIZE;
@@ -63,9 +64,12 @@ function currentState(socket_id) {
 
 
 //Run the genetic algorithm
-// setInterval(function() {
-//   Run("123123123");
-// }, 1000)
+ setInterval(function() {
+   console.log("sdfsdf")
+   Run()("123123123")
+   .then(data => console.log(data))
+   .catch(err => console.log(err));
+ }, 1000)
 
 //This is where the game is updated
 //Update the game 60 times a second
