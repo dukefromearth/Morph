@@ -16,7 +16,7 @@ import numpy as np
 # TARGET_INPUT[i][0] is the x coordinate
 # TARGET_INPUT[i][1] is the y coordinate
 
-TARGET_INPUT = []
+# TARGET_INPUT = []
 
 
 # change the way the fitness function calculates the fitness
@@ -27,12 +27,13 @@ class Individual(object):
     Class representing individual in population 
     '''
 
-    def __init__(self, chromosome):
+    def __init__(self, chromosome, TARGET_INPUT):
         self.chromosome = chromosome #Game of Life board starting pos
         self.next_state = chromosome 
         self.last_state = chromosome #Game of life board ending pos
         self.delta = 0 #amount of moves made in Game of Life
         self.fitness = 50 # init as a very low fitness 
+        self.TARGET_INPUT = TARGET_INPUT
 
     @classmethod
     def mutated_genes(self):
@@ -50,10 +51,11 @@ class Individual(object):
         At the middle of the board
         '''
         chromosome = np.zeros((100,100))
-        for _ in range(50):
+        for _ in range(25):
             x = random.randint(45,55)
             y = random.randint(45,55)
-            chromosome[x][y] == 1
+            chromosome[x][y] = 1
+        # print("create gnome", chromosome[46])
         return chromosome
     
     # update game of life
@@ -111,13 +113,15 @@ class Individual(object):
 
         self.fitness = 0
         # Add fitness score for every point not included in target
-        for i in range(len(TARGET_INPUT)-1):
-            if self.last_state[TARGET_INPUT[i][0]][TARGET_INPUT[i][1]] == 1:
+        # print("THIS IS TI",len(self.TARGET_INPUT))
+        for i in range(len(self.TARGET_INPUT)-1):
+            if self.last_state[self.TARGET_INPUT[i][0]][self.TARGET_INPUT[i][1]] == 1:
                 self.fitness+=1
 
 # Driver code
 
 def main(bigman):
+    # print("bigman", bigman)
     POPULATION_SIZE = 20
     # TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
     TARGET_INPUT = bigman
@@ -133,7 +137,7 @@ def main(bigman):
 
     for _ in range(POPULATION_SIZE):
         gnome = Individual.create_gnome()
-        population.append(Individual(gnome))
+        population.append(Individual(gnome, TARGET_INPUT))
 
     while not found:
 
@@ -169,21 +173,21 @@ def main(bigman):
             parent1 = random.choice(population[:50])
             parent2 = random.choice(population[:50])
             child1, child2 = parent1.mate(parent2)
-            new_generation.append(Individual(child2))
+            new_generation.append(Individual(child2, TARGET_INPUT))
             #new_generation.append(child2)
 
         population = new_generation
 
         # Evolve the new generation by x moves of the game of life
         for x in range(POPULATION_SIZE-1):
-            while population[x].delta < 50:
+            while population[x].delta < 20: # CHANGE THIS
                 population[x].evolve()
-                print(population[x].delta)
+                # print(population[x].delta)
             population[x].cal_fitness()
 
         generation += 1
         print("GENERATION:",generation)
-        print(population[0].chromosome[50])
+        # print("last",population[0].chromosome[50])
         #for x in range(POPULATION_SIZE):
             #print(population[x].chromosome[45])
             #print(population[x].fitness)
@@ -195,7 +199,7 @@ def main(bigman):
     cols = population[0].chromosome.shape[1]
     result = []
 
-    print("pop0", population[0].chromosome.shape[1])
+    # print("pop0", population[0].chromosome.shape[1])
 
     return population[0].chromosome
     # for x in range(0,rows):

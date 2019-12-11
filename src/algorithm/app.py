@@ -15,6 +15,7 @@ CORS(app)
 def home():
     start = time.time()
     content = request.get_json()
+    print("content",content)
     response = GA.main(content['payload']).tolist()
     end = time.time()
     print ('response', response)
