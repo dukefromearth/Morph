@@ -161,7 +161,7 @@ setInterval(function () {
 }, refresh_rate);
 
 let url = ""
-let resp = "" 
+let resp = ""
 let content = ""
 
 setInterval(async () =>{
@@ -179,3 +179,16 @@ setInterval(async () =>{
   content = await resp.json()
   console.log("test",content)
 },60000)
+  current_state = getCurrentState();
+  drawGame.players = current_state.players;
+  drawGame.asteroids = current_state.asteroids;
+  drawGame.planets = current_state.planets;
+   if(current_state.bombs.is_alive){
+     drawGame.bombs = current_state.bombs.bomb_locations;
+   }
+   else drawGame.bombs = [];
+  drawGame.all(socket.id, movement);
+  socket.emit('movement', movement);
+  socket.emit('shoot-bullet', movement.angle);
+  if (bomb) socket.emit('shoot-bomb');
+}, refresh_rate)
