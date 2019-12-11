@@ -198,3 +198,5 @@ def main(bigman):
         for y in range(0,cols):
             if population[0].chromosome[x][y] == 1:
                 result.append([x,y])
+
+    return result

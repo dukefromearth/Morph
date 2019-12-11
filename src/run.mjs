@@ -11,7 +11,7 @@ export default function run(TARGET) {
     process.stdout.on(
       'data',
       (data) => {
-          console.log(data);
+        console.log(data);
         out.push(data.toString());
         logOutput('stdout')(data);
       }
