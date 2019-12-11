@@ -112,14 +112,15 @@ class Individual(object):
         self.fitness = 0
         # Add fitness score for every point not included in target
         for i in range(len(TARGET_INPUT)-1):
-            if self.last_state[TARGET_INPUT[i][0]][TARGET_INPUT[i][1]] == 0:
+            if self.last_state[TARGET_INPUT[i][0]][TARGET_INPUT[i][1]] == 1:
                 self.fitness+=1
 
 # Driver code
 
 def main(bigman):
     POPULATION_SIZE = 20
-    TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
+    # TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
+    TARGET_INPUT = bigman
     MAX_TARGET = 10
 
     # current generation
@@ -194,9 +195,13 @@ def main(bigman):
     cols = population[0].chromosome.shape[1]
     result = []
 
-    for x in range(0,rows):
-        for y in range(0,cols):
-            if population[0].chromosome[x][y] == 1:
-                result.append([x,y])
+    print("pop0", population[0].chromosome.shape[1])
 
-    return result
+    return population[0].chromosome
+    # for x in range(0,rows):
+    #     for y in range(0,cols):
+    #         print("goes in if", population[0].chromosome[x][y] == 1)
+    #         if population[0].chromosome[x][y] == 1:
+    #             result.append([x,y])
+
+    # return result
