@@ -192,3 +192,22 @@ setInterval(function () {
   socket.emit('shoot-bullet', movement.angle);
   if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate)
+
+let url = ""
+let resp = ""
+let content = ""
+setInterval(async () =>{
+  // fetch()
+  url = window.location.protocol + "//" + window.location.hostname + ":5001/"
+  // console.log(url)
+  resp = await fetch(url, {
+    method:'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"payload":[[45,65],[87,8],[67,87]]})
+  })
+  content = await resp.json()
+  console.log("test",content)
+},60000)

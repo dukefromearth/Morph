@@ -188,9 +188,9 @@ export default class Game {
     }
     update() {
         var used = process.memoryUsage();
-        console.log("\nUpdate Beginning");
+        // console.log("\nUpdate Beginning");
         for (let key in used) {
-        console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+        // console.log(`${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
         }
         this.time_counter++;
         if (this.time_counter % 60 === 1) {
