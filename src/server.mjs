@@ -101,7 +101,8 @@ setInterval(function () {
         io.to(socket.id).emit('state', update);
       }
     }
+    game.object_array.length = 0;
     emit_count++;
     // console.timeEnd("Send Socket");
   }
-}, 1000/120);
+}, 1000/60);
