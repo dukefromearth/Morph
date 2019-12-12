@@ -4,7 +4,6 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-import runGA from './run.mjs';
 import Game from './src/game.mjs';
 
 const __dirname = path.resolve(path.dirname(''));
@@ -59,10 +58,10 @@ function currentState(){
   return state;
 }
 
-//Run the genetic algorithm
-setInterval(function() {
-  runGA([[12,1],[45,8],[66,3]]);
-}, 1000)
+// //Run the genetic algorithm
+// setInterval(function() {
+//   runGA([[12,1],[45,8],[66,3]]);
+// }, 1000)
 
 //This is where the game is updated
 //Update the game 120 times a second
