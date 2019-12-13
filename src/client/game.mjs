@@ -151,11 +151,16 @@ socket.emit('new player');
 initState();
 
 socket.on('state', function (state) {
-  processGameUpdate(state);
+  //processGameUpdate(state);
+  drawGame.update_state(state);
+  drawGame.all(socket.id, movement);
+  // drawGame.update_state(getCurrentState());
+  
 });
 
 setInterval(function () {
   socket.emit('movement', movement);
-  drawGame.update_state(getCurrentState());
-  drawGame.all(socket.id, movement);
+  // drawGame.update_state(getCurrentState());
+  // drawGame.all(socket.id, movement);
+  
 }, refresh_rate);

@@ -334,7 +334,6 @@ export default class Game {
         this.player_tree.load(this.player_array);
         this.seeker_tree.load(this.seeker_array);
         //Cycle through every player and their surrounding objects, handle collisions appropriately
-
         this.detect_all_collisions();
         this.remove_min_max_from_individual_client_objects();
     }
