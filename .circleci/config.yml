@@ -15,15 +15,20 @@ jobs:
           command: ssh $SSH_USER@$SSH_HOST bash -c '
             pkill screen;
             pkill node;
+            pkill python;
             pkill nodemon;
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
             cd Morph;
-            git checkout Seeker-bugs;
-            git pull origin Seeker-bugs;
+            git checkout flask;
+            git pull origin flask;
             cd src;
             npm i;
-            screen -d -m npm start'
+            screen -d -m npm start;
+            cd /home/ubuntu/Morph/src/algorithm;
+            source ./flask_algo/bin/activate;
+            pip3 install -r requirements.txt;
+            screen -d -m python3 app.py'
           
 
     #"pkill screen;rm -rf Morph;git clone git@github.com:dukefromearth/Morph.git Morph2;cd Morph2/server;npm i;npm start"
