@@ -1,7 +1,8 @@
 'use strict';
-import Player from './player.mjs';
 import Rbush from 'rbush';
-import Projectile from './projectile.mjs'
+import Bomb from './bomb.mjs';
+import Player from './player.mjs';
+import Projectile from './projectile.mjs';
 import Seeker from './seeker.mjs';
 
 /**
@@ -21,6 +22,7 @@ export default class Game {
         this.players = {};
         this.objects = {};
         this.seekers = {};
+        this.bomb = [];
         this.player_count = 0;
         this.top_scores = [];
 
@@ -303,6 +305,19 @@ export default class Game {
         })
         this.top_scores = sortable.splice(0,3);
     }
+    new_bomb(socketID) {
+        console.log("im here");
+        var player = this.players[socketID];
+        if (player === undefined) return; //happens if server restarts
+        var curr_time = Date.now();
+       // if (curr_time - player.time_at_last_bomb > player.bomb_speed) {
+            this.bomb = new Bomb(player.x + this.bomb.size / 2, player.y + this.bomb.size / 2, true);
+            //player.time_at_last_bomb = curr_time;
+        //}
+    }
+    update_bombs() {
+        if (this.bomb.is_alive) this.bomb.update();
+    }
     /**
      * @desc It updates 
      */
@@ -337,6 +352,22 @@ export default class Game {
 
         this.detect_all_collisions();
         this.remove_min_max_from_individual_client_objects();
+        this.update_bombs();
+        if (this.bomb.is_alive) {
+            //console.log("bomb update"); we go in here
+            for (var bombID in this.bomb.bomb_locations) {
+                var bomb = this.bomb.bomb_locations[bombID];
+                for (var playerID in this.players) {
+                    var _player = this.players[playerID];
+                    if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
+                        if (_player.health.accumulator <= 0) this.revive_player(_player.id);
+                        else {
+                            _player.health.sub(0.1);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

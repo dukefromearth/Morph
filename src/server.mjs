@@ -56,6 +56,10 @@ io.on('connection', function (socket) {
   socket.on('movement', function (data) {
     game.update_player_pos(socket.id, data);
   });
+  
+  socket.on('shoot-bomb', function () {
+    game.new_bomb(socket.id);
+  });
 
 });
 
@@ -65,6 +69,7 @@ function currentState(socket_id) {
     players: game.individual_client_objects[socket_id].players,
     objects: game.individual_client_objects[socket_id].objects,
     time: Date.now(),
+    bombs: game.bomb,
     top: game.top_scores
   }
   return state;

@@ -14,11 +14,13 @@ export default class DrawGame {
         this.collisions = new Collision(100);
         this.shields = new Shields();
         this.top = [];
+        this.bombs = [];
     }
     update_state(state) {
         this.players = state.players;
         this.objects = state.objects;
         this.top = state.top;
+        this.bombs = state.bombs
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -180,6 +182,22 @@ export default class DrawGame {
         }
     }
     
+    bomb(bomb, myPlayer) {
+        const canvasX = canvas.width / 2 + bomb[0] - myPlayer.x;
+        const canvasY = canvas.height / 2 + bomb[1] - myPlayer.y;
+        this.context.save();
+        this.context.translate(canvasX, canvasY);
+        var bomb_img;
+        if (Math.random() < 0.5) {
+            console.log("draw bomb");
+            bomb_img = document.getElementById('img_flame');
+        }
+        else bomb_img = document.getElementById('img_electric');
+        console.log("draw bomb2");
+        this.context.drawImage(bomb_img, -myPlayer.size / 2, -myPlayer.size / 2, 60, 60);
+        this.context.restore();
+    }
+    
     all(socket_id, movement) {
         if (!this.players) return;
         // this.tree.clear();
@@ -214,6 +232,15 @@ export default class DrawGame {
             //draw all collisions
             this.draw_collisions(myPlayer);
             this.draw_top_scores();
+
+            //draw bombs
+            for (var bombID in this.bombs) {
+                console.log("drawing", bombID);
+            var bomb = this.bombs[bombID];
+            this.bomb(bomb, myPlayer);
+            }
+            //clears the bombs array
+            this.bombs = [];
         }
     }
 }

@@ -99,6 +99,7 @@ export function getCurrentState() {
         return {
             players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
             objects: interpolateObjects(baseUpdate.update.objects, next.update.objects, r),
+            bombs: baseUpdate.update.bombs,
             top: baseUpdate.update.top
         };
     }
