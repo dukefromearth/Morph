@@ -18,6 +18,8 @@ import numpy as np
 
 # TARGET_INPUT = []
 
+# make a starting pos list in individual
+# change fitness function to work on lists
 
 # change the way the fitness function calculates the fitness
 
@@ -28,19 +30,19 @@ class Individual(object):
     '''
 
     def __init__(self, chromosome, TARGET_INPUT):
+        self.curr_locs = [] # used for fitness
+        self.sp = []
         self.chromosome = chromosome #Game of Life board starting pos
-        self.next_state = chromosome 
+        self.next_state = chromosome  # intermediate state
         self.last_state = chromosome #Game of life board ending pos
         self.delta = 0 #amount of moves made in Game of Life
-        self.fitness = 50 # init as a very low fitness 
+        self.fitness = 50000 # init as a very low fitness 
         self.TARGET_INPUT = TARGET_INPUT
 
-    @classmethod
     def mutated_genes(self):
         ''' 
         create random genes for mutation 
         '''
-
         gene = random.randint(0,1)
         return gene
 
@@ -55,8 +57,14 @@ class Individual(object):
             x = random.randint(45,55)
             y = random.randint(45,55)
             chromosome[x][y] = 1
-        # print("create gnome", chromosome[46])
         return chromosome
+
+    def starting(self):
+        for x in range(0,99):
+            for y in range(0,99):
+                if self.chromosome[x][y]==1:
+                    self.sp.append([x,y])
+
     
     # update game of life
     def evolve(self):
@@ -99,12 +107,30 @@ class Individual(object):
         """
         Take two parents, return two children, interchanging half of the allels of each parent randomly
         """
-        # select_mask = np.random.randint(0, 2, size=(20, 20), dtype='bool')
-        select_mask = np.random.binomial(1, 0.5, size=(100, 100)).astype('bool')
-        child1, child2 = np.copy(par2.chromosome), np.copy(self.chromosome)
-        child1[select_mask] = par2.chromosome[select_mask]
-        child2[select_mask] = self.chromosome[select_mask]
+        child1 = []
+        child2 = []
+        loop = 0
+        if len(self.sp) != len(par2.sp):
+            return self.sp, par2.sp
+        if len(self.sp) <= len(par2.sp):
+            loop = len(self.sp)
+        else:
+            loop = len(par2.sp)
+        for id in range(loop):
+            egg = self.sp[id]
+            sperm = par2.sp[id]
+            number = random.randint(0,100)
+            if number < 33:
+                child1.append(egg)
+                child2.append(egg)
+            elif number < 66:
+                child1.append(sperm)
+                child2.append(sperm)
+            else:
+                child1.append(egg)
+                child2.append(sperm)
         return child1, child2
+
 
     def cal_fitness(self):
         ''' 
@@ -112,18 +138,39 @@ class Individual(object):
         '''
 
         self.fitness = 0
+        for x in range(0,99):
+            for y in range(0,99):
+                if self.last_state[x][y] == 1:
+                    self.curr_locs.append([x,y])
+                    
         # Add fitness score for every point not included in target
-        # print("THIS IS TI",len(self.TARGET_INPUT))
-        for i in range(len(self.TARGET_INPUT)-1):
-            if self.last_state[self.TARGET_INPUT[i][0]][self.TARGET_INPUT[i][1]] == 1:
-                self.fitness+=1
+        if len(self.curr_locs) < len(self.TARGET_INPUT) * 5:
+            self.fitness = 10000
+            print(len(self.curr_locs))
+        for e in range(len(self.curr_locs)):
+            ent = self.curr_locs[e]
+            closest = 1000
+            for i in range(len(self.TARGET_INPUT)):
+                t = self.TARGET_INPUT[i]
+                distX = ent[0] - t[0]
+                distY = ent[1] - t[1]
+                dist = math.sqrt(math.pow(distX,2) + math.pow(distY, 2))
+                if dist < closest:
+                    closest = dist
+                if closest <= 5:
+                    self.fitness -=10
+            self.fitness += closest
+        if self.fitness == 0:
+            self.fitness = 10000
+        self.fitness = (self.fitness/len(self.curr_locs))
+        print(len(self.curr_locs))
+        print(self.fitness)
+
 
 # Driver code
 
 def main(bigman):
-    # print("bigman", bigman)
     POPULATION_SIZE = 20
-    # TARGET_INPUT = [[1, 2], [63, 48],[55,12],[8,7],[32,51],[72,82],[44,44]]
     TARGET_INPUT = bigman
     MAX_TARGET = 10
 
@@ -172,17 +219,26 @@ def main(bigman):
         for _ in range(s):
             parent1 = random.choice(population[:50])
             parent2 = random.choice(population[:50])
+            parent1.starting()
+            parent2.starting()
             child1, child2 = parent1.mate(parent2)
-            new_generation.append(Individual(child2, TARGET_INPUT))
+            # convert child into numpy
+            child = np.zeros((100,100))
+            for x in range(0,99):
+                for y in range(0,99):
+                    if [x,y] in child1:
+                        child[x][y] = 1
+
+            new_generation.append(Individual(child, TARGET_INPUT))
             #new_generation.append(child2)
 
         population = new_generation
 
         # Evolve the new generation by x moves of the game of life
-        for x in range(POPULATION_SIZE-1):
-            while population[x].delta < 20: # CHANGE THIS
+        for x in range(POPULATION_SIZE):
+            while population[x].delta < 50: # CHANGE THIS
                 population[x].evolve()
-                # print(population[x].delta)
+                print(population[x].delta)
             population[x].cal_fitness()
 
         generation += 1
@@ -201,11 +257,10 @@ def main(bigman):
 
     # print("pop0", population[0].chromosome.shape[1])
 
-    return population[0].chromosome
-    # for x in range(0,rows):
-    #     for y in range(0,cols):
-    #         print("goes in if", population[0].chromosome[x][y] == 1)
-    #         if population[0].chromosome[x][y] == 1:
-    #             result.append([x,y])
 
-    # return result
+    for x in range(0,rows):
+        for y in range(0,cols):
+            print("goes in if", population[0].chromosome[x][y] == 1)
+            if population[0].chromosome[x][y] == 1:
+                result.append([x,y])
+    return result
