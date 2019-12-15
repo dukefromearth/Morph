@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import GeneticAlgorithm as GA
 import time
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+import GeneticAlgorithm as GA
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +18,7 @@ def home():
     start = time.time()
     content = request.get_json()
     print("content",content)
-    response = GA.main(content['payload']).tolist()
+    response = GA.main(content['payload'])
     end = time.time()
     print ('response', response)
     print ('time', end - start)
