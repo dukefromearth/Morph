@@ -29,6 +29,14 @@ app.get('/', function (request, response) {
   response.sendFile(path.join(__dirname, '/index.html'));
 });
 
+app.get('/call', function(request, response){
+  fetch('http://localhost:5001/call', { method: 'GET'})
+    .then(res => res.json()) // expecting a json response
+    .then(json => {
+      console.log(json)
+      return json
+    });
+})
 server.listen(port_num, function () {
   console.log(`Running as ${environment} environment`);
   console.log('Starting server on port', port_num);
