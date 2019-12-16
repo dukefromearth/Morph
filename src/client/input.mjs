@@ -1,9 +1,6 @@
 
 
 export default function Listen(document, canvas) {
-
-
-
     var movement = {
         up: false,
         down: false,

@@ -35,43 +35,47 @@ export default class Bomb {
         return this.bomb_locations;
     }
     update(){
-        this.bomb_locations.length = 0;
-        this.next_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
-        for (let j = 1; j < this.last_state.length - 1; j++) {
-            for (let i = 1; i < this.last_state.length - 1; i++) {
-                let bomb = { x: i, y: j };
-                //count neighbors
-                let neighbors = 0;
-                if (this.last_state[i - 1][j - 1] === 1) ++neighbors;//top left
-                if (this.last_state[i - 1][j] === 1) ++neighbors;//top
-                if (this.last_state[i - 1][j + 1] === 1) ++neighbors;//top right
-                if (this.last_state[i][j - 1] === 1) ++neighbors;//left
-                if (this.last_state[i][j + 1] === 1) ++neighbors;//right
-                if (this.last_state[i + 1][j - 1] === 1) ++neighbors;//bottom left
-                if (this.last_state[i + 1][j] === 1) ++neighbors;//bottom
-                if (this.last_state[i + 1][j + 1] === 1) ++neighbors;//bottom right
-                if (this.last_state[i][j] === 0) {
-                    if (neighbors === 3) {
-                        this.next_state[i][j] = 1;
-                        this.bomb_locations.push(bomb);
-                    }
-                } else {
-                    if (neighbors <= 1 || neighbors >= 4){
-                        this.next_state[i][j] = 0;
-                    }
-                    else {
-                        this.next_state[i][j] = 1;
-                        this.bomb_locations.push(bomb);
+        if(Date.now()-this.last_update > this.last_update){
+            this.bomb_locations.length = 0;
+            this.next_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
+            for (let j = 1; j < this.last_state.length - 1; j++) {
+                for (let i = 1; i < this.last_state.length - 1; i++) {
+                    let bomb = { x: i, y: j };
+                    //count neighbors
+                    let neighbors = 0;
+                    if (this.last_state[i - 1][j - 1] === 1) ++neighbors;//top left
+                    if (this.last_state[i - 1][j] === 1) ++neighbors;//top
+                    if (this.last_state[i - 1][j + 1] === 1) ++neighbors;//top right
+                    if (this.last_state[i][j - 1] === 1) ++neighbors;//left
+                    if (this.last_state[i][j + 1] === 1) ++neighbors;//right
+                    if (this.last_state[i + 1][j - 1] === 1) ++neighbors;//bottom left
+                    if (this.last_state[i + 1][j] === 1) ++neighbors;//bottom
+                    if (this.last_state[i + 1][j + 1] === 1) ++neighbors;//bottom right
+                    if (this.last_state[i][j] === 0) {
+                        if (neighbors === 3) {
+                            this.next_state[i][j] = 1;
+                            this.bomb_locations.push(bomb);
+                        }
+                    } else {
+                        if (neighbors <= 1 || neighbors >= 4){
+                            this.next_state[i][j] = 0;
+                        }
+                        else {
+                            this.next_state[i][j] = 1;
+                            this.bomb_locations.push(bomb);
+                        }
                     }
                 }
             }
+            this.last_state = this.next_state;
+            this.gen_count++;
+            if (this.gen_count > this.max_gens) this.is_alive = false;
+            this.last_update = Date.now()
         }
-        this.last_state = this.next_state;
-        this.gen_count++;
-        if (this.gen_count > this.max_gens) this.is_alive = false;
     }
 
     init(starting_state) {
+        this.alive = true;
         this.last_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
         this.next_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
         for (let id in starting_state) {

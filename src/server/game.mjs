@@ -22,7 +22,7 @@ export default class Game {
         this.players = {};
         this.objects = {};
         this.seekers = {};
-        this.bomb = [];
+        this.bomb = new Bomb(GAME_WIDTH/2, GAME_HEIGHT/2);
         this.player_count = 0;
         this.top_scores = [];
 
@@ -305,18 +305,11 @@ export default class Game {
         })
         this.top_scores = sortable.splice(0,3);
     }
-    new_bomb(socketID) {
-        console.log("im here");
-        var player = this.players[socketID];
-        if (player === undefined) return; //happens if server restarts
-        var curr_time = Date.now();
-       // if (curr_time - player.time_at_last_bomb > player.bomb_speed) {
-            this.bomb = new Bomb(player.x + this.bomb.size / 2, player.y + this.bomb.size / 2, true);
-            //player.time_at_last_bomb = curr_time;
-        //}
-    }
     update_bombs() {
         if (this.bomb.is_alive) this.bomb.update();
+    }
+    bomb_init(starting_state){
+        if(!this.bomb.is_alive) this.bomb.init(starting_state)
     }
     /**
      * @desc It updates 
@@ -324,6 +317,8 @@ export default class Game {
     update() {
         if (Date.now() % 20 === 0) this.add_random_cell();
         if (Date.now() % 20 === 0) this.add_seeker();
+        if (this.bomb.is_alive) this.update_bombs();
+        else this.bomb_init({"x49y50":{"x":49,"y":50},"x52y52":{"x":52,"y":52},"x53y46":{"x":53,"y":46},"x53y52":{"x":53,"y":52},"x48y48":{"x":48,"y":48},"x51y47":{"x":51,"y":47},"x49y51":{"x":49,"y":51},"x47y48":{"x":47,"y":48},"x46y52":{"x":46,"y":52},"x47y50":{"x":47,"y":50},"x53y49":{"x":53,"y":49},"x52y49":{"x":52,"y":49},"x53y47":{"x":53,"y":47},"x48y47":{"x":48,"y":47},"x51y51":{"x":51,"y":51},"x51y48":{"x":51,"y":48},"x52y48":{"x":52,"y":48},"x53y48":{"x":53,"y":48},"x48y52":{"x":48,"y":52},"x48y51":{"x":48,"y":51}});
         this.calculate_top_players();
         //Reset object_tree 
         this.object_tree.clear();
@@ -353,21 +348,6 @@ export default class Game {
         this.detect_all_collisions();
         this.remove_min_max_from_individual_client_objects();
         this.update_bombs();
-        if (this.bomb.is_alive) {
-            //console.log("bomb update"); we go in here
-            for (var bombID in this.bomb.bomb_locations) {
-                var bomb = this.bomb.bomb_locations[bombID];
-                for (var playerID in this.players) {
-                    var _player = this.players[playerID];
-                    if ((Math.abs(bomb[0] - _player.x)) < 35 && (Math.abs(bomb[1] - _player.y)) < 35) {
-                        if (_player.health.accumulator <= 0) this.revive_player(_player.id);
-                        else {
-                            _player.health.sub(0.1);
-                        }
-                    }
-                }
-            }
-        }
     }
 
 }
