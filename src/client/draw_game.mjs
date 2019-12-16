@@ -148,7 +148,7 @@ export default class DrawGame {
 
     }
     draw_level_up(type){
-        console.log(`#${type}`)
+        // console.log(`#${type}`)
         const element =  document.querySelector(`#${type}`)
         element.style.display = 'inline';
         // display only once for now
@@ -216,11 +216,11 @@ export default class DrawGame {
         this.context.translate(canvasX, canvasY);
         var bomb_img;
         if (Math.random() < 0.5) {
-            console.log("draw bomb");
+            // console.log("draw bomb");
             bomb_img = document.getElementById('img_flame');
         }
         else bomb_img = document.getElementById('img_electric');
-        console.log("draw bomb2");
+        // console.log("draw bomb2");
         this.context.drawImage(bomb_img, -myPlayer.size / 2, -myPlayer.size / 2, 60, 60);
         this.context.restore();
     }
@@ -265,7 +265,7 @@ export default class DrawGame {
 
             //draw bombs
             for (var bombID in this.bombs) {
-                console.log("drawing", bombID);
+                // console.log("drawing", bombID);
             var bomb = this.bombs[bombID];
             this.bomb(bomb, myPlayer);
             }

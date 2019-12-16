@@ -177,10 +177,7 @@ setInterval(function () {
   // console.log("state", current_state)
 
   current_state = getCurrentState();
-  if(current_state.bombs.is_alive){
-    drawGame.bombs = current_state.bombs.bomb_locations;
-  }
-  else drawGame.bombs = [];
+
   drawGame.all(socket.id, movement);
   if (bomb) socket.emit('shoot-bomb');
 }, refresh_rate);
