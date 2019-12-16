@@ -147,8 +147,9 @@ export default class DrawGame {
         this.context.fillText("POINTS " + myPlayer.points, 20, canvas.height - 20);
 
     }
-    draw_level_up(){
-        const element =  document.querySelector('#level_up')
+    draw_level_up(type){
+        console.log(`#${type}`)
+        const element =  document.querySelector(`#${type}`)
         element.style.display = 'inline';
         // display only once for now
         if(this.display === false){
@@ -260,7 +261,7 @@ export default class DrawGame {
             this.draw_top_scores();
             this.draw_health(myPlayer);
 
-            this.draw_level_up()
+            this.draw_level_up("infected")
 
             //draw bombs
             for (var bombID in this.bombs) {

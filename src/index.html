@@ -18,7 +18,7 @@ https://opengameart.org/users/sujit1717
       width: auto;
     }
 
-    #level_up{
+    #level_up, #infected {
       /*color: white;*/
       /*display: none;*/
       position: absolute;
@@ -32,6 +32,23 @@ https://opengameart.org/users/sujit1717
       -webkit-background-clip: text;
       background-clip: text;
     }
+
+    #infected {
+      /*color: white;*/
+      /*display: none;*/
+      position: absolute;
+      height: 50px;
+      top: 40%;
+      left: 42%;
+      margin-left: -50px; /* margin is -0.5 * dimension */
+      margin-top: -25px; 
+      font-size: 50px;
+      color:#8AB1FF;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+
     
   </style>
   <link rel="stylesheet" href="/client/animate.css"></link>
@@ -40,7 +57,8 @@ https://opengameart.org/users/sujit1717
 <body>
   <!-- <div id="level_up">Level UP</div> -->
   <canvas id="canvas"></canvas>
-  <img id="level_up" src="/client/assets/RD2N.png" />
+  <img id="level_up" src="/client/assets/LEVEL-UP.png" />
+  <img id="infected" src="/client/assets/infected.png" />
 
   <img id="img_ship" src="/client/assets/RD2N.png" class="image">
   <img id="bullet" src="/client/assets/flame.png" class="image">
