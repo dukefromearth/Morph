@@ -15,6 +15,7 @@ export default class DrawGame {
         this.shields = new Shields();
         this.top = [];
         this.bombs = [];
+        this.display = false;
     }
     update_state(state) {
         this.players = state.players;
@@ -146,6 +147,21 @@ export default class DrawGame {
         this.context.fillText("POINTS " + myPlayer.points, 20, canvas.height - 20);
 
     }
+    draw_level_up(){
+        const element =  document.querySelector('#level_up')
+
+        // display only once for now
+        if(this.display === false){
+
+            element.classList.add('animated', 'bounceIn')
+            element.addEventListener('animationend', function() { 
+                element.classList.add('animated', 'bounceOut');  
+            })
+            // element.className = '';
+            // element.style.display = "none";
+            this.display = true
+        }
+    }
     draw_collisions(myPlayer) {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
@@ -243,6 +259,8 @@ export default class DrawGame {
             this.draw_collisions(myPlayer);
             this.draw_top_scores();
             this.draw_health(myPlayer);
+
+            this.draw_level_up()
 
             //draw bombs
             for (var bombID in this.bombs) {
