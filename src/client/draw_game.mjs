@@ -150,6 +150,7 @@ export default class DrawGame {
     draw_level_up(){
         const element =  document.querySelector('#level_up')
 
+        // display only once for now
         if(this.display === false){
 
             element.classList.add('animated', 'bounceIn')
