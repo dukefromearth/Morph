@@ -206,6 +206,9 @@ var current_state = {};
 setInterval(function () {
   socket.emit('movement', movement);
   drawGame.update_state(getCurrentState());
+
+  // console.log("state", current_state)
+
   current_state = getCurrentState();
   if(current_state.bombs.is_alive){
     drawGame.bombs = current_state.bombs.bomb_locations;
