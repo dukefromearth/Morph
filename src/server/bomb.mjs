@@ -6,24 +6,17 @@
 // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
 export default class Bomb {
-    constructor(posx,posy,bool){
+    constructor(posx,posy){
         this.is_alive = bool;
         this.pos = {x: posx, y: posy};
         this.max_gens = 100;
         this.gen_count = 0;
         this.update_interval = 1000/120;
         this.last_update = 0;
-        this.size = 100;
-        if(bool){
-            this.last_state = Array(this.size).fill().map(() => Array(this.size).fill(0))
-            this.next_state = Array(this.size).fill().map(() => Array(this.size).fill(0))
-            this.bomb_locations = [];
-            this.randInit();
-        } else {
-            this.last_state = [];
-            this.next_state = [];
-            this.bomb_locations = [];
-        }
+        this.size = 300;
+        this.last_state = [];
+        this.next_state = [];
+        this.bomb_locations = [];
     }
     update(){
         var curr_time = Date.now();
@@ -62,23 +55,13 @@ export default class Bomb {
             if(this.gen_count > this.max_gens) this.is_alive = false;
         }
     }
-    initialize(arr){
-        for(var i = 0; i <arr.length; i++){
-            this.last_state[arr[i].x][arr[i].y] = 1;
+    
+    initialize(starting_state){
+        this.last_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
+        this.next_state = Array(this.size).fill().map(() => Array(this.size).fill(0));
+        for (let id in starting_state) {
+            let state = starting_state[id];
+            this.last_state[state.x][state.y] = 1;
         }
     }  
-    randInit(){
-        for(var i = this.size/2 - 3; i < this.size/2 + 3; i++){
-            for (var j =this.size/2 - 3; j < this.size/2 + 3; j++){
-                var rawRandom = Math.random(); //get a raw random number
-                var improvedNum = (rawRandom * 2); //convert it to an int
-                var randomBinary = Math.floor(improvedNum);
-                if (randomBinary === 1) {
-                    this.last_state[i][j] = 1;
-                } else {
-                this.last_state[i][j] = 0;
-                }
-            }
-        }       
-    }
 }

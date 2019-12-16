@@ -4,7 +4,6 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
-// import Run from './run.mjs';
 import Game from './server/game.mjs';
 import { MAP_SIZE } from './shared/constants.mjs';
 
@@ -75,33 +74,6 @@ function currentState(socket_id) {
   return state;
 }
 
-
-//Run the genetic algorithm
- // setInterval(function() {
- //   console.log("sdfsdf")
- //   Run()("123123123")
- //   .then(data => console.log(data))
- //   .catch(err => console.log(err));
- // }, 1000)
-
-//This is where the game is updated
-//Update the game 60 times a second
-// setInterval(function () {
-//   console.time("update");
-//   if (num_users) {
-//     game.update();
-//   }
-//   console.timeEnd("update");
-// }, 1000 / 60);
-
-//Send socket emits 30 times a second
-var emit_count = 0;
-
-// setInterval(function() {
-//   console.log(emit_count, "emits per second");
-//   emit_count = 0;
-// },1000);
-
 setInterval(function () {
   if (num_users) {
     // console.time("update");
@@ -118,7 +90,5 @@ setInterval(function () {
         io.to(socket.id).emit('state', update);
       }
     }
-    emit_count++;
-    // console.timeEnd("Send Socket");
   }
 }, 1000/120);
