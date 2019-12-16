@@ -149,7 +149,7 @@ export default class DrawGame {
     }
     draw_level_up(){
         const element =  document.querySelector('#level_up')
-
+        element.style.display = 'inline';
         // display only once for now
         if(this.display === false){
 
