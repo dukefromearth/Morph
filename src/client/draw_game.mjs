@@ -136,6 +136,16 @@ export default class DrawGame {
             this.context.fillText(p[0] + " " + p[1], this.canvas.width - 330, 75 + i * 25);
         }
     }
+    draw_health(myPlayer){
+        this.context.lineWidth = 3;
+        this.context.font = "24px Comic Sans MS";
+
+        // console.log("myPlayer", myPlayer)
+        this.context.fillText("HEALTH " + Math.ceil(myPlayer.health), 20, canvas.height - 80);
+        this.context.fillText("SHIELD " + myPlayer.shield_lvl, 20, canvas. height - 50)
+        this.context.fillText("POINTS " + myPlayer.points, 20, canvas.height - 20);
+
+    }
     draw_collisions(myPlayer) {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
@@ -232,6 +242,7 @@ export default class DrawGame {
             //draw all collisions
             this.draw_collisions(myPlayer);
             this.draw_top_scores();
+            this.draw_health(myPlayer);
 
             //draw bombs
             for (var bombID in this.bombs) {
