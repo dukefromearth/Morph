@@ -8,6 +8,7 @@ import Seeker from './seeker.mjs';
 
 // right 
 const dir1_bank = [
+    {"x52y49":{"x":52,"y":49},"x47y48":{"x":47,"y":48},"x51y52":{"x":51,"y":52},"x49y49":{"x":49,"y":49},"x51y47":{"x":51,"y":47},"x46y48":{"x":46,"y":48},"x46y51":{"x":46,"y":51},"x52y50":{"x":52,"y":50},"x48y48":{"x":48,"y":48},"x49y46":{"x":49,"y":46},"x46y46":{"x":46,"y":46},"x52y46":{"x":52,"y":46},"x49y50":{"x":49,"y":50},"x49y48":{"x":49,"y":48},"x48y49":{"x":48,"y":49},"x48y53":{"x":48,"y":53},"x51y49":{"x":51,"y":49},"x46y47":{"x":46,"y":47},"x46y49":{"x":46,"y":49},"x49y53":{"x":49,"y":53}},
     {"x47y46":{"x":47,"y":46},"x49y49":{"x":49,"y":49},"x53y51":{"x":53,"y":51},"x48y53":{"x":48,"y":53},"x51y52":{"x":51,"y":52},"x52y49":{"x":52,"y":49},"x48y47":{"x":48,"y":47},"x46y48":{"x":46,"y":48},"x48y52":{"x":48,"y":52},"x52y51":{"x":52,"y":51},"x48y49":{"x":48,"y":49},"x48y46":{"x":48,"y":46},"x47y47":{"x":47,"y":47},"x46y49":{"x":46,"y":49},"x51y47":{"x":51,"y":47},"x52y52":{"x":52,"y":52},"x46y53":{"x":46,"y":53},"x47y51":{"x":47,"y":51},"x47y49":{"x":47,"y":49},"x50y49":{"x":50,"y":49},"x53y52":{"x":53,"y":52}},
     {"x49y47":{"x":49,"y":47},"x50y53":{"x":50,"y":53},"x50y52":{"x":50,"y":52},"x48y46":{"x":48,"y":46},"x53y49":{"x":53,"y":49},"x50y49":{"x":50,"y":49},"x48y50":{"x":48,"y":50},"x46y53":{"x":46,"y":53},"x49y51":{"x":49,"y":51},"x47y53":{"x":47,"y":53},"x49y48":{"x":49,"y":48},"x52y52":{"x":52,"y":52},"x49y52":{"x":49,"y":52},"x53y51":{"x":53,"y":51},"x47y46":{"x":47,"y":46},"x52y51":{"x":52,"y":51},"x53y53":{"x":53,"y":53},"x48y49":{"x":48,"y":49},"x51y49":{"x":51,"y":49},"x51y52":{"x":51,"y":52},"x46y48":{"x":46,"y":48}},
     {"x51y48":{"x":51,"y":48},"x48y52":{"x":48,"y":52},"x46y53":{"x":46,"y":53},"x49y48":{"x":49,"y":48},"x51y53":{"x":51,"y":53},"x46y46":{"x":46,"y":46},"x49y50":{"x":49,"y":50},"x47y49":{"x":47,"y":49},"x53y51":{"x":53,"y":51},"x50y48":{"x":50,"y":48},"x48y46":{"x":48,"y":46},"x46y48":{"x":46,"y":48},"x49y46":{"x":49,"y":46},"x46y51":{"x":46,"y":51},"x51y49":{"x":51,"y":49},"x49y53":{"x":49,"y":53},"x48y49":{"x":48,"y":49},"x49y51":{"x":49,"y":51},"x52y53":{"x":52,"y":53},"x52y49":{"x":52,"y":49},"x51y52":{"x":51,"y":52},"x52y48":{"x":52,"y":48}},
@@ -438,7 +439,7 @@ export default class Game {
      */
     update() {
         if (Date.now() % 30 === 0) this.add_random_cell();
-        // if (this.seeker_array.length < 5) this.add_seeker();
+        if (this.seeker_array.length < 5) this.add_seeker();
         
         //Reset object_tree 
         this.object_tree.clear();
@@ -454,7 +455,7 @@ export default class Game {
 
         if (!this.objects[0]) this.new_big_cell();
         //Create random players
-        // if (this.player_count < 20) this.new_player('abcdef' + this.player_count);
+        // if (this.player_count < 3) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds

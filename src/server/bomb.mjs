@@ -10,7 +10,7 @@ export default class Bomb {
     constructor(posx,posy){
     this.alive = false;
     this.pos = { x: posx, y: posy };
-    this.max_gens = 300;
+    this.max_gens = 350;
     this.gen_count = 0;
     this.update_interval = 1000 / 60;
     this.last_update = 0;
