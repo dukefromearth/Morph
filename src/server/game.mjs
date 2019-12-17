@@ -437,7 +437,7 @@ export default class Game {
      */
     update() {
         if (Date.now() % 30 === 0) this.add_random_cell();
-        // if (this.seeker_array.length < 5) this.add_seeker();
+        if (this.seeker_array.length < 5) this.add_seeker();
         
         //Reset object_tree 
         this.object_tree.clear();
@@ -453,7 +453,7 @@ export default class Game {
 
         if (!this.objects[0]) this.new_big_cell();
         //Create random players
-        // if (this.player_count < 20) this.new_player('abcdef' + this.player_count);
+        if (this.player_count < 3) this.new_player('abcdef' + this.player_count);
         //Check if there are bullets to be shot for each player and add them
         this.add_bullets_to_all_players();
         //Update all object positions, delete those that are out of bounds
