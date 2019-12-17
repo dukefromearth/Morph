@@ -11,6 +11,7 @@ export default class Points {
         if(this.points > this.nextLevel) {
             this.level++;
             this.nextLevel = this.level * this.level * this.levelMultiplier;
+            this.useable_points = 0;
             return true;
         } else return false;
     }

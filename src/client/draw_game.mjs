@@ -14,6 +14,15 @@ export default class DrawGame {
         this.collisions = new Collision(100);
         this.shields = new Shields();
         this.top = [];
+        this.images = {};
+        this.cache_images();
+        // this.display = false;
+    }
+    cache_images() {
+        let images = ["bullet", "img_enemy", "img_flame", "img_electric", "img_asteroid1", "health", "l1_shield", "l2_shield", "l3_shield", "beam_left", "beam_right", "beam_up", "beam_down", "missile_f0", "missile_f1", "missile_f2", "missile_f3", "planet_01", "upgrade_blast_speed", "upgrade_blast_level", "upgrade_bullets_per_sec", "cell0", "cell1", "cell2", "cell3", "cell4", "big_cell", "seeker", "e_0001", "e_0002", "e_0003", "e_0004", "e_0005", "e_0006", "e_0007", "e_0008", "e_0009", "e_0010", "e_0011", "e_0012", "e_0013", "e_0014", "e_0015", "e1_0000", "e1_0001", "e1_0002", "e1_0003", "e1_0004", "e1_0005", "e1_0006", "e1_0007"];
+        for (let i = 0; i < images.length; i++) {
+            this.images[images[i]] = document.getElementById(images[i]);
+        }
     }
     update_state(state) {
         this.players = state.players;
@@ -24,8 +33,8 @@ export default class DrawGame {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
         // 800 in-game units of width.
         const scaleRatio = Math.max(1, 800 / window.innerWidth);
-        this.canvas.width = scaleRatio * Math.min(1500,(window.innerWidth - 15));
-        this.canvas.height = scaleRatio * Math.min(1500,(window.innerHeight - 30));
+        this.canvas.width = scaleRatio * Math.min(1500, (window.innerWidth - 15));
+        this.canvas.height = scaleRatio * Math.min(1500, (window.innerHeight - 30));
     }
     background(myPlayerX, myPlayerY) {
         const backgroundX = (this.MAP_SIZE / 2) - myPlayerX + (canvas.width / 2);
@@ -60,20 +69,20 @@ export default class DrawGame {
             this.context.save();
             this.context.globalAlpha = player.shield_accumulator / 100;
             this.context.translate(canvasX, canvasY);
-            this.context.drawImage(shield[++this.shields.counter[level - 1]], -width*0.75, -height*0.75, width*1.5, height*1.5);
+            this.context.drawImage(shield[++this.shields.counter[level - 1]], -width * 0.75, -height * 0.75, width * 1.5, height * 1.5);
             if (this.shields.counter[level - 1] >= shield.length - 1) this.shields.counter[level - 1] = 0;
             this.context.restore();
         }
     }
     draw_object(center, object, rotate) {
-        const img = document.getElementById(object.type);
+        const img = this.images[object.type]//document.getElementById(object.type);
         const width = object.maxX - object.minX;
         const height = object.maxY - object.minY;
         const x = (object.maxX - width / 2);
         const y = (object.maxY - height / 2);
         const canvasX = canvas.width / 2 + x - center.x;
         const canvasY = canvas.height / 2 + y - center.y;
-        if (!object.alive) {
+        if (!object.alive && object.type) {
             this.collisions.new_collision({ x: x, y: y, counter: 0, type: object.type });
             return;
         }
@@ -96,19 +105,19 @@ export default class DrawGame {
         this.context.save();
         this.context.translate(canvasX, canvasY);
         if (object.collected_cells.cell0 > 0) {
-            let img = document.getElementById("cell0");
+            let img = this.images["cell0"]//document.getElementById("cell0");
             this.context.drawImage(img, -50, width / 2 + 5, 20, 20);
         }
         if (object.collected_cells.cell1 > 0) {
-            let img = document.getElementById("cell1");
+            let img = this.images["cell1"]//document.getElementById("cell1");
             this.context.drawImage(img, -25, width / 2 + 5, 20, 20);
         }
         if (object.collected_cells.cell2 > 0) {
-            let img = document.getElementById("cell2");
+            let img = this.images["cell2"]//document.getElementById("cell2");
             this.context.drawImage(img, 0, width / 2 + 5, 20, 20);
         }
         if (object.collected_cells.cell3 > 0) {
-            let img = document.getElementById("cell3");
+            let img = this.images["cell3"]//document.getElementById("cell3");
             this.context.drawImage(img, 25, width / 2 + 5, 20, 20);
         }
         this.context.fillStyle = "red";
@@ -116,18 +125,23 @@ export default class DrawGame {
         this.context.textAlign = "center";
         this.context.fillText(object.points, 0, -width / 2 - 10);
         this.context.fillText(object.name, 0, width / 2 + 40);
+        this.context.lineWidth = 4;
+        this.context.beginPath();
+        this.context.moveTo(-width / 2 - 20, height/2);
+        this.context.lineTo(-width / 2 - 20, Math.floor(-(object.health*0.25)+30));
+        this.context.strokeStyle = "green";
+        this.context.stroke();
         this.context.restore();
-
     }
-    draw_top_scores(){
-        
+    draw_top_scores() {
+
         this.context.fillStyle = "white";
         this.context.strokeStyle = 'white';
         this.context.lineWidth = 3;
         this.context.strokeRect(this.canvas.width - 350, 20, 287, 115)
         this.context.font = "24px Comic Sans MS";
         this.context.fillText("TOP SCORES!", this.canvas.width - 280, 50);
-        for (let i in this.top){
+        for (let i in this.top) {
             let p = this.top[i];
             this.context.fillStyle = "white";
             this.context.font = "24px Comic Sans MS";
@@ -138,7 +152,7 @@ export default class DrawGame {
         for (let id2 in this.collisions.collisions) {
             let collision = this.collisions.collisions[id2];
             let animation;
-            if (collision.type[0] === 'c') animation = this.animations.explosion1;
+            if (collision.type[0] === 'c' || collision.type[0] === 'l') animation = this.animations.explosion1;
             else animation = this.animations.explosion2;
             if (collision.counter < animation.length - 1) {
                 const canvasX = canvas.width / 2 + collision.x - myPlayer.x;
@@ -150,24 +164,37 @@ export default class DrawGame {
             }
         }
     }
+    draw_level_up(type) {
+        const element = document.querySelector(`#${type}`)
+        element.style.display = 'inline';
+        element.classList.add('animated', 'bounceIn')
+        element.addEventListener('animationend', function () {
+            element.classList.add('animated', 'bounceOut');
+        })
+    }
     movement(myPlayer, movement) {
         const canvasX = canvas.width / 2 + myPlayer.x - myPlayer.x;
         const canvasY = canvas.height / 2 + myPlayer.y - myPlayer.y;
         this.context.save();
         this.context.translate(canvasX - 50, canvasY - 50);
         if (movement.left) {
-            this.context.drawImage(document.getElementById("beam_right"), -40, 0, 100, 100);
+            this.context.drawImage(this.images["beam_right"], -40, 0, 100, 100);
         }
         if (movement.right) {
-            this.context.drawImage(document.getElementById("beam_left"), 40, 0, 100, 100);
+            this.context.drawImage(this.images["beam_left"], 40, 0, 100, 100);
         }
         if (movement.up) {
-            this.context.drawImage(document.getElementById("beam_down"), 0, -40, 100, 100);
+            this.context.drawImage(this.images["beam_down"], 0, -40, 100, 100);
         }
         if (movement.down) {
-            this.context.drawImage(document.getElementById("beam_up"), 0, 40, 100, 100);
+            this.context.drawImage(this.images["beam_up"], 0, 40, 100, 100);
         }
         this.context.restore();
+    }
+    draw_player_animations(player) {
+        console.log(player.infected_trigger,player.level_up_trigger);
+        if (player.infected_trigger) this.draw_level_up("infected");
+        if (player.level_up_trigger) this.draw_level_up("level_up");
     }
     get_my_player(socket_id) {
         for (let id in this.players) {
@@ -179,7 +206,6 @@ export default class DrawGame {
             }
         }
     }
-    
     all(socket_id, movement) {
         if (!this.players) return;
         // this.tree.clear();
@@ -198,19 +224,24 @@ export default class DrawGame {
             this.background(myPlayer.x, myPlayer.y);
             //draw movement
             this.movement(myPlayer, movement);
-            //draw my player
-            this.draw_object(myPlayer, myPlayer, true);
             //draw other players
             for (let id in this.players) {
                 let player = this.players[id];
                 this.draw_player(myPlayer, player, false);
-                
             }
+            let big_cell = null;
             //draw all objects 
             for (let id in this.objects) {
                 let object = this.objects[id];
-                this.draw_object(myPlayer, object, false);
+                if (object.type === "big_cell") {
+                    big_cell = object;
+                }
+                else this.draw_object(myPlayer, object, false);
             }
+            if (big_cell) this.draw_object(myPlayer, big_cell, false);
+            //draw my player
+            this.draw_player(myPlayer, myPlayer, true);
+            this.draw_player_animations(myPlayer);
             //draw all collisions
             this.draw_collisions(myPlayer);
             this.draw_top_scores();

@@ -16,7 +16,7 @@ var num_users = 0;
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-const refresh_rate = 1000 / 120;
+const refresh_rate = 1000 / 60;
 const port_num = 5000;
 
 app.set('port', port_num);
@@ -85,6 +85,7 @@ var emit_count = 0;
 //   emit_count = 0;
 // },1000);
 
+
 setInterval(function () {
   if (num_users) {
     // console.time("update");
@@ -95,14 +96,10 @@ setInterval(function () {
     for (let id in sockets) {
       let socket = sockets[id];
       let update = currentState(socket.id);
-      if (game.individual_client_objects[socket.id]) {
-        // console.log("Players: ", Object.keys(update.players).length,
-        //   "Objects: ", Object.keys(update.objects).length);
-        io.to(socket.id).emit('state', update);
-      }
+      // console.log("Players: ", Object.keys(update.players).length,
+      // console.log("Objects: ", Object.values(update.objects));
+      io.to(socket.id).emit('state', update);
     }
-    game.object_array.length = 0;
-    emit_count++;
     // console.timeEnd("Send Socket");
   }
 }, refresh_rate);

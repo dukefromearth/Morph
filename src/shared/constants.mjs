@@ -1,1 +1,1 @@
-export var MAP_SIZE = 4000;
+export var MAP_SIZE = 3000;

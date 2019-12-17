@@ -39,11 +39,11 @@ export default class Game {
         this.new_big_cell();
     }
     new_big_cell() {
-        let x = Math.random() * this.width;
-        let y = Math.random() * this.height;
+        let x = this.width/2;//Math.random() * this.width;
+        let y = this.height/2;//Math.random() * this.height;
         let dir = (Math.random() < 0.5 ? 1 : -1);
-        let angle = dir * Math.random() * Math.PI;
-        this.big_cell = new Projectile(0, x, y, angle, 1, 100, 500, 500, "big_cell", 10000);
+        let angle = 0;//dir * Math.random() * Math.PI;
+        this.big_cell = new Projectile(0, x, y, angle, 0, 100, 1000, 1000, "big_cell", 10000);
         this.objects[0] = this.big_cell;
     }
     player_image() {
@@ -86,32 +86,34 @@ export default class Game {
     tally_points(socketID) {
         let player = this.players[socketID];
         let points = player.cell_count * 10;
-        if (player.cell_count > 3) points = points * 2 + player.points.points;;
+        if (player.cell_count > 3) points = points * 2;
         return points;
     }
     player_scored(socketID) {
-        let type = this.player_image();
-        let new_points = this.tally_points(socketID)
-        let points = this.players[socketID].points.points + new_points;
-        let name = this.players[socketID].name;
-        this.players[socketID] = new Player(socketID, this.width, this.height, type);
-        this.players[socketID].points.add(points);
-        this.players[socketID].points.sub(this.players[socketID].points.useable_points);
-        if(Math.random() < 0.25) {
-            this.players[socketID].health.add(points);
-        }
-        else if(Math.random() < 0.5) {
-            this.players[socketID].gun.bullet_damage.add(points);
-        }
-        else if(Math.random() < 0.75) {
-            this.players[socketID].gun.bullet_speed.add(points);
-        }
-        else {
-            this.players[socketID].gun.multi_shot.add(points);
-        }
+        let new_points = this.tally_points(socketID);
         let player = this.players[socketID];
+        let level = player.points.level;
+        let gun = player.gun;
+        let health = player.health;
+        let points = player.points;
+        let name = player.name;
+        let speed = player.getSpeed();
+        this.players[socketID] = new Player(socketID, this.width, this.height, this.player_image());
+        player = this.players[socketID];
+        player.points = points;
+        player.health = health;
+        player.health.accumulator = player.health.level*50;
+        player.gun = gun;
+        player.points.add(new_points);
+        if(player.points.level != level) player.level_up_trigger = true;
         player.name = name;
-        player.setSpeed(player.getSpeed() + 1);
+        player.type = this.player_image();
+        player.setSpeed(speed+1);
+        player.gun.parasite = false;
+        this.players[socketID].health.add(new_points);
+        this.players[socketID].gun.bullet_damage.add(new_points);
+        this.players[socketID].gun.bullet_speed.add(new_points);
+        this.players[socketID].gun.multi_shot.add(new_points);
     }
     update_player_pos(socketID, data) {
         const player = this.players[socketID];
@@ -159,9 +161,9 @@ export default class Game {
             let enemy = this.players[seeker.enemyID];
             if (!enemy) seeker.updatePos();
             else seeker.update(enemy.x, enemy.y);
-            if (!seeker.alive || this.out_of_bounds(seeker)) {
-                delete this.seekers[id];
-            }
+            // if (!seeker.alive || this.out_of_bounds(seeker)) {
+            //     delete this.seekers[id];
+            // }
         }
     }
     get_id_x_y_angle() {
@@ -196,7 +198,6 @@ export default class Game {
         else type = type + Math.floor(Math.random() * 4);
         this.add_cell(x, y, type);
     }
-
     detect_all_collisions() {
         //search each object against all seekers
         for (let id in this.seekers) {
@@ -222,6 +223,8 @@ export default class Game {
         for (let id in this.players) {
             let npc = false;
             let player = this.players[id];
+            player.level_up_trigger = false;
+            player.infected_trigger = false;
             if (player.id.substr(0, 5) === "abcde") {
                 player.angle += .02;
                 npc = true;
@@ -230,9 +233,12 @@ export default class Game {
             let objects_near_player = this.object_tree.search(player);
             for (let objID in objects_near_player) {
                 let object = objects_near_player[objID];
+                
                 if (this.detect_collision(player, object)) {
                     if (object.type === "big_cell") {
-                        this.player_scored(player.id);
+                        if(this.detect_collision(player,{minX: this.width/2 - 10, maxX: this.width/2 + 10, minY: this.height/2+100, maxY: this.height/2+180})){
+                            this.player_scored(player.id);
+                        }
                     }
                     else {
                         object.alive = false;
@@ -246,7 +252,7 @@ export default class Game {
                             player.shield_lvl = 2;
                         }
                         else {
-                            player.take_damage(object.mass/player.shield_lvl + 1);
+                            player.take_damage(object.mass/(player.shield_lvl + 1));
                             if (player.health.accumulator <= 0) this.revive_player(player.id);
                         }
                         delete this.objects[object.id];
@@ -264,6 +270,8 @@ export default class Game {
                         player.take_damage(seeker.mass);
                         if (player.health.accumulator <= 0) this.revive_player(player.id);
                         delete this.seekers[seeker.id];
+                        // this.seekers[seeker.id].x = Math.random() * this.width; //
+                        // this.seekers[seeker.id].y = Math.random() * this.height;
                     }
                 }
             }
@@ -307,8 +315,8 @@ export default class Game {
      * @desc It updates 
      */
     update() {
-        if (Date.now() % 20 === 0) this.add_random_cell();
-        if (Date.now() % 20 === 0) this.add_seeker();
+        if (Date.now() % 5 === 0) this.add_random_cell();
+        // if (this.seeker_array.length < 50) this.add_seeker();
         this.calculate_top_players();
         //Reset object_tree 
         this.object_tree.clear();
