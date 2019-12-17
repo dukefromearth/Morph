@@ -9,7 +9,7 @@ export default class BigCell extends Projectile{
         let min_dist = 10000000;
         for(let id in players){
             let player = players[id];
-            let dist = Math.sqrt(Math.pow(this.y - player.y,2) + Math.pow(this.x - player.x,2));
+            let dist = Math.sqrt(Math.pow(player.y - this.y,2) + Math.pow(player.x - this.x,2));
             if (dist < min_dist) cp_angle = Math.atan2(this.y - player.y, this.x - player.x);
         }
         return cp_angle;

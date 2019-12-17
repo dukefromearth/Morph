@@ -225,6 +225,7 @@ export default class DrawGame {
         if (myPlayer != undefined) {
             //draw background
             this.background(myPlayer.x, myPlayer.y);
+            this.draw_object(myPlayer, this.big_cell, false);
             //draw movement
             this.movement(myPlayer, movement);
             //draw other players
@@ -232,8 +233,7 @@ export default class DrawGame {
                 let player = this.players[id];
                 this.draw_player(myPlayer, player, false);
             }
-            console.log(this.big_cell);
-            this.draw_object(myPlayer, this.big_cell, false);
+            
             //draw all objects 
             for (let id in this.objects) {
                 let object = this.objects[id];

@@ -22,16 +22,16 @@ export default class Bomb {
     }
     make_bomb_object(_x,_y){
         
-        let x = this.pos.x + (_x-50)*10;
-        let y = this.pos.y + (_y-50)*10;
+        let x = this.pos.x + (_x-50)*25;
+        let y = this.pos.y + (_y-50)*25;
         return{
             x: x,
             y: y, 
             mass: 0.1, 
-            minX: x-30,
-            maxX: x+30,
-            minY: y-30,
-            maxY: y+30,
+            minX: x-60,
+            maxX: x+60,
+            minY: y-60,
+            maxY: y+60,
             type: "bomb",
             alive: true
         }
