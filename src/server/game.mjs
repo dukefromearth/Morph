@@ -3,6 +3,8 @@ import Player from './player.mjs';
 import Rbush from 'rbush';
 import Projectile from './projectile.mjs'
 import Seeker from './seeker.mjs';
+import Bomb from './bomb.mjs';
+import BigCell from './big_cell.mjs';
 
 /**
  * Class making something fun and easy.
@@ -23,15 +25,15 @@ export default class Game {
         this.seekers = {};
         this.player_count = 0;
         this.top_scores = [];
-
         this.object_tree = new Rbush();
         this.player_tree = new Rbush();
         this.seeker_tree = new Rbush();
-
+        this.bomb_tree = new Rbush();
         this.object_array = [];
         this.player_array = [];
         this.seeker_array = [];
-
+        this.bomb_array = [];
+        this.bomb = new Bomb(GAME_WIDTH/2, GAME_HEIGHT/2);
         this.individual_client_objects = {}; //Stores proximal data for each player to emit through socket
         this.counter = 0;
         this.player_image_counter = 0;
@@ -43,7 +45,7 @@ export default class Game {
         let y = this.height/2;//Math.random() * this.height;
         let dir = (Math.random() < 0.5 ? 1 : -1);
         let angle = 0;//dir * Math.random() * Math.PI;
-        this.big_cell = new Projectile(0, x, y, angle, 0, 100, 1000, 1000, "big_cell", 10000);
+        this.big_cell = new BigCell(0, x, y, angle, 0, 100, 1000, 1000, "big_cell", 10000);
         this.objects[0] = this.big_cell;
     }
     player_image() {
@@ -114,6 +116,10 @@ export default class Game {
         this.players[socketID].gun.bullet_damage.add(new_points);
         this.players[socketID].gun.bullet_speed.add(new_points);
         this.players[socketID].gun.multi_shot.add(new_points);
+
+        let angle_of_closest_player = this.big_cell.closest_player_angle(this.players);
+        console.log(angle_of_closest_player);
+        this.bomb.init({"x49y50":{"x":49,"y":50},"x52y52":{"x":52,"y":52},"x53y46":{"x":53,"y":46},"x53y52":{"x":53,"y":52},"x48y48":{"x":48,"y":48},"x51y47":{"x":51,"y":47},"x49y51":{"x":49,"y":51},"x47y48":{"x":47,"y":48},"x46y52":{"x":46,"y":52},"x47y50":{"x":47,"y":50},"x53y49":{"x":53,"y":49},"x52y49":{"x":52,"y":49},"x53y47":{"x":53,"y":47},"x48y47":{"x":48,"y":47},"x51y51":{"x":51,"y":51},"x51y48":{"x":51,"y":48},"x52y48":{"x":52,"y":48},"x53y48":{"x":53,"y":48},"x48y52":{"x":48,"y":52},"x48y51":{"x":48,"y":51}});
     }
     update_player_pos(socketID, data) {
         const player = this.players[socketID];
@@ -161,9 +167,9 @@ export default class Game {
             let enemy = this.players[seeker.enemyID];
             if (!enemy) seeker.updatePos();
             else seeker.update(enemy.x, enemy.y);
-            // if (!seeker.alive || this.out_of_bounds(seeker)) {
-            //     delete this.seekers[id];
-            // }
+            if (!seeker.alive || this.out_of_bounds(seeker)) {
+                delete this.seekers[id];
+            }
         }
     }
     get_id_x_y_angle() {
@@ -229,6 +235,15 @@ export default class Game {
                 player.angle += .02;
                 npc = true;
             }
+            //Search each player against all bombs
+            let bombs_near_player = this.bomb_tree.search(player);
+            for (let bID in bombs_near_player){
+                let bomb = bombs_near_player[bID];
+                if (this.detect_collision(player, bomb)){
+                    player.take_damage(bomb.mass/(player.shield_lvl + 1));
+                    if (player.health.accumulator <= 0) this.revive_player(player.id);
+                }
+            }
             //Search each player against all objects
             let objects_near_player = this.object_tree.search(player);
             for (let objID in objects_near_player) {
@@ -285,7 +300,8 @@ export default class Game {
                 }
                 this.individual_client_objects[player.id] = {
                     players: this.player_tree.search(search_space),
-                    objects: this.object_tree.search(search_space).concat(this.seeker_tree.search(search_space))
+                    objects: this.object_tree.search(search_space).concat(this.seeker_tree.search(search_space)),
+                    bombs: this.bomb_tree.search(search_space)
                 }
             }
         }
@@ -311,13 +327,21 @@ export default class Game {
         })
         this.top_scores = sortable.splice(0,3);
     }
+    update_bombs() {
+        if (this.bomb.alive) this.bomb.update();
+    }
+    bomb_init(starting_state){
+        if(!this.bomb.alive) {
+            this.bomb.init(starting_state);
+        }
+    }
     /**
      * @desc It updates 
      */
     update() {
-        if (Date.now() % 5 === 0) this.add_random_cell();
-        // if (this.seeker_array.length < 50) this.add_seeker();
-        this.calculate_top_players();
+        // if (Date.now() % 30 === 0) this.add_random_cell();
+        // if (this.seeker_array.length < 15) this.add_seeker();
+        
         //Reset object_tree 
         this.object_tree.clear();
         this.object_array.length = 0;
@@ -325,6 +349,10 @@ export default class Game {
         this.player_array.length = 0;
         this.seeker_tree.clear();
         this.seeker_array.length = 0;
+        this.bomb_tree.clear();
+
+        if (this.bomb.alive) this.update_bombs();
+        this.calculate_top_players();
 
         if (!this.objects[0]) this.new_big_cell();
         //Create random players
@@ -338,6 +366,7 @@ export default class Game {
         this.player_array = Object.keys(this.players).map(i => this.players[i].serialize());
         this.seeker_array = Object.keys(this.seekers).map(i => this.seekers[i].serialize());
 
+        this.bomb_tree.load(this.bomb.bomb_locations);
         this.object_tree.load(this.object_array);
         this.player_tree.load(this.player_array);
         this.seeker_tree.load(this.seeker_array);

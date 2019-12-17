@@ -16,10 +16,12 @@ export default class DrawGame {
         this.top = [];
         this.images = {};
         this.cache_images();
+        this.big_cell = {};
+        this.bombs = [];
         // this.display = false;
     }
     cache_images() {
-        let images = ["bullet", "img_enemy", "img_flame", "img_electric", "img_asteroid1", "health", "l1_shield", "l2_shield", "l3_shield", "beam_left", "beam_right", "beam_up", "beam_down", "missile_f0", "missile_f1", "missile_f2", "missile_f3", "planet_01", "upgrade_blast_speed", "upgrade_blast_level", "upgrade_bullets_per_sec", "cell0", "cell1", "cell2", "cell3", "cell4", "big_cell", "seeker", "e_0001", "e_0002", "e_0003", "e_0004", "e_0005", "e_0006", "e_0007", "e_0008", "e_0009", "e_0010", "e_0011", "e_0012", "e_0013", "e_0014", "e_0015", "e1_0000", "e1_0001", "e1_0002", "e1_0003", "e1_0004", "e1_0005", "e1_0006", "e1_0007"];
+        let images = ["bomb", "bullet", "img_enemy", "img_flame", "img_electric", "img_asteroid1", "health", "l1_shield", "l2_shield", "l3_shield", "beam_left", "beam_right", "beam_up", "beam_down", "missile_f0", "missile_f1", "missile_f2", "missile_f3", "planet_01", "upgrade_blast_speed", "upgrade_blast_level", "upgrade_bullets_per_sec", "cell0", "cell1", "cell2", "cell3", "cell4", "big_cell", "seeker", "e_0001", "e_0002", "e_0003", "e_0004", "e_0005", "e_0006", "e_0007", "e_0008", "e_0009", "e_0010", "e_0011", "e_0012", "e_0013", "e_0014", "e_0015", "e1_0000", "e1_0001", "e1_0002", "e1_0003", "e1_0004", "e1_0005", "e1_0006", "e1_0007"];
         for (let i = 0; i < images.length; i++) {
             this.images[images[i]] = document.getElementById(images[i]);
         }
@@ -27,7 +29,9 @@ export default class DrawGame {
     update_state(state) {
         this.players = state.players;
         this.objects = state.objects;
+        this.bombs = state.bombs;
         this.top = state.top;
+        this.big_cell = state.big_cell;
     }
     setCanvasDimensions() {
         // On small screens (e.g. phones), we want to "zoom out" so players can still see at least
@@ -192,7 +196,6 @@ export default class DrawGame {
         this.context.restore();
     }
     draw_player_animations(player) {
-        console.log(player.infected_trigger,player.level_up_trigger);
         if (player.infected_trigger) this.draw_level_up("infected");
         if (player.level_up_trigger) this.draw_level_up("level_up");
     }
@@ -229,16 +232,18 @@ export default class DrawGame {
                 let player = this.players[id];
                 this.draw_player(myPlayer, player, false);
             }
-            let big_cell = null;
+            console.log(this.big_cell);
+            this.draw_object(myPlayer, this.big_cell, false);
             //draw all objects 
             for (let id in this.objects) {
                 let object = this.objects[id];
-                if (object.type === "big_cell") {
-                    big_cell = object;
-                }
-                else this.draw_object(myPlayer, object, false);
+                if (object.type != "big_cell") this.draw_object(myPlayer, object, false);
             }
-            if (big_cell) this.draw_object(myPlayer, big_cell, false);
+            for (let id in this.bombs){
+                let bomb = this.bombs[id];
+                this.draw_object(myPlayer,bomb,true);
+            }
+            
             //draw my player
             this.draw_player(myPlayer, myPlayer, true);
             this.draw_player_animations(myPlayer);
