@@ -1,8 +1,8 @@
 /*jshint esversion: 6 */
-import Projectile from './projectile.mjs';
-import Gun from './abilities/gun.mjs'
+import Gun from './abilities/gun.mjs';
 import Health from './abilities/health.mjs';
 import Points from './abilities/points.mjs';
+import Projectile from './projectile.mjs';
 
 export default class Player extends Projectile {
     constructor(socketID, game_width, game_height, type) {
@@ -26,10 +26,13 @@ export default class Player extends Projectile {
     create_name(){
         let names = [
             "onion breath", "dill pickle", "old lady", "old man", "farty mctootles", 
-            "weezer", "chill bro", "too much wine", "dizzy spinner", "punk duck", "olive toast", 
+            "weezer", "chill bro", "Mother Milk", "dizzy spinner", "punk duck", "olive toast", 
             "shipwrecked", "toilet baby", "turtle clown", "algae tax", "big second toe", 
             "tar morals", "bow legged shrimp", "huge bum", "calculate this", "cleavage horse", 
-            "left shoe", "sad 'n ugly", "fat 'n happy"];
+            "left shoe", "sad 'n ugly", "fat 'n happy", "Hen tie", "Mega Milk","Milkies","Baconeggandcheeseonaroll",
+            "Where's my son?", "ZUCC","Please pass me Shostak","Jobless Graduate", "Traps", "nerf this",
+            "not cool buddy", "sonic_fan_1", "Please pass me Shostak_2"
+         ];
         let name = (names[Math.floor(Math.random() * names.length)]);
         return name;
     }
