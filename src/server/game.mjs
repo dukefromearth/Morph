@@ -339,8 +339,8 @@ export default class Game {
      * @desc It updates 
      */
     update() {
-        // if (Date.now() % 30 === 0) this.add_random_cell();
-        // if (this.seeker_array.length < 15) this.add_seeker();
+        if (Date.now() % 30 === 0) this.add_random_cell();
+        if (this.seeker_array.length < 15) this.add_seeker();
         
         //Reset object_tree 
         this.object_tree.clear();
