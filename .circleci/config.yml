@@ -20,8 +20,8 @@ jobs:
             rm -rf Morph;
             git clone git@github.com:dukefromearth/Morph.git Morph;
             cd Morph;
-            git checkout flask;
-            git pull origin flask;
+            git checkout merge-test;
+            git pull origin merge-test;
             cd src;
             npm i;
             screen -d -m npm start;

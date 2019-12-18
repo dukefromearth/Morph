@@ -7,6 +7,7 @@ import socketIO from 'socket.io';
 import Game from './server/game.mjs';
 import { MAP_SIZE } from './shared/constants.mjs';
 
+import Sentry from '@sentry/node';
 const __dirname = path.resolve(path.dirname(''));
 const map_size = MAP_SIZE;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -18,6 +19,16 @@ const server = http.Server(app);
 const io = socketIO(server);
 const refresh_rate = 1000 / 60;
 const port_num = 5000;
+
+Sentry.init({
+  dsn: 'https://c0345c3b5bad4241afe661e1e23d5197@sentry.io/1835657',
+  // ...
+});
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
+// The error handler must be before any other error middleware
+app.use(Sentry.Handlers.errorHandler());
+
 
 app.set('port', port_num);
 app.use('/client', express.static('./client'));
