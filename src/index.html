@@ -18,42 +18,29 @@ https://opengameart.org/users/sujit1717
       width: auto;
     }
 
-    #level_up, #infected {
-      /*color: white;*/
-      /*display: none;*/
-      position: absolute;
-      height: 50px;
-      top: 40%;
-      left: 47.5%;
-      margin-left: -50px; /* margin is -0.5 * dimension */
-      margin-top: -25px; 
-      font-size: 50px;
-      color:#8AB1FF;
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
+    #level_up,
     #infected {
       /*color: white;*/
       /*display: none;*/
       position: absolute;
       height: 50px;
       top: 40%;
-      left: 42%;
-      margin-left: -50px; /* margin is -0.5 * dimension */
-      margin-top: -25px; 
+      left: 47.5%;
+      margin-left: -50px;
+      /* margin is -0.5 * dimension */
+      margin-top: -25px;
       font-size: 50px;
-      color:#8AB1FF;
+      color: #8AB1FF;
       -webkit-background-clip: text;
       background-clip: text;
     }
-
-
-    
+/*  */
   </style>
-  <link rel="stylesheet" href="/client/animate.css"></link>
+  <link rel="stylesheet" href="/client/animate.css">
+  </link>
   <script src="/socket.io/socket.io.js"></script>
 </head>
+
 <body>
   <!-- <div id="level_up">Level UP</div> -->
   <canvas id="canvas"></canvas>
@@ -64,6 +51,7 @@ https://opengameart.org/users/sujit1717
   <img id="bullet" src="/client/assets/flame.png" class="image">
   <img id="img_enemy" src="/client/assets/ship2.png" class="image">
   <img id="img_flame" src="/client/assets/flame.png" class="image">
+  <img id="bomb" src="/client/assets/Virus.png" class="image">
   <img id="img_electric" src="/client/assets/electric.png" class="image">
   <img id="img_asteroid1" src="/client/assets/asteroids/asteroid1.png" class="image">
   <img id="health" src="/client/assets/health.png" class="image">
@@ -92,7 +80,7 @@ https://opengameart.org/users/sujit1717
   <img id="cell2" src="/client/assets/cells/yellow-round.png" class="image">
   <img id="cell3" src="/client/assets/cells/red-round.png" class="image">
   <img id="cell4" src="/client/assets/cells/virus2.png" class="image">
-  <img id="big_cell" src="/client/assets/cells/capsid_ray.png" class="image">
+  <img id="big_cell" src="/client/assets/cells/virus2.png" class="image">
   <img id="seeker" src="/client/assets/cells/blue1.png" class="image">
 
   <img id="l1_shield_f0" src="/client/assets/shields/level_1/00.png" class="image">

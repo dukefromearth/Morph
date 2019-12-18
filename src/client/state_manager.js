@@ -61,10 +61,8 @@ function update_server_update_avg() {
     time_at_last_receipt = Date.now();
 }
 
-
-
 function currentServerTime() {
-    return firstServerTimestamp + (Date.now() - gameStart) - (max_time_between_server_updates / average_time_between_server_updates) * average_time_between_server_updates;
+    return firstServerTimestamp + (Date.now() - gameStart)// - (max_time_between_server_updates / average_time_between_server_updates) * average_time_between_server_updates;
 }
 
 // Returns the index of the base update, the first game update before
@@ -100,7 +98,8 @@ export function getCurrentState() {
             players: interpolatePlayers(baseUpdate.update.players, next.update.players, r),
             objects: interpolateObjects(baseUpdate.update.objects, next.update.objects, r),
             bombs: baseUpdate.update.bombs,
-            top: baseUpdate.update.top
+            top: baseUpdate.update.top,
+            big_cell: baseUpdate.update.big_cell
         };
     }
 }

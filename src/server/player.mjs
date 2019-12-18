@@ -10,7 +10,7 @@ export default class Player extends Projectile {
         let x = Math.floor(Math.random() * (game_width - 75));
         let y = Math.floor(Math.random() * (game_height - 75));
         let angle = Math.random() * Math.PI;
-        let speed = 7;
+        let speed = 6;
         let mass = 10;
         let w = 70;
         let h = 70;
@@ -22,17 +22,20 @@ export default class Player extends Projectile {
         this.shield_lvl = 0;
         this.collected_cells = { cell0: 0, cell1: 0, cell2: 0, cell3: 0 };
         this.name = this.create_name();
+        this.level_up_trigger = false;
+        this.infected_trigger = false;
     }
-    create_name(){
+    create_name() {
         let names = [
-            "onion breath", "dill pickle", "old lady", "old man", "farty mctootles", 
-            "weezer", "chill bro", "Mother Milk", "dizzy spinner", "punk duck", "olive toast", 
-            "shipwrecked", "toilet baby", "turtle clown", "algae tax", "big second toe", 
+            "onion breath", "dill pickle", "old lady", "old man", "farty mctootles",
+            "weezer", "chill bro", "too much wine", "dizzy spinner", "punk duck", "olive toast",
+            "shipwrecked", "toilet baby", "turtle clown", "algae tax", "big second toe",
             "tar morals", "bow legged shrimp", "huge bum", "calculate this", "cleavage horse", 
-            "left shoe", "sad 'n ugly", "fat 'n happy", "Hen tie", "Mega Milk","Milkies","Baconeggandcheeseonaroll",
-            "Where's my son?", "ZUCC","Please pass me Shostak","Jobless Graduate", "Traps", "nerf this",
-            "not cool buddy", "sonic_fan_1", "Please pass me Shostak_2"
-         ];
+            "sad 'n ugly", "fat 'n happy", "hen tie", "Pass me please Shostak",
+            "nerf this", "not cool bro", "Moo moo milk", "Milkies","Jobless Graduate", "OOF",
+            "chase a bag","mwong","depresso espresso","hen tie", "dont you hate it when",
+            "bruh"
+        ];
         let name = (names[Math.floor(Math.random() * names.length)]);
         return name;
     }
@@ -59,16 +62,17 @@ export default class Player extends Projectile {
             this.collected_cells.cell2 > 0 &&
             this.collected_cells.cell3 > 0 &&
             !this.gun.parasite
-            ) {
-                this.setSpeed(this.getSpeed() / 2);
-                this.gun.parasite = true;
-                this.type = "cell4";
+        ) {
+            this.gun.parasite = true;
+            this.infected_trigger = true;
+            this.type = "cell4";
         }
     }
     //Void - Updates the players position
     update_pos(data, game_width, game_height) {
         //Check for diagonal movements
-        var speed = this.getSpeed();
+        let speed = this.getSpeed();
+        speed = (!this.gun.parasite) ? speed : speed/2;
         let count = 0;
         if (data.left) count++;
         if (data.right) count++;
@@ -96,7 +100,7 @@ export default class Player extends Projectile {
         this.update_min_max();
     }
     take_damage(x) {
-        this.health.hit(x/(this.shield_lvl+1));
+        this.health.hit(x / (this.shield_lvl + 1));
         if (this.health.accumulator < 0) this.alive = false;
     }
     serialize() {
@@ -117,7 +121,9 @@ export default class Player extends Projectile {
             collected_cells: this.collected_cells,
             points: this.points.points,
             shield_lvl: this.shield_lvl,
-            name: this.name
+            name: this.name,
+            infected_trigger: this.infected_trigger,
+            level_up_trigger: this.level_up_trigger
         }
     }
 }

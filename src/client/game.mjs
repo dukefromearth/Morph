@@ -161,7 +161,10 @@ socket.emit('new player');
 initState();
 
 socket.on('state', function (state) {
-  processGameUpdate(state);
+  //processGameUpdate(state);
+  drawGame.update_state(state);
+  // drawGame.update_state(getCurrentState());
+  
 });
 
 socket.on('bombs-update', function (bomb_locs) {
@@ -172,14 +175,9 @@ socket.on('bombs-update', function (bomb_locs) {
 var current_state = {};
 setInterval(function () {
   socket.emit('movement', movement);
-  drawGame.update_state(getCurrentState());
-
-  // console.log("state", current_state)
-
-  current_state = getCurrentState();
 
   drawGame.all(socket.id, movement);
-  if (bomb) socket.emit('shoot-bomb');
+
 }, refresh_rate);
 
 let url = ""
